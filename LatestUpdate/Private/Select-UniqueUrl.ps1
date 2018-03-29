@@ -16,7 +16,8 @@ Function Select-UniqueUrl {
     [CmdletBinding(SupportsShouldProcess = $False)]
     [OutputType([Array])]
     Param(
-        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, HelpMessage = "The array of updates from Get-LatestUpdate.")]
+        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True, `
+                HelpMessage = "The array of updates from Get-LatestUpdate.")]
         [ValidateNotNullOrEmpty()]
         [array]$Updates    
     )

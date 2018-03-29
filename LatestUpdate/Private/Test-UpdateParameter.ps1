@@ -9,7 +9,7 @@ Function Test-UpdateParameter {
     .NOTES
     #>
     Param (
-        [Parameter(Mandatory = $True, Position = 0, ValueFromPipelineByPropertyName = $True)]
+        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
         $Param
     )
     [String]$UpdatePath = $Param

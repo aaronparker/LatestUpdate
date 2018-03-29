@@ -21,7 +21,7 @@ Function Import-LatestUpdate {
         Specify the path to the MDT deployment share.
 
     .PARAMETER PackagePath
-        A folder path to import into under the Packages folder in MDT.
+        A packges folder to import into relative to the Packages folder in the MDT share.
 
     .PARAMETER Clean
         Before importing the latest updates into the target path, remove any existing update package.
@@ -43,7 +43,9 @@ Function Import-LatestUpdate {
 #>
     [CmdletBinding(SupportsShouldProcess = $True)]
     Param (
-        [Parameter(Mandatory = $True, ValueFromPipelineByPropertyName = $True, HelpMessage = "Specify the path to the MSU to import.")]
+        [Parameter(Mandatory = $True, ValueFromPipelineByPropertyName = $True, `
+                HelpMessage = "Specify the folder containing the MSU update/s to import.")]
+        [ValidateScript( { If (Test-Path $_ -PathType 'Container') { $True } Else { Throw "Cannot find path $_" } })]
         [string]$UpdatePath,
 
         [Parameter(Mandatory = $True, HelpMessage = "Specify an MDT deployment share to apply the update to.")]
@@ -53,10 +55,24 @@ Function Import-LatestUpdate {
         [Parameter(Mandatory = $False, HelpMessage = "A sub-folder in the MDT Packages folder.")]
         [string]$PackagePath,
 
-        [Parameter(Mandatory = $False, HelpMessage = "Remove the updates from the target MDT deployment share before importing the new updates.")]
+        [Parameter(Mandatory = $False, `
+                HelpMessage = "Remove the updates from the target MDT deployment share before importing the new updates.")]
         [switch]$Clean
     )
     Begin {
+        $Drive = "DS001"
+        If (Import-MdtModule) {
+            If ($pscmdlet.ShouldProcess("$($Drive): to $($Path)", "Mapping")) {
+                If (Test-Path "$($Drive):") {
+                    Write-Verbose "Found existing MDT drive $Drive."
+                    Remove-PSDrive -Name $Drive -Force
+                }
+                $Drive = New-PSDrive -Name $Drive -PSProvider MDTProvider -Root $SharePath
+            }
+        }
+
+        # Fix $UpdatePath to ensure it's valid for Import-MdtPackage
+        $UpdatePath = Test-UpdateParameter (Get-Item $UpdatePath).FullName
     }
     Process {
 
@@ -84,8 +100,8 @@ Function Import-LatestUpdate {
             }
 
             # Validate the provided local path and import the update package
-            $UpdatePath = Test-UpdateParameter $UpdatePath
             If ($UpdatePath -ne $False) {
+                Write-Verbose "Importing from $($UpdatePath)"
                 Import-MdtPackage -Path $Dest -SourcePath $UpdatePath
             }
             Else {

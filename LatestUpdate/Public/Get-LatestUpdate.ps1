@@ -15,7 +15,7 @@ Function Get-LatestUpdate {
         Forked from: https://gist.github.com/keithga/1ad0abd1f7ba6e2f8aff63d94ab03048
 
     .LINK
-        https://support.microsoft.com/en-us/help/4000823
+        https://support.microsoft.com/en-us/help/4043454
 
     .EXAMPLE
         Get-LatestUpdate

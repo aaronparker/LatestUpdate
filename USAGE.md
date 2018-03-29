@@ -1,66 +1,96 @@
-# Get and Import Update Packages
-Get updates for Windows 10 and Windows Server 2016 for querying and importing into an MDT deployment share. Schedule to keep your deployment share up to date.
+# Installing the Module
 
-Updates are queried from the [Windows 10 and Windows Server 2016 update history](https://support.microsoft.com/en-ph/help/4000825/windows-10-windows-server-2016-update-history) page.
+## Install from the PowerShell Gallery
 
-## Get-LatestUpdate.ps1
-Originally forked from [https://gist.github.com/keithga/1ad0abd1f7ba6e2f8aff63d94ab03048](https://gist.github.com/keithga/1ad0abd1f7ba6e2f8aff63d94ab03048).
+The LatestUpdate module is published to the PowerShell Gallery and can be found here: [LatestUpdate](https://www.powershellgallery.com/packages/LatestUpdate/). The module can be installed from the gallery with:
 
-Queries JSON from Microsoft to determine the latest Windows 10 updates. Returns an object that lists details of the update. Optionally download the update to a local folder.
+```powershell
+Install-Module -Name LatestUpdate
+Import-Module -Name LatestUpdate
+```
 
-This script supports the following parameters:
+### Updating from the Module
 
-### PARAMETER SearchString
-Specify a specific search string to change the target update behaviour. The default will only download Cumulative updates for x64.
+If you have installed a previous version of the module from the gallery, you can install the latest update with the `-Force` parameter:
 
-### PARAMETER Download
-Required to download the enumerated update.
+```powershell
+Install-Module -Name LatestUpdate -Force
+```
 
-### PARAMETER Path
-Specify the path to download the updates to, otherwise the current folder will be used.
+## Manual Installation from the Repository
 
-### Examples
-Enumerate the latest Cumulative Update for Windows 10 x86 (Semi-Annual Channel)
+The module can be downloaded from the [GitHub source repository](https://github.com/aaronparker/LatestUpdate) and includes the module in the `LatestUpdate` folder. The folder needs to be installed into one of your PowerShell Module Paths. To see the full list of available PowerShell Module paths, use `$env:PSModulePath.split(';')` in a PowerShell console.
 
-        .\Get-LatestUpdate.ps1 -SearchString 'Cumulative.*x86'
+Common PowerShell module paths include:
 
-Enumerate the latest Cumulative Update for Windows Server 2016
+* Current User: `%USERPROFILE%\Documents\WindowsPowerShell\Modules\`
+* All Users: `%ProgramFiles%\WindowsPowerShell\Modules\`
+* OneDrive: `$env:OneDrive\Documents\WindowsPowerShell\Modules\`
 
-        .\Get-LatestUpdate.ps1 -SearchString 'Cumulative.*Server.*x64' -Build 14393
+To install from the repository
 
-Enumerate the latest Windows 10 Cumulative Update for build 14393 and download it.
+1. Download the `master branch` to your workstation.
+2. Copy the contents of the LatestUpdate folder onto your workstation into the desired PowerShell Module path.
+3. Open a Powershell console with the Run as Administrator option.
+4. Run `Set-ExecutionPolicy` using the parameter `RemoteSigned` or `Bypass`.
 
-        .\Get-LatestUpdate.ps1 -Download -Build 14393
+Once installation is complete, you can validate that the module exists by running `Get-Module -ListAvailable LatestUpdate`. To use the module, load it with:
 
-Enumerate the latest Windows 10 Cumulative Update (Semi-Annual Channel) and download to C:\Updates.
+```powershell
+Import-Module LatestUpdate
+```
 
-        .\Get-LatestUpdate.ps1 -Download -Path C:\Updates
+## Using the Module
 
+To use the module, we follow 3 tasks:
 
-## Import-Update.ps1
-Imports updates from a specified folder into an MDT deployment share. Takes output via the pipeline from Get-LatestUpdate.ps1.
+1. Get the latest update with Get-LatestUpdate
+2. Download the update/s with Save-LatestUpdate
+3. Optionally import the update/s into an MDT deployment share
 
-### PARAMETER UpdatePath
-The folder containing the updates to import into the MDT deployment share.
+### Get the Latest Update
 
-### PARAMETER PathPath
-Specify the path to the MDT deployment share.
+`Get-LatestUpdate` retrieves the latest update from the Windows 10 Update History page at [https://support.microsoft.com/en-us/help/4043454](https://support.microsoft.com/en-us/help/4043454). Run `Get-LatestUpdate` with no additional switches to return the latest update for the most recent Windows 10 x64 build.
 
-### PARAMETER PackagePath
-A folder path to import into under the Packages folder in MDT.
+```powershell
+PS C:\> Get-LatestUpdate
+```
 
-### PARAMETER Clean
-Before importing the latest updates into the target path, remove any existing update package.
+This returns the most recent update - depending on the current builds of Windows 10 and Windows Server, you could see a single update listed, or two updates - one for Windows 10 and another for Windows Server (if the builds are the same, both will be returned.)
 
-### Examples
-Import the latest update gathered from Get-LatestUpdate.ps1 into the deployment share \\server\reference under 'Packages\Windows 10'.
+To return the latest cumulative update for a specific build or processor architecture of Windows, use the following examples:
 
-         .\Get-LatestUpdate.ps1 -Download -Path C:\Updates | .\Import-Update.ps1 -SharePath \\server\reference -PackagePath 'Windows 10'
-        
-Import the latest update stored in C:\Updates into the deployment share \\server\reference. Remove all existing packages first. Show verbose output.
+Return the cumulative update for Windows 10 1607:
 
-         .\Import-Update.ps1 -UpdatePath C:\Updates -SharePath \\server\reference -Clean -Verbose
-        
-Import the latest update stored in C:\Updates into the deployment share \\server\reference under 'Packages\Windows 10'.
+```powershell
+PS C:\> Get-LatestUpdate -Build 14393
+```
 
-         .\Import-Update.ps1 -UpdatePath C:\Updates -SharePath \\server\reference -PackagePath 'Windows 10'
+Return the cumulative update for latest release of Windows 10 x86:
+
+```powershell
+PS C:\> Get-LatestUpdate -SearchString 'Cumulative.*x86'
+```
+
+### Download the Latest Update
+
+`Save-LatestUpdate` is used to download the update or updates returned from `Get-LatestUpdate` to a local folder. On Windows `Save-LatestUpdate` uses BITS to transfer the update locally for a robust download. Where BITS is not available, `Invoke-WebRequest` is used.
+
+The following example, will download the latest cumulative update for the current release of Windows 10 x64:
+
+```powershell
+$Updates = Get-LatestUpdate
+Save-LatestUpdate -Updates $Updates -Path "C:\Temp\Updates" -Verbose
+```
+
+### Import the Latest Update into MDT
+
+Now that the cumulative update has been downloaded, you can import it into an MDT deployment share with `Import-LatestUpdate`. This requires the Microsoft Deployment Toolkit Workbench to be installed on the local machine (and therefore requires Windows).
+
+The following example will retrieve the latest update and download it locally and finally import the update into the Packages node in a target MDT deployment share.
+
+```powershell
+$Updates = Get-LatestUpdate
+Save-LatestUpdate -Updates $Updates -Path "C:\Temp\Updates" -Verbose
+Import-LatestUpdate -UpdatePath "C:\Temp\Updates" -SharePath "\\server\share"
+```

@@ -12,35 +12,38 @@ Function Save-LatestUpdate {
         The array of latest cumulative updates retreived by Get-LatestUpdate.
 
     .PARAMETER Path
-        A destination path for downloading the cumulative updates to.
+        A destination path for downloading the cumulative updates to. This path must exist.
     #>
     [CmdletBinding(SupportsShouldProcess = $True)]
     [OutputType([Array])]
     Param(
-        [Parameter(Mandatory = $True, Position = 0, HelpMessage = "The array of updates from Get-LatestUpdate.")]
+        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True, `
+                HelpMessage = "The array of updates from Get-LatestUpdate.")]
         [ValidateNotNullOrEmpty()]
         [array]$Updates,
     
-        [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Specify a target path to download the update(s) to.")]
+        [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline = $False, `
+                HelpMessage = "Specify a target path to download the update(s) to.")]
         [ValidateScript( { If (Test-Path $_ -PathType 'Container') { $True } Else { Throw "Cannot find path $_" } })]
         [string]$Path = $PWD
     )
     Begin {
+        $Path = Test-UpdateParameter (Get-Item $Path).FullName
         $Urls = $Updates | Select-UniqueUrl
     } 
     Process {
         ForEach ( $Url in $Urls ) {
-            # $Filename = $Url.Substring($Url.LastIndexOf("/") + 1)
             $Filename = Split-Path $Url -Leaf
-            $Target = "$((Get-Item $Path).FullName)\$Filename"
+            $Target = "$($Path)\$($Filename)"
+            $DisplayName = $Updates | Where-Object { $_.Url -eq $Url } | Select-Object -ExpandProperty Note | Select-Object -First 1
             Write-Verbose "`t`tDownload target will be $Target"
     
             If (!(Test-Path -Path $Target)) {
                 If (Get-Command Start-BitsTransfer -ErrorAction SilentlyContinue) {
-                    If ($pscmdlet.ShouldProcess($Url, "BitsDownload")) {
+                    If ($pscmdlet.ShouldProcess($(Split-Path $Url -Leaf), "BitsDownload")) {
                         Start-BitsTransfer -Source $Url -Destination $Target `
                             -Priority High -ErrorAction Continue -ErrorVariable $ErrorBits `
-                            -DisplayName "Windows 10 Cumulative Update" -Description "Downloading the latest Windows 10 Cumulative update"
+                            -DisplayName $DisplayName -Description "Downloading $($Url)"
                     }
                 }
                 Else {
@@ -50,7 +53,7 @@ Function Save-LatestUpdate {
                 }
             }
             Else {
-                Write-Verbose "File exists: $target. Skipping download."
+                Write-Verbose "File exists: $Target. Skipping download."
             }
         }
     }

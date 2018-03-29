@@ -11,7 +11,7 @@ Function New-MdtPsDrive {
     #>
     [CmdletBinding(SupportsShouldProcess = $True)]
     Param (
-        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
+        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline = $True)]
         [String]$Drive,
 
         [Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $True)]
@@ -23,6 +23,7 @@ Function New-MdtPsDrive {
             Write-Verbose "Found existing MDT drive $Drive."
             Remove-PSDrive -Name $Drive -Force
         }
-        New-PSDrive -Name $Drive -PSProvider MDTProvider -Root $Path
+        $Drive = New-PSDrive -Name $Drive -PSProvider MDTProvider -Root $Path
     }
+    $Drive.Name
 }
