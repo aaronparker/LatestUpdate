@@ -18,7 +18,7 @@ pull_requests:
 # The "secure:" value is the Appveyor encryption of the key
 environment:
   GitHubKey:
-    secure: 
+    secure: unWb9ORoL3oo22K6z2U2fZ+AdBmv75laNb7jibBwQCMGv9u8Cs2GayQBGjkqfPro
 
 # Ignore testing a commit if only the README.md file changed
 # Or if various strings are found in the commit message: updated readme, update readme, update docs, update version, update appveyor
