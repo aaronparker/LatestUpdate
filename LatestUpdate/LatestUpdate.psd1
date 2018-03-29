@@ -33,7 +33,7 @@ Copyright = '(c) 2018 stealthpuppy. All rights reserved.'
 Description = 'A module for retreiving the latest Windows 10 Cumulative Update from the Microsoft Update History page, download the update file and import it into a Microsoft Deployment Toolkit deployment share.'
 
 # Minimum version of the Windows PowerShell engine required by this module
-PowerShellVersion = '3.0'
+PowerShellVersion = '5.0'
 
 # Name of the Windows PowerShell host required by this module
 # PowerShellHostName = ''

@@ -1,5 +1,14 @@
 Function New-MdtPackagesFolder {
-    # Function to create a folder in the MDT Packages node
+    <#
+    .SYNOPSIS
+        Creates a folder in the MDT Packages node.
+
+    .DESCRIPTION
+        Creates a folder in the MDT Packages node.
+
+    .NOTES
+
+    #>
     [CmdletBinding(SupportsShouldProcess = $True)]
     Param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]

@@ -1,4 +1,14 @@
 Function New-MdtPsDrive {
+    <#
+    .SYNOPSIS
+        Creates a new PS drive mapped to an MDT share.
+
+    .DESCRIPTION
+        Creates a new PS drive mapped to an MDT share.
+
+    .NOTES
+
+    #>
     [CmdletBinding(SupportsShouldProcess = $True)]
     Param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]

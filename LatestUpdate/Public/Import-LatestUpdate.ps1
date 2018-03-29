@@ -7,7 +7,7 @@ Function Import-LatestUpdate {
         This script will import the latest Cumulative updates for Windows 10 and Windows Server 2016 gathered by Get-LatestUpdate.ps1 into an MDT deployment share.
 
     .NOTES
-        Name: Import-Update.ps1
+        Name: Import-Update
         Author: Aaron Parker
         Twitter: @stealthpuppy
 

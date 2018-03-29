@@ -1,10 +1,22 @@
 Function Select-LatestUpdate {
+    <#
+    .SYNOPSIS
+        Selects the latest update build number.
+
+    .DESCRIPTION
+        Selects the latest update build number from the update JSON at https://support.microsoft.com/app/content/api/content/asset/en-us/4000816.
+
+    .NOTES
+        Original script: Copyright Keith Garner, All rights reserved.
+        Forked from: https://gist.github.com/keithga/1ad0abd1f7ba6e2f8aff63d94ab03048
+    #>
     [CmdletBinding(SupportsShouldProcess = $False)]
+    [OutputType([String])]
     Param(
-        [parameter(Mandatory = $True, ValueFromPipeline = $True)]
+        [parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
         $Updates
     )
-    Begin { 
+    Begin {
         $MaxObj = $Null
         $MaxValue = [version]::new("0.0")
     }

@@ -1,5 +1,13 @@
 Function Test-UpdateParameter {
-    # Validate Update parameter which could be a string or a PSCustomObject passed from Get-LatestUpdate.ps1
+    <#
+    .SYNOPSIS
+        Validate Update parameter which could be a string or a PSCustomObject passed from Get-LatestUpdate
+
+    .DESCRIPTION
+        Validate Update parameter which could be a string or a PSCustomObject passed from Get-LatestUpdate
+
+    .NOTES
+    #>
     Param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipelineByPropertyName = $True)]
         $Param
