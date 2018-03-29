@@ -34,7 +34,7 @@ skip_commits:
 
 only_commits:
   files:
-    - win10-updates/
+    - LatestUpdate/
 
 # Install Pester to enable tests
 install:
