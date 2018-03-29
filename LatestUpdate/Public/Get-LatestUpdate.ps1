@@ -125,7 +125,7 @@ Function Select-LatestUpdate {
         Where-Object { $_ -in $Available_kbIDs }
 
     # If innerHTML is empty or does not exist, use outerHTML instead
-    If ( $kbIDs -eq $Null ) {
+    If ( $Null -eq $kbIDs ) {
         $kbIDs = $kbObj.Links | 
             Where-Object ID -match '_link' |
             Where-Object outerHTML -match $SearchString |

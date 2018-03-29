@@ -19,4 +19,4 @@ Else {
     # Local Testing 
     $ProjectRoot = "$(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)\..\"
 }
-Import-Module "$projectRoot\Win10Updates" -Verbose -Force
+Import-Module "$projectRoot\LatestUpdate" -Verbose -Force

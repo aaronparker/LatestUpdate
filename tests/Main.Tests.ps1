@@ -8,7 +8,7 @@ Else {
 }
 
 Describe "General project validation" {
-    $scripts = Get-ChildItem "$projectRoot\ApplicationControl" -Recurse -Include *.ps1, *.psm1
+    $scripts = Get-ChildItem "$projectRoot\LatestUpdate" -Recurse -Include *.ps1, *.psm1
 
     # TestCases are splatted to the script so we need hashtables
     $testCase = $scripts | Foreach-Object {@{file = $_}}         
@@ -39,7 +39,7 @@ Describe "General project validation" {
 }
 
 Describe "Function validation" {
-    $scripts = Get-ChildItem "$projectRoot\ApplicationControl" -Recurse -Include *.ps1
+    $scripts = Get-ChildItem "$projectRoot\LatestUpdate" -Recurse -Include *.ps1
     $testCase = $scripts | Foreach-Object {@{file = $_}}         
     It "Script <file> should only contain one function" -TestCases $testCase {
         param($file)   

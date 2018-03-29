@@ -1,4 +1,4 @@
-Function Import-Update {
+Function Import-LatestUpdate {
     <#
     .SYNOPSIS
         Imports the latest Windows update into MDT.

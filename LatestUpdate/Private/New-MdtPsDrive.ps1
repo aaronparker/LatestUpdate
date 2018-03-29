@@ -1,13 +1,18 @@
 Function New-MdtPsDrive {
-    If (Import-MdtModule) {
-        $Drive = "DS001"
+    [CmdletBinding(SupportsShouldProcess = $True)]
+    Param (
+        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
+        [String]$Drive,
+
+        [Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $True)]
+        [String]$Path
+    )
+    $Drive = "DS001"
+    If ($pscmdlet.ShouldProcess("$($Drive): to $($Path)", "Mapping")) {
         If (Test-Path "$($Drive):") {
             Write-Verbose "Found existing MDT drive $Drive."
             Remove-PSDrive -Name $Drive -Force
         }
-        New-PSDrive -Name $Drive -PSProvider MDTProvider -Root $SharePath
-    }
-    Else {
-        Throw "Unable to map drive to the MDT deployment share."
+        New-PSDrive -Name $Drive -PSProvider MDTProvider -Root $Path
     }
 }

@@ -5,7 +5,7 @@ Function Select-LatestUpdate {
         $Updates
     )
     Begin { 
-        $MaxObject = $Null
+        $MaxObj = $Null
         $MaxValue = [version]::new("0.0")
     }
     Process {
@@ -13,10 +13,10 @@ Function Select-LatestUpdate {
             Select-String -InputObject $Update -AllMatches -Pattern "(\d+\.)?(\d+\.)?(\d+\.)?(\*|\d+)" |
                 ForEach-Object { $_.matches.value } |
                 ForEach-Object { $_ -as [version] } |
-                ForEach-Object { If ( $_ -gt $MaxValue ) { $MaxObject = $Update; $MaxValue = $_ } }
+                ForEach-Object { If ( $_ -gt $MaxValue ) { $MaxObj += $Update; $MaxValue = $_ } }
         }
     }
     End { 
-        $MaxObject | Write-Output 
+        Write-Output $MaxObj
     }
 }

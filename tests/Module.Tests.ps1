@@ -1,12 +1,12 @@
 # AppVeyor Testing
 If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
-    $manifest = "$env:APPVEYOR_BUILD_FOLDER\ApplicationControl\ApplicationControl.psd1"
-    $module = "$env:APPVEYOR_BUILD_FOLDER\ApplicationControl\ApplicationControl.psm1"
+    $manifest = "$env:APPVEYOR_BUILD_FOLDER\LatestUpdate\LatestUpdate.psd1"
+    $module = "$env:APPVEYOR_BUILD_FOLDER\LatestUpdate\LatestUpdate.psm1"
 }
 Else {
     # Local Testing 
-    $manifest = "$(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)\..\ApplicationControl\ApplicationControl.psd1"
-    $module = "$(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)\..\ApplicationControl\ApplicationControl.psm1"
+    $manifest = "$(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)\..\LatestUpdate\LatestUpdate.psd1"
+    $module = "$(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)\..\LatestUpdate\LatestUpdate.psm1"
 }
 
 Describe 'Module Metadata Validation' {      

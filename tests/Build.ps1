@@ -12,7 +12,7 @@ If ($env:APPVEYOR_REPO_BRANCH -ne 'master') {
     # This means that the major / minor / build values will be consistent across GitHub and the Gallery
     Try {
         # This is where the module manifest lives
-        $manifestPath = '.\Win10Updates\Win10Updates.psd1'
+        $manifestPath = '.\LatestUpdate\LatestUpdate.psd1'
 
         # Start by importing the manifest to determine the version, then add 1 to the revision
         $manifest = Test-ModuleManifest -Path $manifestPath
@@ -22,10 +22,10 @@ If ($env:APPVEYOR_REPO_BRANCH -ne 'master') {
         Write-Output "New Version: $newVersion"
 
         # Update the manifest with the new version value and fix the weird string replace bug
-        $functionList = ((Get-ChildItem -Path .\Win10Updates\Public).BaseName)
+        $functionList = ((Get-ChildItem -Path .\LatestUpdate\Public).BaseName)
         Update-ModuleManifest -Path $manifestPath -ModuleVersion $newVersion -FunctionsToExport $functionList
-        (Get-Content -Path $manifestPath) -replace 'PSGet_Win10Updates', 'Win10Updates' | Set-Content -Path $manifestPath
-        (Get-Content -Path $manifestPath) -replace 'NewManifest', 'Win10Updates' | Set-Content -Path $manifestPath
+        (Get-Content -Path $manifestPath) -replace 'PSGet_LatestUpdate', 'LatestUpdate' | Set-Content -Path $manifestPath
+        (Get-Content -Path $manifestPath) -replace 'NewManifest', 'LatestUpdate' | Set-Content -Path $manifestPath
         (Get-Content -Path $manifestPath) -replace 'FunctionsToExport = ', 'FunctionsToExport = @(' | Set-Content -Path $manifestPath -Force
         (Get-Content -Path $manifestPath) -replace "$($functionList[-1])'", "$($functionList[-1])')" | Set-Content -Path $manifestPath -Force
     }
@@ -44,7 +44,7 @@ If ($env:APPVEYOR_REPO_BRANCH -ne 'master') {
         git status
         git commit -s -m "Update version to $newVersion"
         git push origin master
-        Write-Host "Win10Updates PowerShell Module version $newVersion published to GitHub." -ForegroundColor Cyan
+        Write-Host "LatestUpdate PowerShell Module version $newVersion published to GitHub." -ForegroundColor Cyan
     }
     Catch {
         # Sad panda; it broke
