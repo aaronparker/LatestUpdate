@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="34" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2018-03-29" time="09:45:53">
+  <environment user="appveyor" machine-name="APPVYR-WIN" cwd="C:\projects\latestupdate" user-domain="APPVYR-WIN" platform="Microsoft Windows Server 2012 R2 Datacenter|C:\windows|\Device\Harddisk0\Partition5" nunit-version="2.5.8.0" os-version="6.3.9600" clr-version="4.0.30319.42000" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="3.6715" asserts="0" description="Pester">
+    <results>
+      <test-suite type="TestFixture" name="C:\projects\latestupdate\Tests\Main.Tests.ps1" executed="True" result="Success" success="True" time="3.4077" asserts="0" description="C:\projects\latestupdate\Tests\Main.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="General project validation" executed="True" result="Success" success="True" time="2.9821" asserts="0" description="General project validation">
+            <results>
+              <test-suite type="ParameterizedTest" name="General project validation.Script &lt;file&gt; should be valid PowerShell" executed="True" result="Success" success="True" time="0.7428" asserts="0" description="Script &lt;file&gt; should be valid PowerShell">
+                <results>
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should be valid PowerShell" time="0.5946" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should be valid PowerShell" time="0.08" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtPsDrive.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtPsDrive.ps1 should be valid PowerShell" time="0.0091" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\Test-UpdateParameter.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Private\Test-UpdateParameter.ps1 should be valid PowerShell" time="0.0085" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should be valid PowerShell" time="0.0122" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should be valid PowerShell" time="0.0109" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should be valid PowerShell" time="0.019" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\LatestUpdate.psm1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\LatestUpdate.psm1 should be valid PowerShell" time="0.0085" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="ParameterizedTest" name="General project validation.&lt;file&gt; should pass ScriptAnalyzer" executed="True" result="Success" success="True" time="2.2393" asserts="0" description="&lt;file&gt; should pass ScriptAnalyzer">
+                <results>
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should pass ScriptAnalyzer" time="0.6008" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should pass ScriptAnalyzer" time="0.2282" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\New-MdtPsDrive.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Private\New-MdtPsDrive.ps1 should pass ScriptAnalyzer" time="0.0904" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\Test-UpdateParameter.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Private\Test-UpdateParameter.ps1 should pass ScriptAnalyzer" time="0.2243" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should pass ScriptAnalyzer" time="0.6581" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should pass ScriptAnalyzer" time="0.2615" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should pass ScriptAnalyzer" time="0.1163" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\LatestUpdate.psm1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\LatestUpdate.psm1 should pass ScriptAnalyzer" time="0.0598" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Function validation" executed="True" result="Success" success="True" time="0.4256" asserts="0" description="Function validation">
+            <results>
+              <test-suite type="ParameterizedTest" name="Function validation.Script &lt;file&gt; should only contain one function" executed="True" result="Success" success="True" time="0.2494" asserts="0" description="Script &lt;file&gt; should only contain one function">
+                <results>
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should only contain one function" time="0.1038" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should only contain one function" time="0.0582" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtPsDrive.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtPsDrive.ps1 should only contain one function" time="0.0118" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\Select-LatestUpdate.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Private\Select-LatestUpdate.ps1 should only contain one function" time="0.0273" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\Test-UpdateParameter.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Private\Test-UpdateParameter.ps1 should only contain one function" time="0.0106" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should only contain one function" time="0.0138" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should only contain one function" time="0.0132" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should only contain one function" time="0.0106" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="ParameterizedTest" name="Function validation.&lt;file&gt; should match function name" executed="True" result="Success" success="True" time="0.1762" asserts="0" description="&lt;file&gt; should match function name">
+                <results>
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should match function name" time="0.0788" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should match function name" time="0.0232" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\New-MdtPsDrive.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Private\New-MdtPsDrive.ps1 should match function name" time="0.0111" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\Select-LatestUpdate.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Private\Select-LatestUpdate.ps1 should match function name" time="0.0118" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\Test-UpdateParameter.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Private\Test-UpdateParameter.ps1 should match function name" time="0.0122" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should match function name" time="0.0122" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should match function name" time="0.0131" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should match function name" time="0.0137" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\projects\latestupdate\Tests\Module.Tests.ps1" executed="True" result="Success" success="True" time="0.2638" asserts="0" description="C:\projects\latestupdate\Tests\Module.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Module Metadata Validation" executed="True" result="Success" success="True" time="0.2638" asserts="0" description="Module Metadata Validation">
+            <results>
+              <test-case description="Script fileinfo should be OK" name="Module Metadata Validation.Script fileinfo should be OK" time="0.1247" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Import module should be OK" name="Module Metadata Validation.Import module should be OK" time="0.1391" asserts="0" success="True" result="Success" executed="True" />
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
