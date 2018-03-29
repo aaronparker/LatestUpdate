@@ -28,9 +28,8 @@ skip_commits:
     - book.json
     - docs/*
     - help/*
-    - images/*
+    - img/*
     - scripts/*
-  message: /updated readme.*|update readme.*s|update docs.*|update version.*|update appveyor.*/
 
 only_commits:
   files:
