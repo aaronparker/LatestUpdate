@@ -12,7 +12,7 @@
 RootModule = 'LatestUpdate.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.0.9'
+ModuleVersion = '1.0.1.9'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -30,7 +30,7 @@ CompanyName = 'stealthpuppy'
 Copyright = '(c) 2018 stealthpuppy. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'A module for retreiving the latest Windows 10 Cumulative Update from the Microsoft Update History page, download the update file and import it into a Microsoft Deployment Toolkit deployment share.'
+Description = 'A module for retreiving the latest Windows 10 Cumulative Update from the Microsoft Update History page, downloading the update file locally and importing it into a Microsoft Deployment Toolkit deployment share. Supports querying for specific Windows builds and processor architecture.'
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '5.0'
@@ -126,4 +126,3 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
-
