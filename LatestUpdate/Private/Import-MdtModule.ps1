@@ -7,6 +7,8 @@ Function Import-MdtModule {
         Imports the MDT PowerShell module.
 
     .NOTES
+        Author: Aaron Parker
+        Twitter: @stealthpuppy
     #>
     # If we can find the MDT PowerShell module, import it. Requires MDT console to be installed
     $MdtModule = "$((Get-ItemProperty "HKLM:SOFTWARE\Microsoft\Deployment 4").Install_Dir)bin\MicrosoftDeploymentToolkit.psd1"

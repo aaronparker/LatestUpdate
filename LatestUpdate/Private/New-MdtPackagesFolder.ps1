@@ -7,7 +7,8 @@ Function New-MdtPackagesFolder {
         Creates a folder in the MDT Packages node.
 
     .NOTES
-
+        Author: Aaron Parker
+        Twitter: @stealthpuppy
     #>
     [CmdletBinding(SupportsShouldProcess = $True)]
     Param (

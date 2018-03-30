@@ -7,7 +7,8 @@ Function New-MdtPsDrive {
         Creates a new PS drive mapped to an MDT share.
 
     .NOTES
-
+        Author: Aaron Parker
+        Twitter: @stealthpuppy
     #>
     [CmdletBinding(SupportsShouldProcess = $True)]
     Param (
