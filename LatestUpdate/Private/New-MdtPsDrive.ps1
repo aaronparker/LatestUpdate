@@ -11,9 +11,10 @@ Function New-MdtPsDrive {
         Twitter: @stealthpuppy
     #>
     [CmdletBinding(SupportsShouldProcess = $True)]
+    [OutputType([String])]
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline = $True)]
-        [String]$Drive,
+        [String]$Drive = "DS001",
 
         [Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $True)]
         [String]$Path
@@ -26,5 +27,5 @@ Function New-MdtPsDrive {
         }
         $Drive = New-PSDrive -Name $Drive -PSProvider MDTProvider -Root $Path
     }
-    $Drive.Name
+    Write-Output $Drive.Name
 }

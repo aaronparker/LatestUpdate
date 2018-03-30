@@ -1,4 +1,4 @@
-Function Test-UpdatePath {
+Function Get-ValidPath {
     <#
     .SYNOPSIS
         Test a file system path and return correct path string.

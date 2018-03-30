@@ -67,8 +67,9 @@ Function Import-LatestUpdate {
             Write-Error -Message "Failed to import the MDT PowerShell module. Please install the MDT Workbench and try again." -ErrorAction Stop
         }
 
-        # Fix $UpdatePath to ensure it's valid for Import-MdtPackage
-        $UpdatePath = Test-UpdatePath $UpdatePath
+        # Ensure file system paths are valid and don't include trailing \
+        $UpdatePath = Get-ValidPath $UpdatePath
+        $SharePath = Get-ValidPath $SharePath
     }
     Process {
         # If $PackagePath is specified, use a sub-folder of MDT Share\Packages
@@ -103,7 +104,7 @@ Function Import-LatestUpdate {
         # Validate the provided local path and import the update package
         If ($UpdatePath -ne $False) {
             If ($pscmdlet.ShouldProcess("From $($UpdatePath) to $($Dest)", "Importing")) {
-            Import-MdtPackage -Path $Dest -SourcePath $UpdatePath
+                Import-MdtPackage -Path $Dest -SourcePath $UpdatePath
             }
         }
         Else {

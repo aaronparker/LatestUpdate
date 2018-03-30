@@ -11,7 +11,8 @@ Function Import-MdtModule {
         Twitter: @stealthpuppy
     #>
     # If we can find the MDT PowerShell module, import it. Requires MDT console to be installed
-    $MdtModule = "$((Get-ItemProperty "HKLM:SOFTWARE\Microsoft\Deployment 4").Install_Dir)bin\MicrosoftDeploymentToolkit.psd1"
+    $InstallDir = Get-ValidPath "$((Get-ItemProperty "HKLM:SOFTWARE\Microsoft\Deployment 4").Install_Dir)"
+    $MdtModule = "$($InstallDir)\bin\MicrosoftDeploymentToolkit.psd1"
     If (Test-Path -Path $MdtModule) {
         Try {            
             Import-Module -Name $MdtModule -ErrorAction SilentlyContinue

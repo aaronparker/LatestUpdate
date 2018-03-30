@@ -30,10 +30,10 @@ Function Save-LatestUpdate {
         [string]$Path = $PWD
     )
     Begin {
-        $Path = Test-UpdatePath $Path
-        $Urls = $Updates | Select-UniqueUrl
+        $Path = Get-ValidPath $Path
     } 
     Process {
+        $Urls = $Updates | Select-UniqueUrl
         ForEach ( $Url in $Urls ) {
             $Filename = Split-Path $Url -Leaf
             $Target = "$($Path)\$($Filename)"
@@ -60,6 +60,6 @@ Function Save-LatestUpdate {
         }
     }
     End {
-        $Urls
+        Write-Output $Urls
     }
 }
