@@ -8,7 +8,7 @@
 build: off
 
 # Version number
-version: 1.0.0.{build}
+version: 1.0.1.{build}
 
 # There's no need to alter the build number for a Pull Request (PR) since they don't modify anything
 pull_requests:
@@ -19,6 +19,8 @@ pull_requests:
 environment:
   GitHubKey:
     secure: unWb9ORoL3oo22K6z2U2fZ+AdBmv75laNb7jibBwQCMGv9u8Cs2GayQBGjkqfPro
+  NuGetApiKey:
+    secure: /YPozcX4yV1XCrZuS8DAhOmH/OOjkg6+zrCTT3lHR3a7/SY7S83JNNgYBsROlLq3
 
 # Ignore testing a commit if only the README.md file changed
 # Or if various strings are found in the commit message: updated readme, update readme, update docs, update version, update appveyor

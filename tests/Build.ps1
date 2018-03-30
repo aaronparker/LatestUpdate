@@ -5,9 +5,11 @@ Write-Host -Object ''
 # Environmental Variables Guide: https://www.appveyor.com/docs/environment-variables/
 If ($env:APPVEYOR_REPO_BRANCH -ne 'master') {
     Write-Warning -Message "Skipping version increment and publish for branch $env:APPVEYOR_REPO_BRANCH"
-} ElseIf ($env:APPVEYOR_PULL_REQUEST_NUMBER -gt 0) {
+}
+ElseIf ($env:APPVEYOR_PULL_REQUEST_NUMBER -gt 0) {
     Write-Warning -Message "Skipping version increment and publish for pull request #$env:APPVEYOR_PULL_REQUEST_NUMBER"
-} Else {
+}
+Else {
     # We're going to add 1 to the revision value since a new commit has been merged to Master
     # This means that the major / minor / build values will be consistent across GitHub and the Gallery
     Try {
@@ -50,5 +52,22 @@ If ($env:APPVEYOR_REPO_BRANCH -ne 'master') {
         # Sad panda; it broke
         Write-Warning "Publishing update $newVersion to GitHub failed."
         Throw $_
+    }
+
+    # Publish the new version to the PowerShell Gallery
+    Try {
+        # Build a splat containing the required details and make sure to Stop for errors which will trigger the catch
+        $PM = @{
+            Path        = '.\LatestUpdate'
+            NuGetApiKey = $env:NuGetApiKey
+            ErrorAction = 'Stop'
+        }
+        Publish-Module @PM
+        Write-Host "LatestUpdate PowerShell Module version $newVersion published to the PowerShell Gallery." -ForegroundColor Cyan
+    }
+    Catch {
+        # Sad panda; it broke
+        Write-Warning "Publishing update $newVersion to the PowerShell Gallery failed."
+        throw $_
     }
 }
