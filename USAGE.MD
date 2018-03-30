@@ -9,7 +9,7 @@ Install-Module -Name LatestUpdate
 Import-Module -Name LatestUpdate
 ```
 
-### Updating from the Module
+### Updating the Module
 
 If you have installed a previous version of the module from the gallery, you can install the latest update with the `-Force` parameter:
 
