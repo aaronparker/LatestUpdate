@@ -34,6 +34,7 @@ Function Save-LatestUpdate {
     } 
     Process {
         $Urls = $Updates | Select-UniqueUrl
+        Write-Verbose "URL count is: $Urls.Count"
         ForEach ( $Url in $Urls ) {
             $Filename = Split-Path $Url -Leaf
             $Target = "$($Path)\$($Filename)"
