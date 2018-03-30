@@ -1,5 +1,4 @@
 # Pester tests
-. ..\LatestUpdate\Private\Get-ValidPath.ps1
 Describe 'Get-LatestUpdate' {
     Context "Returns a valid list of updates" {
         It "Given no arguments, returns an array" {

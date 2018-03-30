@@ -1,4 +1,12 @@
 # Pester tests
+If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
+    $ProjectRoot = $env:APPVEYOR_BUILD_FOLDER
+}
+Else {
+    # Local Testing 
+    $ProjectRoot = "$(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)\..\"
+}
+. $projectRoot\LatestUpdate\Private\Get-ValidPath.ps1
 $RelPath = "..\LatestUpdate\"
 Describe 'Get-ValidPath' {
     Context "Return valid path" {
