@@ -4,7 +4,7 @@ Describe 'Get-ValidPath' {
     Context "Return valid path" {
         It "Given a relative path, it returns a fully qualified path" {
             $Path = Get-ValidPath -Path $RelPath
-            (Resolve-Path $RelPath).Path -eq $Path | Should -Be $True
+            $((Resolve-Path $RelPath).Path).TrimEnd("\") | Should -Be $Path
         }
     }
     Context "Fix trailing backslash" {

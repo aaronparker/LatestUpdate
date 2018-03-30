@@ -35,7 +35,7 @@ Function Get-LatestUpdate {
         Enumerate the latest Cumulative Update for Windows 10 x86 (Semi-Annual Channel)
 
     .EXAMPLE
-        Get-LatestUpdate.ps1 -SearchString 'Cumulative.*Server.*x64' -Build 14393    
+        Get-LatestUpdate -SearchString 'Cumulative.*Server.*x64' -Build 14393    
     
         Description:
         Enumerate the latest Cumulative Update for Windows Server 2016
