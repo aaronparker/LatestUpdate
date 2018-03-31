@@ -32,6 +32,7 @@ skip_commits:
     - help/*
     - img/*
     - scripts/*
+    - TestsResults.xml
   message: /update version.*|update appveyor.*/
 
 only_commits:

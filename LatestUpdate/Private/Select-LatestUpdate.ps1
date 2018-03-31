@@ -7,6 +7,9 @@ Function Select-LatestUpdate {
         Selects the latest update build number from the update JSON at https://support.microsoft.com/app/content/api/content/asset/en-us/4000816.
 
     .NOTES
+        Author: Aaron Parker
+        Twitter: @stealthpuppy
+    
         Original script: Copyright Keith Garner, All rights reserved.
         Forked from: https://gist.github.com/keithga/1ad0abd1f7ba6e2f8aff63d94ab03048
     #>
