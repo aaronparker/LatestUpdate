@@ -89,4 +89,46 @@ InModuleScope LatestUpdate {
             }
         }
     }
+
+    Describe 'Select-LatestUpdate' {
+        $Upd1 = [PSCustomObject]@{
+            id = 148
+            text = "KB4089848 (OS Build 16299.334)"
+            level = 2
+            articleId = "4089848"
+            articleType = "article"
+        }
+        $Upd2 = [PSCustomObject]@{
+            id = 144
+            text = "KB4088776 (OS Build 16299.309)"
+            level = 2
+            articleId = "4088776"
+            articleType = "article"
+        }
+        $KbId = @($Upd1, $Upd2)
+        Context "Selects the latest update" {
+            It "Given a list of updates, selects the latest one" {
+                ($KbId | Select-LatestUpdate).id | Should -Be 148
+            }
+        }
+    }
+
+    Describe 'Select-UniqueUrl' {
+        $Upd1 = [PSCustomObject]@{
+            KB = "KB4089848"
+            Note = "2018-03 Cumulative Update for Windows Server 2016 (1709) for x64-based Systems (KB4089848)"
+            URL = "http://download.windowsupdate.com/d/msdownload/update/software/updt/2018/03/windows10.0-kb4089848-x64_db7c5aad31c520c6983a937c3d53170e84372b11.msu"
+        }
+        $Upd2 = [PSCustomObject]@{
+            KB = "KB4089848"
+            Note = "2018-03 Cumulative Update for Windows 10 Version 1709 for x64-based Systems (KB4089848)"
+            URL = "http://download.windowsupdate.com/d/msdownload/update/software/updt/2018/03/windows10.0-kb4089848-x64_db7c5aad31c520c6983a937c3d53170e84372b11.msu"
+        }
+        $Updates = @($Upd1, $Upd2)
+        Context "Select a single update" {
+            It "Given a list of updates returns a single URL" {
+                (Select-UniqueUrl -Updates $Updates).Count | Should -Be 1
+            }
+        }
+    }
 }
