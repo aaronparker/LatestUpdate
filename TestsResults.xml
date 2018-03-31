@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="60" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2018-03-31" time="13:27:22">
+  <environment user="appveyor" machine-name="APPVYR-WIN" cwd="C:\projects\latestupdate" user-domain="APPVYR-WIN" platform="Microsoft Windows Server 2012 R2 Datacenter|C:\windows|\Device\Harddisk0\Partition5" nunit-version="2.5.8.0" os-version="6.3.9600" clr-version="4.0.30319.42000" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="69.0761" asserts="0" description="Pester">
+    <results>
+      <test-suite type="TestFixture" name="C:\projects\latestupdate\Tests\Main.Tests.ps1" executed="True" result="Success" success="True" time="3.8925" asserts="0" description="C:\projects\latestupdate\Tests\Main.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="General project validation" executed="True" result="Success" success="True" time="3.3357" asserts="0" description="General project validation">
+            <results>
+              <test-suite type="ParameterizedTest" name="General project validation.Script &lt;file&gt; should be valid PowerShell" executed="True" result="Success" success="True" time="0.8098" asserts="0" description="Script &lt;file&gt; should be valid PowerShell">
+                <results>
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\Get-ValidPath.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Private\Get-ValidPath.ps1 should be valid PowerShell" time="0.6265" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should be valid PowerShell" time="0.0863" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtDrive.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtDrive.ps1 should be valid PowerShell" time="0.0094" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should be valid PowerShell" time="0.0087" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\Remove-MdtDrive.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Private\Remove-MdtDrive.ps1 should be valid PowerShell" time="0.0102" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\Select-UniqueUrl.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Private\Select-UniqueUrl.ps1 should be valid PowerShell" time="0.0086" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should be valid PowerShell" time="0.022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should be valid PowerShell" time="0.0096" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should be valid PowerShell" time="0.0086" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\LatestUpdate.psm1 should be valid PowerShell" name="General project validation.Script C:\projects\latestupdate\LatestUpdate\LatestUpdate.psm1 should be valid PowerShell" time="0.0198" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="ParameterizedTest" name="General project validation.&lt;file&gt; should pass ScriptAnalyzer" executed="True" result="Success" success="True" time="2.5259" asserts="0" description="&lt;file&gt; should pass ScriptAnalyzer">
+                <results>
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\Get-ValidPath.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Private\Get-ValidPath.ps1 should pass ScriptAnalyzer" time="0.6957" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should pass ScriptAnalyzer" time="0.132" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\New-MdtDrive.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Private\New-MdtDrive.ps1 should pass ScriptAnalyzer" time="0.3044" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should pass ScriptAnalyzer" time="0.0756" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\Remove-MdtDrive.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Private\Remove-MdtDrive.ps1 should pass ScriptAnalyzer" time="0.1253" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\Select-UniqueUrl.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Private\Select-UniqueUrl.ps1 should pass ScriptAnalyzer" time="0.0734" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should pass ScriptAnalyzer" time="0.339" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should pass ScriptAnalyzer" time="0.5244" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should pass ScriptAnalyzer" time="0.1994" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\LatestUpdate.psm1 should pass ScriptAnalyzer" name="General project validation.C:\projects\latestupdate\LatestUpdate\LatestUpdate.psm1 should pass ScriptAnalyzer" time="0.0566" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Function validation" executed="True" result="Success" success="True" time="0.5568" asserts="0" description="Function validation">
+            <results>
+              <test-suite type="ParameterizedTest" name="Function validation.Script &lt;file&gt; should only contain one function" executed="True" result="Success" success="True" time="0.242" asserts="0" description="Script &lt;file&gt; should only contain one function">
+                <results>
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\Get-ValidPath.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Private\Get-ValidPath.ps1 should only contain one function" time="0.0896" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should only contain one function" time="0.0095" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtDrive.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtDrive.ps1 should only contain one function" time="0.0138" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should only contain one function" time="0.01" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\Remove-MdtDrive.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Private\Remove-MdtDrive.ps1 should only contain one function" time="0.0113" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\Select-LatestUpdate.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Private\Select-LatestUpdate.ps1 should only contain one function" time="0.0121" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Private\Select-UniqueUrl.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Private\Select-UniqueUrl.ps1 should only contain one function" time="0.0099" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should only contain one function" time="0.0593" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should only contain one function" time="0.0138" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should only contain one function" name="Function validation.Script C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should only contain one function" time="0.0129" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="ParameterizedTest" name="Function validation.&lt;file&gt; should match function name" executed="True" result="Success" success="True" time="0.3148" asserts="0" description="&lt;file&gt; should match function name">
+                <results>
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\Get-ValidPath.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Private\Get-ValidPath.ps1 should match function name" time="0.0247" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Private\Import-MdtModule.ps1 should match function name" time="0.0109" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\New-MdtDrive.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Private\New-MdtDrive.ps1 should match function name" time="0.0113" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Private\New-MdtPackagesFolder.ps1 should match function name" time="0.0127" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\Remove-MdtDrive.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Private\Remove-MdtDrive.ps1 should match function name" time="0.0112" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\Select-LatestUpdate.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Private\Select-LatestUpdate.ps1 should match function name" time="0.1899" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Private\Select-UniqueUrl.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Private\Select-UniqueUrl.ps1 should match function name" time="0.0156" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Public\Get-LatestUpdate.ps1 should match function name" time="0.0119" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Public\Import-LatestUpdate.ps1 should match function name" time="0.0104" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should match function name" name="Function validation.C:\projects\latestupdate\LatestUpdate\Public\Save-LatestUpdate.ps1 should match function name" time="0.0162" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\projects\latestupdate\Tests\Module.Tests.ps1" executed="True" result="Success" success="True" time="0.0796" asserts="0" description="C:\projects\latestupdate\Tests\Module.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Module Metadata Validation" executed="True" result="Success" success="True" time="0.0796" asserts="0" description="Module Metadata Validation">
+            <results>
+              <test-case description="Script fileinfo should be OK" name="Module Metadata Validation.Script fileinfo should be OK" time="0.0526" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Import module should be OK" name="Module Metadata Validation.Import module should be OK" time="0.027" asserts="0" success="True" result="Success" executed="True" />
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\projects\latestupdate\Tests\PrivateFunctions.Tests.ps1" executed="True" result="Success" success="True" time="0.9767" asserts="0" description="C:\projects\latestupdate\Tests\PrivateFunctions.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Import-MdtModule" executed="True" result="Success" success="True" time="0.5046" asserts="0" description="Import-MdtModule">
+            <results>
+              <test-suite type="TestFixture" name="Importing the MDT PowerShell module" executed="True" result="Success" success="True" time="0.5046" asserts="0" description="Importing the MDT PowerShell module">
+                <results>
+                  <test-case description="Imports the MDT PowerShell module and returns True" name="Import-MdtModule.Importing the MDT PowerShell module.Imports the MDT PowerShell module and returns True" time="0.5046" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="New-MdtDrive" executed="True" result="Success" success="True" time="0.1298" asserts="0" description="New-MdtDrive">
+            <results>
+              <test-suite type="TestFixture" name="Creates a new MDT drive" executed="True" result="Success" success="True" time="0.1298" asserts="0" description="Creates a new MDT drive">
+                <results>
+                  <test-case description="Successfully creates the MDT drive" name="New-MdtDrive.Creates a new MDT drive.Successfully creates the MDT drive" time="0.1298" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="New-MdtPackagesFolder" executed="True" result="Success" success="True" time="0.1297" asserts="0" description="New-MdtPackagesFolder">
+            <results>
+              <test-suite type="TestFixture" name="Packages folder exists" executed="True" result="Success" success="True" time="0.0766" asserts="0" description="Packages folder exists">
+                <results>
+                  <test-case description="Returns True if the Packages folder exists" name="New-MdtPackagesFolder.Packages folder exists.Returns True if the Packages folder exists" time="0.0766" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Creates a new Packages folder" executed="True" result="Success" success="True" time="0.053" asserts="0" description="Creates a new Packages folder">
+                <results>
+                  <test-case description="Successfully creates a Packages folder" name="New-MdtPackagesFolder.Creates a new Packages folder.Successfully creates a Packages folder" time="0.053" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Get-ValidPath" executed="True" result="Success" success="True" time="0.1163" asserts="0" description="Get-ValidPath">
+            <results>
+              <test-suite type="TestFixture" name="Return valid path" executed="True" result="Success" success="True" time="0.0948" asserts="0" description="Return valid path">
+                <results>
+                  <test-case description="Given a relative path, it returns a fully qualified path" name="Get-ValidPath.Return valid path.Given a relative path, it returns a fully qualified path" time="0.0948" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Fix trailing backslash" executed="True" result="Success" success="True" time="0.0216" asserts="0" description="Fix trailing backslash">
+                <results>
+                  <test-case description="Given a path, it returns a without a trailing backslack" name="Get-ValidPath.Fix trailing backslash.Given a path, it returns a without a trailing backslack" time="0.0216" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Select-LatestUpdate" executed="True" result="Success" success="True" time="0.0594" asserts="0" description="Select-LatestUpdate">
+            <results>
+              <test-suite type="TestFixture" name="Selects the latest update" executed="True" result="Success" success="True" time="0.0594" asserts="0" description="Selects the latest update">
+                <results>
+                  <test-case description="Given a list of updates, selects the latest one" name="Select-LatestUpdate.Selects the latest update.Given a list of updates, selects the latest one" time="0.0594" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Select-UniqueUrl" executed="True" result="Success" success="True" time="0.0369" asserts="0" description="Select-UniqueUrl">
+            <results>
+              <test-suite type="TestFixture" name="Select a single update" executed="True" result="Success" success="True" time="0.0369" asserts="0" description="Select a single update">
+                <results>
+                  <test-case description="Given a list of updates returns a single URL" name="Select-UniqueUrl.Select a single update.Given a list of updates returns a single URL" time="0.0369" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\projects\latestupdate\Tests\PublicFunctions.Tests.ps1" executed="True" result="Success" success="True" time="64.1273" asserts="0" description="C:\projects\latestupdate\Tests\PublicFunctions.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-LatestUpdate" executed="True" result="Success" success="True" time="24.9197" asserts="0" description="Get-LatestUpdate">
+            <results>
+              <test-suite type="TestFixture" name="Returns a valid list of updates" executed="True" result="Success" success="True" time="6.5191" asserts="0" description="Returns a valid list of updates">
+                <results>
+                  <test-case description="Given no arguments, returns an array of updates" name="Get-LatestUpdate.Returns a valid list of updates.Given no arguments, returns an array of updates" time="6.4929" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Given no arguments, returns a valid array with expected properties" name="Get-LatestUpdate.Returns a valid list of updates.Given no arguments, returns a valid array with expected properties" time="0.0263" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Returns expected results with -SearchString" executed="True" result="Success" success="True" time="4.922" asserts="0" description="Returns expected results with -SearchString">
+                <results>
+                  <test-case description="Given 'Cumulative.*x86' returns updates for Windows 10 x86" name="Get-LatestUpdate.Returns expected results with -SearchString.Given 'Cumulative.*x86' returns updates for Windows 10 x86" time="2.6204" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Given 'Cumulative.*Server.*x64' returns updates for Windows Server only" name="Get-LatestUpdate.Returns expected results with -SearchString.Given 'Cumulative.*Server.*x64' returns updates for Windows Server only" time="2.3016" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Returns expected results with -Build" executed="True" result="Success" success="True" time="13.4786" asserts="0" description="Returns expected results with -Build">
+                <results>
+                  <test-case description="Given '16299' returns updates for build 1709" name="Get-LatestUpdate.Returns expected results with -Build.Given '16299' returns updates for build 1709" time="3.1001" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Given '15063' returns updates for build 1703" name="Get-LatestUpdate.Returns expected results with -Build.Given '15063' returns updates for build 1703" time="2.2652" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Given '14393' returns updates for build 1607" name="Get-LatestUpdate.Returns expected results with -Build.Given '14393' returns updates for build 1607" time="3.6558" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Given '10586' returns updates for build 1511" name="Get-LatestUpdate.Returns expected results with -Build.Given '10586' returns updates for build 1511" time="2.0425" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Given '10240' returns updates for build 1507" name="Get-LatestUpdate.Returns expected results with -Build.Given '10240' returns updates for build 1507" time="2.415" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Save-LatestUpdate" executed="True" result="Success" success="True" time="39.2076" asserts="0" description="Save-LatestUpdate">
+            <results>
+              <test-suite type="TestFixture" name="Download the latest update" executed="True" result="Success" success="True" time="39.2076" asserts="0" description="Download the latest update">
+                <results>
+                  <test-case description="Given updates returned from Get-LatestUpdate, it successfully downloads the update" name="Save-LatestUpdate.Download the latest update.Given updates returned from Get-LatestUpdate, it successfully downloads the update" time="39.2076" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
