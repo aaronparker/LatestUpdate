@@ -19,16 +19,21 @@ Function New-MdtPackagesFolder {
         [Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $True)]
         [String]$Path
     )
-    [String]$Dest = "$($Drive):\Packages\$Path"
-    If (!(Test-Path -Path $Dest -Type 'Container')) {
-        If ($pscmdlet.ShouldProcess("$($Dest)", "Creating")) {
-            Write-Verbose "Creating folder $Dest."
-            Push-Location "$($Drive):\Packages"
-            New-Item -Path "$($Drive):\Packages" -Enable "True" -Name $Path `
+    If ((Test-Path -Path "$($Drive):\Packages\$Path" -Type 'Container')) {
+        Write-Output $True
+    } Else {
+        If ($pscmdlet.ShouldProcess("$($Drive):\Packages\$Path", "Creating")) {
+            Write-Verbose "Creating folder $($Drive):\Packages\$($Path)."
+            # Push-Location "$($Drive):\Packages"
+            Try {
+                New-Item -Path "$($Drive):\Packages" -Enable "True" -Name $Path `
                 -Comments "Created by 'New-MdtPackagesFolder'" `
                 -ItemType "Folder"
-            Pop-Location
+            }
+            Catch {
+                Throw "Failed to create Packages folder."
+            }
+            Write-Output $?
         }
     }
-    Write-Output $Dest
 }

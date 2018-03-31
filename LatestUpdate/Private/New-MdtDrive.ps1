@@ -17,19 +17,18 @@ Function New-MdtDrive {
         [String]$Path,
 
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline = $True)]
-        [String]$Drive = "DS$(Get-Random -Minimum 100 -Maximum 200)" 
+        [String]$Drive = "DS009"
     )
     $Description = "MDT drive created by $($MyInvocation.MyCommand)"
     If ($MdtDrives = Get-MdtPersistentDrive | Where-Object { ($_.Path -eq $Path) -and ($_.Description -eq $Description) }) {
         Write-Verbose "Found MDT drive: $($MdtDrives[0].Name)"
-        Write-Verbose "Returning drive $($MdtDrives[0].Name)"
         $Output = $MdtDrives[0].Name
     } Else {
         If ($pscmdlet.ShouldProcess("$($Drive): to $($Path)", "Mapping")) {
             New-PSDrive -Name $Drive -PSProvider "MDTProvider" -Root $Path `
                 -NetworkPath $Path -Description $Description | Add-MDTPersistentDrive
             $PsDrive = Get-MdtPersistentDrive | Where-Object { ($_.Path -eq $Path) -and ($_.Name -eq $Drive) }
-            Write-Verbose "Returning drive $($PsDrive.Name)"
+            Write-Verbose "Found: $($PsDrive.Name)"
             $Output = $PsDrive.Name
         }
     }

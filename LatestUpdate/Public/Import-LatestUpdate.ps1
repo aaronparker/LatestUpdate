@@ -52,9 +52,9 @@ Function Import-LatestUpdate {
         [switch]$Clean
     )
     Begin {
-        [String]$Drive = "DS004"
         If (Import-MdtModule) {
-            If ($pscmdlet.ShouldProcess("$($Drive): to $($Path)", "Mapping")) {
+            If ($pscmdlet.ShouldProcess($Path, "Mapping")) {
+                [String]$Drive = "DS004"
                 $Drive = New-PSDrive -Name $Drive -PSProvider MDTProvider -Root $DeployRoot
             }
         } Else {
@@ -69,7 +69,7 @@ Function Import-LatestUpdate {
             $Dest = "$($Drive):\Packages\$($PackagePath)"
             If ($pscmdlet.ShouldProcess($PackagePath, "New Package Folder")) {
                 Try {
-                    $Dest = New-MdtPackagesFolder -Drive $Drive -Path $PackagePath
+                    New-MdtPackagesFolder -Drive $Drive -Path $PackagePath
                 }
                 Catch {
                     Write-Error -Message "Failed to create packages folder $($PackagePath)." -ErrorAction Stop

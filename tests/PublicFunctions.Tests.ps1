@@ -1,4 +1,13 @@
 # Pester tests
+If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
+    $ProjectRoot = $env:APPVEYOR_BUILD_FOLDER
+}
+Else {
+    # Local Testing 
+    $ProjectRoot = "$(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)\..\"
+}
+Import-Module $ProjectRoot\LatestUpdate
+
 Describe 'Get-LatestUpdate' {
     Context "Returns a valid list of updates" {
         It "Given no arguments, returns an array" {
