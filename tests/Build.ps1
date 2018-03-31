@@ -62,8 +62,8 @@ Else {
             NuGetApiKey = $env:NuGetApiKey
             ErrorAction = 'Stop'
         }
-        # Publish-Module @PM
-        # Write-Host "LatestUpdate PowerShell Module version $newVersion published to the PowerShell Gallery." -ForegroundColor Cyan
+        Publish-Module @PM
+        Write-Host "LatestUpdate PowerShell Module version $newVersion published to the PowerShell Gallery." -ForegroundColor Cyan
     }
     Catch {
         # Sad panda; it broke

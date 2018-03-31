@@ -30,7 +30,7 @@ CompanyName = 'stealthpuppy'
 Copyright = '(c) 2018 stealthpuppy. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'A module for retreiving the latest Windows 10 Cumulative Update from the Microsoft Update History page, downloading the update file locally and importing it into a Microsoft Deployment Toolkit deployment share. Supports querying for specific Windows builds and processor architecture.'
+Description = 'A module for retreiving the latest Windows 10 / Windows Server Cumulative Update from the Microsoft Update History page, downloading the update file locally and importing into a Microsoft Deployment Toolkit deployment share. Supports querying for specific Windows builds and processor architecture.'
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '5.0'
