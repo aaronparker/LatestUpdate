@@ -1,13 +1,12 @@
 Function Import-LatestUpdate {
     <#
     .SYNOPSIS
-        Imports the latest Windows update into MDT.
+        Imports the latest Windows packages into an MDT deployment share.
 
     .DESCRIPTION
-        This script will import the latest Cumulative updates for Windows 10 and Windows Server 2016 gathered by Get-LatestUpdate.ps1 into an MDT deployment share.
+        This function will import packages into an MDT Deployment Share. Retrieve the latest Cumulative updates for Windows 10 and Windows Server 2016 gathered by Get-LatestUpdate and downloaded with Save-LatestUpdate
 
     .NOTES
-        Name: Import-Update
         Author: Aaron Parker
         Twitter: @stealthpuppy
 
@@ -17,7 +16,7 @@ Function Import-LatestUpdate {
     .PARAMETER UpdatePath
         The folder containing the updates to import into the MDT deployment share.
 
-    .PARAMETER PathPath
+    .PARAMETER DeployRoot
         Specify the path to the MDT deployment share.
 
     .PARAMETER PackagePath
@@ -27,30 +26,23 @@ Function Import-LatestUpdate {
         Before importing the latest updates into the target path, remove any existing update package.
 
     .EXAMPLE
-         .\Get-LatestUpdate.ps1 -Download -Path C:\Updates | .\Import-LatestUpdate.ps1 -SharePath \\server\reference -PackagePath 'Windows 10'
+        $Updates = Get-LatestUpdate
+        Save-LatestUpdate -Updates $Updates -Path "C:\Temp\Updates" -Verbose
+        Import-LatestUpdate -UpdatePath "C:\Temp\Updates" -SharePath "\\server\reference" -PackagePath "Windows 10"
         
-        Import the latest update gathered from Get-LatestUpdate.ps1 into the deployment share \\server\reference under 'Packages\Windows 10'.
-
-    .EXAMPLE
-         .\Import-LatestUpdate.ps1 -UpdatePath C:\Updates -SharePath \\server\reference -Clean -Verbose
-        
-        Import the latest update stored in C:\Updates into the deployment share \\server\reference. Remove all existing packages first. Show verbose output.
-
-    .EXAMPLE
-         .\Import-LatestUpdate.ps1 -UpdatePath C:\Updates -SharePath \\server\reference -PackagePath 'Windows 10'
-        
-        Import the latest update stored in C:\Updates into the deployment share \\server\reference under 'Packages\Windows 10'.
-#>
+        Description:
+        Import the latest update gathered from Get-LatestUpdate into the deployment share \\server\reference under 'Packages\Windows 10'.
+    #>
     [CmdletBinding(SupportsShouldProcess = $True)]
     Param (
-        [Parameter(Mandatory = $True, ValueFromPipelineByPropertyName = $True, `
+        [Parameter(Mandatory = $False, ValueFromPipeline = $True, `
                 HelpMessage = "Specify the folder containing the MSU update/s to import.")]
         [ValidateScript( { If (Test-Path $_ -PathType 'Container') { $True } Else { Throw "Cannot find path $_" } })]
-        [string]$UpdatePath,
+        [string]$UpdatePath = $PWD,
 
         [Parameter(Mandatory = $True, HelpMessage = "Specify an MDT deployment share to apply the update to.")]
         [ValidateScript( { If (Test-Path $_ -PathType 'Container') { $True } Else { Throw "Cannot find path $_" } })]
-        [string]$SharePath,
+        [string]$DeployRoot,
 
         [Parameter(Mandatory = $False, HelpMessage = "A sub-folder in the MDT Packages folder.")]
         [string]$PackagePath,
@@ -60,55 +52,60 @@ Function Import-LatestUpdate {
         [switch]$Clean
     )
     Begin {
-        $Drive = "DS001"
         If (Import-MdtModule) {
-            If ($pscmdlet.ShouldProcess("$($Drive): to $($Path)", "Mapping")) {
-                If (Test-Path "$($Drive):") {
-                    Write-Verbose "Found existing MDT drive $Drive."
-                    Remove-PSDrive -Name $Drive -Force
-                }
-                $Drive = New-PSDrive -Name $Drive -PSProvider MDTProvider -Root $SharePath
+            If ($pscmdlet.ShouldProcess($Path, "Mapping")) {
+                [String]$Drive = "DS004"
+                $Drive = New-PSDrive -Name $Drive -PSProvider MDTProvider -Root $DeployRoot
             }
+        } Else {
+            Write-Error -Message "Failed to import the MDT PowerShell module. Please install the MDT Workbench and try again." -ErrorAction Stop
         }
-
-        # Fix $UpdatePath to ensure it's valid for Import-MdtPackage
-        $UpdatePath = Test-UpdateParameter (Get-Item $UpdatePath).FullName
+        # Ensure file system paths are valid and don't include trailing \
+        $UpdatePath = Get-ValidPath $UpdatePath
     }
     Process {
-
         # If $PackagePath is specified, use a sub-folder of MDT Share\Packages
         If ($PSBoundParameters.ContainsKey('PackagePath')) {
-            $Dest = New-MdtPackagesFolder -Drive $Drive -Path $PackagePath
+            $Dest = "$($Drive):\Packages\$($PackagePath)"
+            If ($pscmdlet.ShouldProcess($PackagePath, "New Package Folder")) {
+                Try {
+                    New-MdtPackagesFolder -Drive $Drive -Path $PackagePath
+                }
+                Catch {
+                    Write-Error -Message "Failed to create packages folder $($PackagePath)." -ErrorAction Stop
+                }
+            }
         }
         Else {
             # If no path specified, we'll import directly into the Packages folder
             $Dest = "$($Drive):\Packages"
         }
-        Write-Verbose "About to import into: $Dest"
+        Write-Verbose "Destination is $($Dest)"
 
-        # If we could create the path successfully, or import directly into \Packges, continue
-        If ($Dest -ne $False) {
+        # If -Clean is specified, enumerate existing packages from the target destination and remove before importing
+        If ($Clean) {
+            Push-Location $Dest
+            Get-ChildItem | Where-Object { $_.Name -like "Package*" } | ForEach-Object { 
+                If ($pscmdlet.ShouldProcess($_.Name, "Remove package")) {
+                    # Remove, but don't force in case the update exists in another folder
+                    Remove-Item $_.Name
+                }
+            }
+            Pop-Location
+        }
 
-            # If -Clean is specified, enumerate existing packages from the target destination and remove before importing
-            If ($Clean) {
-                Write-Verbose "Removing existing update packages."
-                Push-Location $Dest
-                # Get Package items from the target folder, and remove them
-                # If they appear in other folders we won't remove copies
-                Get-ChildItem | Where-Object { $_.Name -like "Package*" } | ForEach-Object { Remove-Item $_.Name }
-                Pop-Location
+        # Validate the provided local path and import the update package
+        If ($UpdatePath -ne $False) {
+            If ($pscmdlet.ShouldProcess("From $($UpdatePath) to $($Dest)", "Importing")) {
+                Import-MdtPackage -Path $Dest -SourcePath $UpdatePath -ErrorAction SilentlyContinue -ErrorVariable ImportError
             }
-
-            # Validate the provided local path and import the update package
-            If ($UpdatePath -ne $False) {
-                Write-Verbose "Importing from $($UpdatePath)"
-                Import-MdtPackage -Path $Dest -SourcePath $UpdatePath
-            }
-            Else {
-                Write-Error "Validation failed on the provided path $Update"
-            }
+        }
+        Else {
+            Write-Error -Message "Validation failed on the provided path $Update"
         }
     }
     End {
+        # Remove-MdtDrive -Drive $Drive
+        If ($ImportError) { Write-Output $ImportError }
     }
 }

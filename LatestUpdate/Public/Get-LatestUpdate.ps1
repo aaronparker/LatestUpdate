@@ -7,7 +7,6 @@ Function Get-LatestUpdate {
         This script will return the list of Cumulative updates for Windows 10 and Windows Server 2016 from the Microsoft Update Catalog. Optionally download the updates using the -Download parameter.
 
     .NOTES
-        Name: Get-LatestUpdate
         Author: Aaron Parker
         Twitter: @stealthpuppy
 
@@ -17,14 +16,17 @@ Function Get-LatestUpdate {
     .LINK
         https://support.microsoft.com/en-us/help/4043454
 
+    .PARAMETER Build
+        Specify the Windows build number for searching cumulative updates. Supports '16299', '15063', '14393', '10586', '10240'.
+
+    .PARAMETER SearchString
+        Specify a specific search string to change the target update behaviour. The default will only download Cumulative updates for x64.
+
     .EXAMPLE
         Get-LatestUpdate
 
         Description:
         Get the latest Cumulative Update for Windows 10 x64
-
-    .PARAMETER SearchString
-        Specify a specific search string to change the target update behaviour. The default will only download Cumulative updates for x64.
 
     .EXAMPLE
         Get-LatestUpdate -SearchString 'Cumulative.*x86'
@@ -33,7 +35,7 @@ Function Get-LatestUpdate {
         Enumerate the latest Cumulative Update for Windows 10 x86 (Semi-Annual Channel)
 
     .EXAMPLE
-        Get-LatestUpdate.ps1 -SearchString 'Cumulative.*Server.*x64' -Build 14393    
+        Get-LatestUpdate -SearchString 'Cumulative.*Server.*x64' -Build 14393    
     
         Description:
         Enumerate the latest Cumulative Update for Windows Server 2016
@@ -116,13 +118,6 @@ Function Get-LatestUpdate {
                 $item | Add-Member -type NoteProperty -Name 'Note' -Value $Notes[$i]
             }
             $item | Add-Member -type NoteProperty -Name 'URL' -Value $Url
-            If ($PSBoundParameters.ContainsKey('Download')) {
-                $item | Add-Member -type NoteProperty -Name 'File' -Value $Url.Substring($Url.LastIndexOf("/") + 1)
-            }
-            If ($PSBoundParameters.ContainsKey('Path')) {
-                $item | Add-Member -type NoteProperty -Name 'UpdatePath' -Value "$((Get-Item $Path).FullName)"
-            }
-
             $Output += $item
             $i = $i + 1
         }

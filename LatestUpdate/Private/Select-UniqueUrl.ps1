@@ -9,6 +9,8 @@ Function Select-UniqueUrl {
         the a unique URL needs to be passed back to Save-LatestUpdate.
 
     .NOTES
+        Author: Aaron Parker
+        Twitter: @stealthpuppy
 
     .PARAMETER Updates
         The array of latest cumulative updates retreived by Get-LatestUpdate.

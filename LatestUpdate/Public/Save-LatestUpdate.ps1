@@ -7,6 +7,8 @@ Function Save-LatestUpdate {
         Downloads the latest cumulative update passed from Get-LatestUpdate to a local folder. The update can then be imported into an MDT share with Import-LatestUpdate.
 
     .NOTES
+        Author: Aaron Parker
+        Twitter: @stealthpuppy
 
     .PARAMETER Updates
         The array of latest cumulative updates retreived by Get-LatestUpdate.
@@ -28,10 +30,10 @@ Function Save-LatestUpdate {
         [string]$Path = $PWD
     )
     Begin {
-        $Path = Test-UpdateParameter (Get-Item $Path).FullName
-        $Urls = $Updates | Select-UniqueUrl
+        $Path = Get-ValidPath $Path
     } 
     Process {
+        $Urls = $Updates | Select-UniqueUrl
         ForEach ( $Url in $Urls ) {
             $Filename = Split-Path $Url -Leaf
             $Target = "$($Path)\$($Filename)"
@@ -58,6 +60,6 @@ Function Save-LatestUpdate {
         }
     }
     End {
-        $Urls
+        Write-Output $Urls
     }
 }
