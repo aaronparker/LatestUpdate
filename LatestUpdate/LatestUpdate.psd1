@@ -110,7 +110,7 @@ PrivateData = @{
         IconUri = 'https://raw.githubusercontent.com/aaronparker/LatestUpdate/master/img/download.png'
 
         # ReleaseNotes of this module
-        # ReleaseNotes = ''
+        ReleaseNotes = 'https://github.com/aaronparker/LatestUpdate/blob/master/CHANGELOG.MD'
 
         # External dependent modules of this module
         # ExternalModuleDependencies = ''
