@@ -38,10 +38,12 @@ Function Save-LatestUpdate {
             $Filename = Split-Path $Url -Leaf
             $Target = "$($Path)\$($Filename)"
             $DisplayName = $Updates | Where-Object { $_.Url -eq $Url } | Select-Object -ExpandProperty Note | Select-Object -First 1
-            Write-Verbose "`t`tDownload target will be $Target"
+            Write-Verbose "Download target will be $Target"
     
+            # If the update is not already downloaded, download it.
             If (!(Test-Path -Path $Target)) {
                 If (Get-Command Start-BitsTransfer -ErrorAction SilentlyContinue) {
+                    # If BITS is available, let us it
                     If ($pscmdlet.ShouldProcess($(Split-Path $Url -Leaf), "BitsDownload")) {
                         Start-BitsTransfer -Source $Url -Destination $Target `
                             -Priority High -ErrorAction Continue -ErrorVariable $ErrorBits `
@@ -49,6 +51,7 @@ Function Save-LatestUpdate {
                     }
                 }
                 Else {
+                    # BITS isn't available (likely PowerShell Core)
                     If ($pscmdlet.ShouldProcess($Url, "WebDownload")) {
                         Invoke-WebRequest -Uri $Url -OutFile $Target
                     }

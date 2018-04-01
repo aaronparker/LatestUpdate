@@ -72,30 +72,37 @@ Function Get-LatestUpdate {
         Write-Verbose "Found ID: KB$($kbID.articleID)"
         $kbObj = Invoke-WebRequest -Uri "http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($kbID.articleID)"
 
+        # Parse the available KB IDs
         $Available_kbIDs = $kbObj.InputFields | 
             Where-Object { $_.Type -eq 'Button' -and $_.Value -eq 'Download' } | 
             Select-Object -ExpandProperty ID
+        Write-Verbose "Ids found:"
+        ForEach ($id in $Available_kbIDs) {
+            "`t$($id | Out-String)" | Write-Verbose
+        }
 
-        $Available_kbIDs | Out-String | Write-Verbose
-
-        $kbIDs = $kbObj.Links | 
-            Where-Object ID -match '_link' |
-            Where-Object innerText -match $SearchString |
-            ForEach-Object { $_.Id.Replace('_link', '') } |
-            Where-Object { $_ -in $Available_kbIDs }
-
-        # If innerHTML is empty or does not exist, use outerHTML instead
-        If ( $Null -eq $kbIDs ) {
+        # Invoke-WebRequest on PowerShell Core doesn't return innerText
+        # (Same as Invoke-WebRequest -UseBasicParsing on Windows PS)
+        If (Test-PSCore) {
+            Write-Verbose "Using outerHTML. Parsing KB notes"
             $kbIDs = $kbObj.Links | 
                 Where-Object ID -match '_link' |
                 Where-Object outerHTML -match $SearchString |
                 ForEach-Object { $_.Id.Replace('_link', '') } |
                 Where-Object { $_ -in $Available_kbIDs }
         }
+        Else {
+            Write-Verbose "innerText found. Parsing KB notes"
+            $kbIDs = $kbObj.Links | 
+                Where-Object ID -match '_link' |
+                Where-Object innerText -match $SearchString |
+                ForEach-Object { $_.Id.Replace('_link', '') } |
+                Where-Object { $_ -in $Available_kbIDs }
+        }
 
         $Urls = @()
         ForEach ( $kbID in $kbIDs ) {
-            Write-Verbose "`t`tDownload $kbID"
+            Write-Verbose "Download $kbID"
             $Post = @{ size = 0; updateID = $kbID; uidInfo = $kbID } | ConvertTo-Json -Compress
             $PostBody = @{ updateIDs = "[$Post]" } 
             $Urls += Invoke-WebRequest -Uri 'http://www.catalog.update.microsoft.com/DownloadDialog.aspx' -Method Post -Body $postBody |
@@ -103,10 +110,18 @@ Function Get-LatestUpdate {
                 Select-String -AllMatches -Pattern "(http[s]?\://download\.windowsupdate\.com\/[^\'\""]*)" | 
                 ForEach-Object { $_.matches.value }
         }
-        #endregion        
-    }
-    End {
-        $Notes = $kbObj.ParsedHtml.body.getElementsByTagName('a') | ForEach-Object InnerText | Where-Object { $_ -match $SearchString }
+        #endregion
+
+        # Select the update names
+        If (Test-PSCore) {
+            # Updated for PowerShell Core
+            $Notes = ([regex]'(?<note>\d{4}-\d{2}.*\(KB\d{7}\))').match($kbObj.RawContent).Value
+        }
+        Else {
+            # Original code for Windows PowerShell
+            $Notes = $kbObj.ParsedHtml.body.getElementsByTagName('a') | ForEach-Object InnerText | Where-Object { $_ -match $SearchString }
+        }
+
         [int]$i = 0; $Output = @()
         ForEach ( $Url in $Urls ) {
             $item = New-Object PSObject
@@ -121,7 +136,8 @@ Function Get-LatestUpdate {
             $Output += $item
             $i = $i + 1
         }
-
+    }
+    End {
         # Write the URLs list to the pipeline
         Write-Output $Output
     }

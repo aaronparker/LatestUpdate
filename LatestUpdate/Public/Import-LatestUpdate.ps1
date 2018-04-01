@@ -52,6 +52,11 @@ Function Import-LatestUpdate {
         [switch]$Clean
     )
     Begin {
+        # If running on PowerShell Core, error and exit.
+        If (Test-PSCore) {
+            Write-Error -Message "PowerShell Core doesn't support PSSnapins. We can't load the MicrosoftDeploymentToolkit module." -ErrorAction Stop
+        }
+
         If (Import-MdtModule) {
             If ($pscmdlet.ShouldProcess($Path, "Mapping")) {
                 [String]$Drive = "DS004"
