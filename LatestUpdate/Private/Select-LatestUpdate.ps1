@@ -13,6 +13,7 @@ Function Select-LatestUpdate {
         Original script: Copyright Keith Garner, All rights reserved.
         Forked from: https://gist.github.com/keithga/1ad0abd1f7ba6e2f8aff63d94ab03048
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", "", Justification="MaxObj is used more than once.")]
     [CmdletBinding(SupportsShouldProcess = $False)]
     [OutputType([String])]
     Param(
