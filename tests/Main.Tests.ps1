@@ -8,7 +8,7 @@ Else {
 }
 
 Describe "General project validation" {
-    $scripts = Get-ChildItem "$projectRoot\LatestUpdate" -Recurse -Include *.ps1, *.psm1 -Exclude Select-LatestUpdate.ps1
+    $scripts = Get-ChildItem "$projectRoot\LatestUpdate" -Recurse -Include *.ps1, *.psm1
 
     # TestCases are splatted to the script so we need hashtables
     $testCase = $scripts | Foreach-Object {@{file = $_}}         

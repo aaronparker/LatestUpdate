@@ -8,6 +8,9 @@ Function Select-UniqueUrl {
         Multiple updates can be release which could point to the same URL. To ensure we only download the update once,
         the a unique URL needs to be passed back to Save-LatestUpdate.
 
+    .PARAMETER Updates
+        An array of updates retrieved by Get-LatestUpdate.
+
     .NOTES
         Author: Aaron Parker
         Twitter: @stealthpuppy
@@ -21,12 +24,12 @@ Function Select-UniqueUrl {
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True, `
                 HelpMessage = "The array of updates from Get-LatestUpdate.")]
         [ValidateNotNullOrEmpty()]
-        [array]$Updates    
+        [Array] $Updates    
     )
-    $Urls = @()
-    ForEach ( $Update in $Updates ) {
-        $Urls += $Update.Url
+    $urls = @()
+    ForEach ( $update in $Updates ) {
+        $urls += $update.Url
     }
-    $Urls = $Urls | Select-Object -Unique
-    $Urls
+    $urls = $urls | Select-Object -Unique
+    $urls
 }

@@ -3,12 +3,15 @@ Function New-MdtDrive {
     .SYNOPSIS
         Creates a new persistent PS drive mapped to an MDT share.
 
-    .DESCRIPTION
-        Creates a new persistent PS drive mapped to an MDT share.
-
     .NOTES
         Author: Aaron Parker
         Twitter: @stealthpuppy
+
+    .PARAMETER Path
+        A path to a Microsoft Deployment Toolkit share.
+
+    .PARAMETER Drive
+        A PS drive letter to map to the MDT share.
     #>
     [CmdletBinding(SupportsShouldProcess = $True)]
     [OutputType([String])]
@@ -19,18 +22,18 @@ Function New-MdtDrive {
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline = $True)]
         [String]$Drive = "DS009"
     )
-    $Description = "MDT drive created by $($MyInvocation.MyCommand)"
-    If ($MdtDrives = Get-MdtPersistentDrive | Where-Object { ($_.Path -eq $Path) -and ($_.Description -eq $Description) }) {
-        Write-Verbose "Found MDT drive: $($MdtDrives[0].Name)"
-        $Output = $MdtDrives[0].Name
+    $description = "MDT drive created by $($MyInvocation.MyCommand)"
+    If ($mdtDrives = Get-MdtPersistentDrive | Where-Object { ($_.Path -eq $Path) -and ($_.Description -eq $Description) }) {
+        Write-Verbose "Found MDT drive: $($mdtDrives[0].Name)"
+        $output = $mdtDrives[0].Name
     } Else {
         If ($pscmdlet.ShouldProcess("$($Drive): to $($Path)", "Mapping")) {
             New-PSDrive -Name $Drive -PSProvider "MDTProvider" -Root $Path `
-                -NetworkPath $Path -Description $Description | Add-MDTPersistentDrive
-            $PsDrive = Get-MdtPersistentDrive | Where-Object { ($_.Path -eq $Path) -and ($_.Name -eq $Drive) }
-            Write-Verbose "Found: $($PsDrive.Name)"
-            $Output = $PsDrive.Name
+                -NetworkPath $Path -Description $description | Add-MDTPersistentDrive
+            $psDrive = Get-MdtPersistentDrive | Where-Object { ($_.Path -eq $Path) -and ($_.Name -eq $Drive) }
+            Write-Verbose "Found: $($psDrive.Name)"
+            $output = $psDrive.Name
         }
     }
-    Write-Output $Output
+    Write-Output $output
 }

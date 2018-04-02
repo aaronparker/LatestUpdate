@@ -38,26 +38,32 @@ Function Import-LatestUpdate {
         [Parameter(Mandatory = $False, ValueFromPipeline = $True, `
                 HelpMessage = "Specify the folder containing the MSU update/s to import.")]
         [ValidateScript( { If (Test-Path $_ -PathType 'Container') { $True } Else { Throw "Cannot find path $_" } })]
-        [string]$UpdatePath = $PWD,
+        [String] $UpdatePath = $PWD,
 
         [Parameter(Mandatory = $True, HelpMessage = "Specify an MDT deployment share to apply the update to.")]
         [ValidateScript( { If (Test-Path $_ -PathType 'Container') { $True } Else { Throw "Cannot find path $_" } })]
-        [string]$DeployRoot,
+        [String] $DeployRoot,
 
         [Parameter(Mandatory = $False, HelpMessage = "A sub-folder in the MDT Packages folder.")]
-        [string]$PackagePath,
+        [String] $PackagePath,
 
         [Parameter(Mandatory = $False, `
                 HelpMessage = "Remove the updates from the target MDT deployment share before importing the new updates.")]
-        [switch]$Clean
+        [Switch] $Clean
     )
     Begin {
-        If (Import-MdtModule) {
-            If ($pscmdlet.ShouldProcess($Path, "Mapping")) {
-                [String]$Drive = "DS004"
-                $Drive = New-PSDrive -Name $Drive -PSProvider MDTProvider -Root $DeployRoot
+        # If running on PowerShell Core, error and exit.
+        If ( Test-PSCore ) {
+            Write-Error -Message "PowerShell Core doesn't support PSSnapins. We can't load the MicrosoftDeploymentToolkit module." -ErrorAction Stop
+        }
+
+        If ( Import-MdtModule ) {
+            If ( $pscmdlet.ShouldProcess($Path, "Mapping") ) {
+                [String] $drive = "DS004"
+                $drive = New-PSDrive -Name $drive -PSProvider MDTProvider -Root $DeployRoot
             }
-        } Else {
+        }
+        Else {
             Write-Error -Message "Failed to import the MDT PowerShell module. Please install the MDT Workbench and try again." -ErrorAction Stop
         }
         # Ensure file system paths are valid and don't include trailing \
@@ -65,11 +71,11 @@ Function Import-LatestUpdate {
     }
     Process {
         # If $PackagePath is specified, use a sub-folder of MDT Share\Packages
-        If ($PSBoundParameters.ContainsKey('PackagePath')) {
-            $Dest = "$($Drive):\Packages\$($PackagePath)"
-            If ($pscmdlet.ShouldProcess($PackagePath, "New Package Folder")) {
+        If ( $PSBoundParameters.ContainsKey('PackagePath') ) {
+            $dest = "$($drive):\Packages\$($PackagePath)"
+            If ( $pscmdlet.ShouldProcess($PackagePath, "New Package Folder") ) {
                 Try {
-                    New-MdtPackagesFolder -Drive $Drive -Path $PackagePath
+                    New-MdtPackagesFolder -Drive $drive -Path $PackagePath
                 }
                 Catch {
                     Write-Error -Message "Failed to create packages folder $($PackagePath)." -ErrorAction Stop
@@ -78,15 +84,15 @@ Function Import-LatestUpdate {
         }
         Else {
             # If no path specified, we'll import directly into the Packages folder
-            $Dest = "$($Drive):\Packages"
+            $dest = "$($drive):\Packages"
         }
-        Write-Verbose "Destination is $($Dest)"
+        Write-Verbose "Destination is $($dest)"
 
         # If -Clean is specified, enumerate existing packages from the target destination and remove before importing
-        If ($Clean) {
-            Push-Location $Dest
+        If ( $Clean ) {
+            Push-Location $dest
             Get-ChildItem | Where-Object { $_.Name -like "Package*" } | ForEach-Object { 
-                If ($pscmdlet.ShouldProcess($_.Name, "Remove package")) {
+                If ( $pscmdlet.ShouldProcess($_.Name, "Remove package") ) {
                     # Remove, but don't force in case the update exists in another folder
                     Remove-Item $_.Name
                 }
@@ -95,17 +101,21 @@ Function Import-LatestUpdate {
         }
 
         # Validate the provided local path and import the update package
-        If ($UpdatePath -ne $False) {
-            If ($pscmdlet.ShouldProcess("From $($UpdatePath) to $($Dest)", "Importing")) {
-                Import-MdtPackage -Path $Dest -SourcePath $UpdatePath -ErrorAction SilentlyContinue -ErrorVariable ImportError
+        If ( $UpdatePath -ne $False ) {
+            If ( $pscmdlet.ShouldProcess("From $($UpdatePath) to $($dest)", "Importing") ) {
+                Try {
+                    Import-MdtPackage -Path $dest -SourcePath $UpdatePath -ErrorAction SilentlyContinue -ErrorVariable importError
+                }
+                Catch {
+                    Write-Error -Message "Failed to import the package."
+                }
             }
         }
         Else {
-            Write-Error -Message "Validation failed on the provided path $Update"
+            Write-Error -Message "Validation failed on the provided path $UpdatePath" -ErrorAction Stop
         }
     }
     End {
-        # Remove-MdtDrive -Drive $Drive
-        If ($ImportError) { Write-Output $ImportError }
+        If ( $importError ) { Write-Output $importError }
     }
 }

@@ -62,7 +62,7 @@ Describe 'Save-LatestUpdate' {
             $Updates = Get-LatestUpdate
             $Url = Save-LatestUpdate -Updates $Updates -Path "$($ProjectRoot)\.."
             $Filename = Split-Path $Url -Leaf
-            Test-Path -Path "$($ProjectRoot)\..\$($Filename)" | Should -Be $True
+            "$($ProjectRoot)\..\$($Filename)" | Should -Exist
         }
     }
 }
