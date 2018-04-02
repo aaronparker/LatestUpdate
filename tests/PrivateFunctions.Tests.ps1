@@ -131,4 +131,22 @@ InModuleScope LatestUpdate {
             }
         }
     }
+
+    Describe 'Test-PSCore' {
+        $Version = '6.0.0'
+        Context "Tests whether we are running on PowerShell Core" {
+            It "Imports the MDT PowerShell module and returns True" {
+                If (($PSVersionTable.PSVersion -ge [version]::Parse($Version)) -and ($PSVersionTable.PSEdition -eq "Core")) {
+                    Test-PSCore | Should Be $True
+                }
+            }
+        }
+        Context "Tests whether we are running on Windows PowerShell" {
+            It "Returns False if running Windows PowerShell" {
+                If (($PSVersionTable.PSVersion -lt [version]::Parse($Version)) -and ($PSVersionTable.PSEdition -eq "Desktop")) {
+                    Test-PSCore | Should Be $False
+                }
+            }
+        }
+    }
 }

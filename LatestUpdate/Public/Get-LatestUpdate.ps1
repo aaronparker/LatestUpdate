@@ -22,6 +22,9 @@ Function Get-LatestUpdate {
     .PARAMETER SearchString
         Specify a specific search string to change the target update behaviour. The default will only download Cumulative updates for x64.
 
+    .PARAMETER StartKB
+        The JSON used to query updates. Should not need to change unless Microsoft changes the JSON URL.
+
     .EXAMPLE
         Get-LatestUpdate
 
@@ -44,14 +47,14 @@ Function Get-LatestUpdate {
     Param(
         [Parameter(Mandatory = $False, HelpMessage = "JSON source for the update KB articles.")]
         [Parameter(ParameterSetName = 'Download', Mandatory = $False)]
-        [string]$StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4000816',
+        [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4000816',
 
         [Parameter(Mandatory = $False, HelpMessage = "Windows build number.")]
         [ValidateSet('16299', '15063', '14393', '10586', '10240')]
-        [string]$Build = '16299',
+        [String] $Build = '16299',
 
         [Parameter(Mandatory = $False, HelpMessage = "Search query string.")]
-        [string]$SearchString = 'Cumulative.*x64'
+        [String] $SearchString = 'Cumulative.*x64'
     )
     Begin {
     }
@@ -68,16 +71,16 @@ Function Get-LatestUpdate {
         #endregion
 
         #region get the download link from Windows Update
-        $Kb = $kbID.articleID
+        $kb = $kbID.articleID
         Write-Verbose "Found ID: KB$($kbID.articleID)"
         $kbObj = Invoke-WebRequest -Uri "http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($kbID.articleID)"
 
         # Parse the available KB IDs
-        $Available_kbIDs = $kbObj.InputFields | 
+        $availableKbIDs = $kbObj.InputFields | 
             Where-Object { $_.Type -eq 'Button' -and $_.Value -eq 'Download' } | 
             Select-Object -ExpandProperty ID
         Write-Verbose "Ids found:"
-        ForEach ($id in $Available_kbIDs) {
+        ForEach ($id in $availableKbIDs) {
             "`t$($id | Out-String)" | Write-Verbose
         }
 
@@ -89,7 +92,7 @@ Function Get-LatestUpdate {
                 Where-Object ID -match '_link' |
                 Where-Object outerHTML -match $SearchString |
                 ForEach-Object { $_.Id.Replace('_link', '') } |
-                Where-Object { $_ -in $Available_kbIDs }
+                Where-Object { $_ -in $availableKbIDs }
         }
         Else {
             Write-Verbose "innerText found. Parsing KB notes"
@@ -97,15 +100,15 @@ Function Get-LatestUpdate {
                 Where-Object ID -match '_link' |
                 Where-Object innerText -match $SearchString |
                 ForEach-Object { $_.Id.Replace('_link', '') } |
-                Where-Object { $_ -in $Available_kbIDs }
+                Where-Object { $_ -in $availableKbIDs }
         }
 
-        $Urls = @()
+        $urls = @()
         ForEach ( $kbID in $kbIDs ) {
             Write-Verbose "Download $kbID"
             $Post = @{ size = 0; updateID = $kbID; uidInfo = $kbID } | ConvertTo-Json -Compress
             $PostBody = @{ updateIDs = "[$Post]" } 
-            $Urls += Invoke-WebRequest -Uri 'http://www.catalog.update.microsoft.com/DownloadDialog.aspx' -Method Post -Body $postBody |
+            $urls += Invoke-WebRequest -Uri 'http://www.catalog.update.microsoft.com/DownloadDialog.aspx' -Method Post -Body $postBody |
                 Select-Object -ExpandProperty Content |
                 Select-String -AllMatches -Pattern "(http[s]?\://download\.windowsupdate\.com\/[^\'\""]*)" | 
                 ForEach-Object { $_.matches.value }
@@ -113,32 +116,32 @@ Function Get-LatestUpdate {
         #endregion
 
         # Select the update names
-        If (Test-PSCore) {
+        If ( Test-PSCore ) {
             # Updated for PowerShell Core
-            $Notes = ([regex]'(?<note>\d{4}-\d{2}.*\(KB\d{7}\))').match($kbObj.RawContent).Value
+            $notes = ([regex]'(?<note>\d{4}-\d{2}.*\(KB\d{7}\))').match($kbObj.RawContent).Value
         }
         Else {
             # Original code for Windows PowerShell
-            $Notes = $kbObj.ParsedHtml.body.getElementsByTagName('a') | ForEach-Object InnerText | Where-Object { $_ -match $SearchString }
+            $notes = $kbObj.ParsedHtml.body.getElementsByTagName('a') | ForEach-Object InnerText | Where-Object { $_ -match $SearchString }
         }
 
-        [int]$i = 0; $Output = @()
-        ForEach ( $Url in $Urls ) {
+        [int] $i = 0; $output = @()
+        ForEach ( $url in $urls ) {
             $item = New-Object PSObject
             $item | Add-Member -type NoteProperty -Name 'KB' -Value "KB$Kb"
-            If ( $Notes.Count -eq 1 ) {
-                $item | Add-Member -type NoteProperty -Name 'Note' -Value $Notes
+            If ( $notes.Count -eq 1 ) {
+                $item | Add-Member -type NoteProperty -Name 'Note' -Value $notes
             }
             Else {
-                $item | Add-Member -type NoteProperty -Name 'Note' -Value $Notes[$i]
+                $item | Add-Member -type NoteProperty -Name 'Note' -Value $notes[$i]
             }
-            $item | Add-Member -type NoteProperty -Name 'URL' -Value $Url
-            $Output += $item
+            $item | Add-Member -type NoteProperty -Name 'URL' -Value $url
+            $output += $item
             $i = $i + 1
         }
     }
     End {
         # Write the URLs list to the pipeline
-        Write-Output $Output
+        Write-Output $output
     }
 }

@@ -12,27 +12,30 @@ Function Select-LatestUpdate {
     
         Original script: Copyright Keith Garner, All rights reserved.
         Forked from: https://gist.github.com/keithga/1ad0abd1f7ba6e2f8aff63d94ab03048
+
+    .PARAMETER Updates
+        An array of updates retrieved by Get-LatestUpdate.
     #>
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", "", Justification="MaxObj is used more than once.")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", "", Justification="MaxObj is false positive.")]
     [CmdletBinding(SupportsShouldProcess = $False)]
     [OutputType([String])]
     Param(
         [parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
-        $Updates
+        [Array] $Updates
     )
     Begin {
-        $MaxObj = $Null
-        $MaxValue = [version]::new("0.0")
+        $maxObj = $Null
+        $maxValue = [version]::new("0.0")
     }
     Process {
-        ForEach ( $Update in $Updates ) {
+        ForEach ( $update in $Updates ) {
             Select-String -InputObject $Update -AllMatches -Pattern "(\d+\.)?(\d+\.)?(\d+\.)?(\*|\d+)" |
                 ForEach-Object { $_.matches.value } |
                 ForEach-Object { $_ -as [version] } |
-                ForEach-Object { If ( $_ -gt $MaxValue ) { $MaxObj += $Update; $MaxValue = $_ } }
+                ForEach-Object { If ( $_ -gt $maxValue ) { $maxObj += $Update; $maxValue = $_ } }
         }
     }
     End { 
-        Write-Output $MaxObj
+        Write-Output $maxObj
     }
 }

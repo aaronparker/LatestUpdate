@@ -15,6 +15,21 @@ Function Save-LatestUpdate {
 
     .PARAMETER Path
         A destination path for downloading the cumulative updates to. This path must exist.
+
+    .EXAMPLE
+        Get-LatestUpdate | Save-LatestUpdate -Path C:\Temp\Update
+
+        Description:
+        Retreives the latest Windows 10 Cumulative Update with Get-LatestUpdate and passes the array of updates to Save-LatestUpdate on the pipeline.
+        Save-LatestUpdate then downloads the latest updates to C:\Temp\Update.
+
+    .EXAMPLE
+        $Updates = Get-LatestUpdate -Build 14393
+        Save-LatestUpdate -Updates $Updates -Path C:\Temp\Update
+
+        Description:
+        Retreives the latest Windows 10 build 14393 (1607) Cumulative Update with Get-LatestUpdate, saved to the variable $Updates.
+        Save-LatestUpdate then downloads the latest updates to C:\Temp\Update.
     #>
     [CmdletBinding(SupportsShouldProcess = $True)]
     [OutputType([Array])]
@@ -22,47 +37,47 @@ Function Save-LatestUpdate {
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True, `
                 HelpMessage = "The array of updates from Get-LatestUpdate.")]
         [ValidateNotNullOrEmpty()]
-        [array]$Updates,
+        [Array] $Updates,
     
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline = $False, `
                 HelpMessage = "Specify a target path to download the update(s) to.")]
         [ValidateScript( { If (Test-Path $_ -PathType 'Container') { $True } Else { Throw "Cannot find path $_" } })]
-        [string]$Path = $PWD
+        [String] $Path = $PWD
     )
     Begin {
         $Path = Get-ValidPath $Path
     } 
     Process {
         $Urls = $Updates | Select-UniqueUrl
-        ForEach ( $Url in $Urls ) {
-            $Filename = Split-Path $Url -Leaf
-            $Target = "$($Path)\$($Filename)"
-            $DisplayName = $Updates | Where-Object { $_.Url -eq $Url } | Select-Object -ExpandProperty Note | Select-Object -First 1
-            Write-Verbose "Download target will be $Target"
-    
+        ForEach ( $url in $urls ) {
+            $filename = Split-Path $url -Leaf
+            $target = "$($Path)\$($filename)"
+            Write-Verbose "Download target will be $target"
+            $displayName = $Updates | Where-Object { $_.Url -eq $url } | Select-Object -ExpandProperty Note | Select-Object -First 1
+            
             # If the update is not already downloaded, download it.
-            If (!(Test-Path -Path $Target)) {
-                If (Get-Command Start-BitsTransfer -ErrorAction SilentlyContinue) {
+            If (!( Test-Path -Path $target )) {
+                If ( Get-Command Start-BitsTransfer -ErrorAction SilentlyContinue ) {
                     # If BITS is available, let us it
-                    If ($pscmdlet.ShouldProcess($(Split-Path $Url -Leaf), "BitsDownload")) {
-                        Start-BitsTransfer -Source $Url -Destination $Target `
+                    If ( $pscmdlet.ShouldProcess($(Split-Path $url -Leaf), "BitsDownload") ) {
+                        Start-BitsTransfer -Source $url -Destination $target `
                             -Priority High -ErrorAction Continue -ErrorVariable $ErrorBits `
-                            -DisplayName $DisplayName -Description "Downloading $($Url)"
+                            -DisplayName $displayName -Description "Downloading $($url)"
                     }
                 }
                 Else {
                     # BITS isn't available (likely PowerShell Core)
-                    If ($pscmdlet.ShouldProcess($Url, "WebDownload")) {
-                        Invoke-WebRequest -Uri $Url -OutFile $Target
+                    If ( $pscmdlet.ShouldProcess($url, "WebDownload") ) {
+                        Invoke-WebRequest -Uri $url -OutFile $target
                     }
                 }
             }
             Else {
-                Write-Verbose "File exists: $Target. Skipping download."
+                Write-Verbose "File exists: $target. Skipping download."
             }
         }
     }
     End {
-        Write-Output $Urls
+        Write-Output $urls
     }
 }
