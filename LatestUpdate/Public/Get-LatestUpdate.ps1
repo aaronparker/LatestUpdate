@@ -57,6 +57,7 @@ Function Get-LatestUpdate {
         [String] $SearchString = 'Cumulative.*x64'
     )
     Begin {
+        Write-Verbose "Check updates for $Build $SearchString"
     }
     Process {
         #region Find the KB Article Number
