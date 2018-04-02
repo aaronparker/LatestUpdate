@@ -14,11 +14,11 @@ This module is a re-write of the Update scripts found here: [https://github.com/
 
 ## Supported Platforms
 
-LatestUpdate will only support PowerShell 5.0 (and potentially PowerShell Core) and is tested on Windows 10 and Windows Server 2016. If you are running an earlier version of PowerShell, update to the latest release of the [Windows Management Framework](https://docs.microsoft.com/en-us/powershell/wmf/readme) or please use the [previous scripts](https://github.com/aaronparker/MDT/tree/master/Updates) instead.
+LatestUpdate supports PowerShell 5.0 and above and is tested on macOS, Windows 10 and Windows Server 2016. If you are running an earlier version of PowerShell, update to the latest release of the [Windows Management Framework].(https://docs.microsoft.com/en-us/powershell/wmf/readme) or please use the [previous scripts](https://github.com/aaronparker/MDT/tree/master/Updates) instead.
 
 ### PowerShell Core
 
-Support for PowerShell Core will be added in a future release; however, because `Import-LatestUpdate` requires the MDT Workbench, full support for PowerShell Core will depend on Microsoft updating the MDT PowerShell module to support it.
+`Get-LatestUpdate` and `Save-LatestUpdate` support PowerShell Core; however, because `Import-LatestUpdate` requires the MDT Workbench, full support for PowerShell Core will depend on Microsoft updating the MDT PowerShell module to support it.
 
 ## Usage
 
