@@ -1,5 +1,28 @@
 # Change Log
 
+## v1.0.1.27
+
+### General
+
+- Inline help updates, code style formatting
+- Update module description
+- Update module release notes link
+
+### Private functions
+
+- Add `Test-PSCore` for testing when environment is PowerShell Core
+- Add suppression of PSUseDeclaredVarsMoreThanAssignments for PSScriptAnalyzer false positive in `Select-LatestUpdate`
+- Pester tests now test `Select-LatestUpdate`
+
+### Public functions
+
+- Update `Get-LatestUpdate` and `Save-LatestUpdate` with support for PowerShell Core
+- Better error handling in `Import-LatestUpdate`
+
+### Tests
+
+- Add Pester tests for `Test-PSCore`
+
 ## v1.0.1.20
 
 ### General
