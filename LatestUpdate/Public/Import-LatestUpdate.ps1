@@ -103,15 +103,19 @@ Function Import-LatestUpdate {
         # Validate the provided local path and import the update package
         If ( $UpdatePath -ne $False ) {
             If ( $pscmdlet.ShouldProcess("From $($UpdatePath) to $($dest)", "Importing") ) {
-                Import-MdtPackage -Path $dest -SourcePath $UpdatePath -ErrorAction SilentlyContinue -ErrorVariable importError
+                Try {
+                    Import-MdtPackage -Path $dest -SourcePath $UpdatePath -ErrorAction SilentlyContinue -ErrorVariable importError
+                }
+                Catch {
+                    Write-Error -Message "Failed to import the package."
+                }
             }
         }
         Else {
-            Write-Error -Message "Validation failed on the provided path $Update"
+            Write-Error -Message "Validation failed on the provided path $UpdatePath" -ErrorAction Stop
         }
     }
     End {
-        # Remove-MdtDrive -Drive $drive
         If ( $importError ) { Write-Output $importError }
     }
 }
