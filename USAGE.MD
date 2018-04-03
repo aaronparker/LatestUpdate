@@ -83,6 +83,12 @@ $Updates = Get-LatestUpdate
 Save-LatestUpdate -Updates $Updates -Path "C:\Temp\Updates" -Verbose
 ```
 
+This can be simplified to a one-line command that will get the latest update and download it to the current folder.
+
+```powershell
+Get-LatestUpdate | Save-LatestUpdate
+```
+
 ### Import the Latest Update into MDT
 
 Now that the cumulative update has been downloaded, you can import it into an MDT deployment share with `Import-LatestUpdate`. This requires the Microsoft Deployment Toolkit Workbench to be installed on the local machine (and therefore requires Windows).
