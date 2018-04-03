@@ -80,7 +80,7 @@ The following example, will download the latest cumulative update for the curren
 
 ```powershell
 $Updates = Get-LatestUpdate
-Save-LatestUpdate -Updates $Updates -Path "C:\Temp\Updates" -Verbose
+Save-LatestUpdate -Updates $Updates -Path "C:\Temp\Updates"
 ```
 
 This can be simplified to a one-line command that will get the latest update and download it to the current folder.
@@ -97,6 +97,6 @@ The following example will retrieve the latest update and download it locally an
 
 ```powershell
 $Updates = Get-LatestUpdate
-Save-LatestUpdate -Updates $Updates -Path "C:\Temp\Updates" -Verbose
+Save-LatestUpdate -Updates $Updates -Path "C:\Temp\Updates"
 Import-LatestUpdate -UpdatePath "C:\Temp\Updates" -SharePath "\\server\share"
 ```
