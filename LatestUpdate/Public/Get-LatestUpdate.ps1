@@ -50,8 +50,8 @@ Function Get-LatestUpdate {
         [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4000816',
 
         [Parameter(Mandatory = $False, HelpMessage = "Windows build number.")]
-        [ValidateSet('16299', '15063', '14393', '10586', '10240')]
-        [String] $Build = '16299',
+        [ValidateSet('17133', '16299', '15063', '14393', '10586', '10240')]
+        [String] $Build = '17133',
 
         [Parameter(Mandatory = $False, HelpMessage = "Search query string.")]
         [String] $SearchString = 'Cumulative.*x64'
@@ -69,6 +69,7 @@ Function Get-LatestUpdate {
             Where-Object text -match $Build |
             Select-LatestUpdate |
             Select-Object -First 1
+        If ( $Null -eq $kbID ) { Write-Warning -Message "kbID is Null. Unable to read from the KB from the JSON." }
         #endregion
 
         #region get the download link from Windows Update
@@ -76,18 +77,24 @@ Function Get-LatestUpdate {
         Write-Verbose "Found ID: KB$($kbID.articleID)"
         $kbObj = Invoke-WebRequest -Uri "http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($kbID.articleID)"
 
-        # Parse the available KB IDs
+        # Write warnings if we can't read values
+        If ( $Null -eq $kbObj ) { Write-Warning -Message "kbObj is Null. Unable to read KB details from the Catalog." }
+        If ( $Null -eq $kbObj.InputFields ) { Write-Warning -Message "kbObj.InputFields is Null. Unable to read button details from the Catalog KB page." }
+        #endregion
+
+        #region Parse the available KB IDs
         $availableKbIDs = $kbObj.InputFields | 
             Where-Object { $_.Type -eq 'Button' -and $_.Value -eq 'Download' } | 
             Select-Object -ExpandProperty ID
         Write-Verbose "Ids found:"
-        ForEach ($id in $availableKbIDs) {
+        ForEach ( $id in $availableKbIDs ) {
             "`t$($id | Out-String)" | Write-Verbose
         }
+        #endregion
 
-        # Invoke-WebRequest on PowerShell Core doesn't return innerText
+        #region Invoke-WebRequest on PowerShell Core doesn't return innerText
         # (Same as Invoke-WebRequest -UseBasicParsing on Windows PS)
-        If (Test-PSCore) {
+        If ( Test-PSCore ) {
             Write-Verbose "Using outerHTML. Parsing KB notes"
             $kbIDs = $kbObj.Links | 
                 Where-Object ID -match '_link' |
@@ -103,12 +110,14 @@ Function Get-LatestUpdate {
                 ForEach-Object { $_.Id.Replace('_link', '') } |
                 Where-Object { $_ -in $availableKbIDs }
         }
+        #endregion
 
+        #region Read KB details
         $urls = @()
         ForEach ( $kbID in $kbIDs ) {
             Write-Verbose "Download $kbID"
-            $Post = @{ size = 0; updateID = $kbID; uidInfo = $kbID } | ConvertTo-Json -Compress
-            $PostBody = @{ updateIDs = "[$Post]" } 
+            $post = @{ size = 0; updateID = $kbID; uidInfo = $kbID } | ConvertTo-Json -Compress
+            $postBody = @{ updateIDs = "[$post]" } 
             $urls += Invoke-WebRequest -Uri 'http://www.catalog.update.microsoft.com/DownloadDialog.aspx' -Method Post -Body $postBody |
                 Select-Object -ExpandProperty Content |
                 Select-String -AllMatches -Pattern "(http[s]?\://download\.windowsupdate\.com\/[^\'\""]*)" | 
@@ -116,7 +125,7 @@ Function Get-LatestUpdate {
         }
         #endregion
 
-        # Select the update names
+        #region Select the update names
         If ( Test-PSCore ) {
             # Updated for PowerShell Core
             $notes = ([regex]'(?<note>\d{4}-\d{2}.*\(KB\d{7}\))').match($kbObj.RawContent).Value
@@ -125,7 +134,9 @@ Function Get-LatestUpdate {
             # Original code for Windows PowerShell
             $notes = $kbObj.ParsedHtml.body.getElementsByTagName('a') | ForEach-Object InnerText | Where-Object { $_ -match $SearchString }
         }
+        #endregion
 
+        #region Build the output array
         [int] $i = 0; $output = @()
         ForEach ( $url in $urls ) {
             $item = New-Object PSObject
@@ -140,6 +151,7 @@ Function Get-LatestUpdate {
             $output += $item
             $i = $i + 1
         }
+        #endregion
     }
     End {
         # Write the URLs list to the pipeline
