@@ -47,10 +47,13 @@ Function Get-LatestUpdate {
     Param(
         [Parameter(Mandatory = $False, HelpMessage = "JSON source for the update KB articles.")]
         [Parameter(ParameterSetName = 'Download', Mandatory = $False)]
+        [ValidateSet('https://support.microsoft.com/app/content/api/content/asset/en-us/4000816', `
+                'https://support.microsoft.com/app/content/api/content/asset/en-us/4010477', `
+                'https://support.microsoft.com/app/content/api/content/asset/en-us/4009472')]
         [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4000816',
 
         [Parameter(Mandatory = $False, HelpMessage = "Windows build number.")]
-        [ValidateSet('16299', '15063', '14393', '10586', '10240')]
+        [ValidateSet('16299', '15063', '14393', '10586', '10240', 'Monthly Rollup')]
         [String] $Build = '16299',
 
         [Parameter(Mandatory = $False, HelpMessage = "Search query string.")]
