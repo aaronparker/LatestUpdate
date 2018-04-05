@@ -16,14 +16,14 @@ Function Get-LatestUpdate {
     .LINK
         https://support.microsoft.com/en-us/help/4043454
 
+    .PARAMETER WindowsVersion
+        Specifiy the Windows version to search for updates. Valid values are Windows10, Windows8, Windows7.
+
     .PARAMETER Build
-        Specify the Windows build number for searching cumulative updates. Supports '16299', '15063', '14393', '10586', '10240'.
+        Specify the Windows build number for searching cumulative updates. Supports '17133', '16299', '15063', '14393', '10586', '10240'.
 
     .PARAMETER SearchString
         Specify a specific search string to change the target update behaviour. The default will only download Cumulative updates for x64.
-
-    .PARAMETER StartKB
-        The JSON used to query updates. Should not need to change unless Microsoft changes the JSON URL.
 
     .EXAMPLE
         Get-LatestUpdate
@@ -45,23 +45,73 @@ Function Get-LatestUpdate {
     #>
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param(
-        [Parameter(Mandatory = $False, HelpMessage = "JSON source for the update KB articles.")]
-        [Parameter(ParameterSetName = 'Download', Mandatory = $False)]
-        [ValidateSet('https://support.microsoft.com/app/content/api/content/asset/en-us/4000816', `
-                'https://support.microsoft.com/app/content/api/content/asset/en-us/4010477', `
-                'https://support.microsoft.com/app/content/api/content/asset/en-us/4009472')]
-        [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4000816',
-
-        [Parameter(Mandatory = $False, HelpMessage = "Windows build number.")]
-        [ValidateSet('16299', '15063', '14393', '10586', '10240', 'Monthly Rollup')]
-        [String] $Build = '16299',
-
-        [Parameter(Mandatory = $False, HelpMessage = "Search query string.")]
-        [String] $SearchString = 'Cumulative.*x64'
+        [Parameter(Mandatory = $False, HelpMessage = "Select the OS to search for updates")]
+        [ValidateSet('Windows10', 'Windows8', 'Windows7')]
+        [String] $WindowsVersion = "Windows10"
     )
+    DynamicParam {
+        #Create the RuntimeDefinedParameterDictionary
+        $Dictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
+        If ( $WindowsVersion -eq "Windows10") {
+            $args = @{
+                Name         = "Build"
+                Type         = [String]
+                ValidateSet  = @('17133', '16299', '15063', '14393', '10586', '10240')
+                HelpMessage  = "Provide a Windows 10 build number"
+                DPDictionary = $Dictionary
+            }
+            New-DynamicParam @args
+
+            $args = @{
+                Name         = "SearchString"
+                Type         = [String]
+                ValidateSet  = @('Cumulative.*x64', 'Cumulative.*Server.*x64', 'Cumulative.*x86')
+                HelpMessage  = "Search query string."
+                DPDictionary = $Dictionary
+            }
+            New-DynamicParam @args
+        }
+        If ( ($WindowsVersion -eq "Windows8") -or ($WindowsVersion -eq "Windows7") ) {
+            $args = @{
+                Name         = "SearchString"
+                Type         = [String]
+                ValidateSet  = @('Monthly Quality Rollup.*x64', 'Monthly Quality Rollup.*x86')
+                HelpMessage  = "Search query string."
+                DPDictionary = $Dictionary
+            }
+            New-DynamicParam @args
+        }
+        #return RuntimeDefinedParameterDictionary
+        Write-Output $Dictionary
+    }
     Begin {
+        #Get common parameters, pick out bound parameters not in that set
+        Function _temp { [cmdletbinding()] param() }
+        $BoundKeys = $PSBoundParameters.keys | Where-Object { (Get-Command _temp | Select-Object -ExpandProperty parameters).Keys -notcontains $_}
+        ForEach ($param in $BoundKeys) {
+            If (-not ( Get-Variable -name $param -scope 0 -ErrorAction SilentlyContinue ) ) {
+                New-Variable -Name $Param -Value $PSBoundParameters.$param
+                Write-Verbose "Adding variable for dynamic parameter '$param' with value '$($PSBoundParameters.$param)'"
+            }
+        }
+        
+        Switch ( $WindowsVersion ) {
+            "Windows10" {
+                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4000816'
+                If ( $Null -eq $SearchString ) { $SearchString = "Cumulative.*x64" }
+            }
+            "Windows8" {
+                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4010477'
+                [String] $Build = 'Monthly Rollup'
+                [String] $SearchString = 'Monthly Quality Rollup.*x64'
+            }
+            "Windows7" {
+                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4009472'
+                [String] $Build = 'Monthly Rollup'
+                [String] $SearchString = 'Monthly Quality Rollup.*x64'
+            }
+        }
         Write-Verbose "Check updates for $Build $SearchString"
-        If ( $Build -eq 'Monthly Rollup') { $SearchString = 'Monthly Quality Rollup.*x64' }
     }
     Process {
         #region Find the KB Article Number
@@ -71,8 +121,8 @@ Function Get-LatestUpdate {
             Select-Object -ExpandProperty Links |
             Where-Object level -eq 2 |
             Where-Object text -match $Build |
-           # Select-LatestUpdate |
-            Select-Object -First 1
+            # Select-LatestUpdate |
+        Select-Object -First 1
         If ( $Null -eq $kbID ) { Write-Warning -Message "kbID is Null. Unable to read from the KB from the JSON." }
         #endregion
 
