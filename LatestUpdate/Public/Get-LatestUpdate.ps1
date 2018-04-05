@@ -32,16 +32,34 @@ Function Get-LatestUpdate {
         Get the latest Cumulative Update for Windows 10 x64
 
     .EXAMPLE
-        Get-LatestUpdate -SearchString 'Cumulative.*x86'
+        Get-LatestUpdate -WindowsVersion Windows10 -SearchString 'Cumulative.*x86'
 
         Description:
         Enumerate the latest Cumulative Update for Windows 10 x86 (Semi-Annual Channel)
 
     .EXAMPLE
-        Get-LatestUpdate -SearchString 'Cumulative.*Server.*x64' -Build 14393    
+        Get-LatestUpdate -WindowsVersion Windows10 -Build 14393 -SearchString 'Cumulative.*Server.*x64'
     
         Description:
         Enumerate the latest Cumulative Update for Windows Server 2016
+
+    .EXAMPLE
+        Get-LatestUpdate -WindowsVersion Windows8
+    
+        Description:
+        Enumerate the latest Monthly Update for Windows Server 2012 R2 / Windows 8.1 x64
+
+    .EXAMPLE
+        Get-LatestUpdate -WindowsVersion Windows8 -SearchString 'Monthly Quality Rollup.*x86'
+    
+        Description:
+        Enumerate the latest Monthly Update for Windows 8.1 x86
+
+    .EXAMPLE
+        Get-LatestUpdate -WindowsVersion Windows7 -SearchString 'Monthly Quality Rollup.*x86'
+    
+        Description:
+        Enumerate the latest Monthly Update for Windows 7 x86
     #>
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param(
@@ -103,12 +121,12 @@ Function Get-LatestUpdate {
             "Windows8" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4010477'
                 [String] $Build = 'Monthly Rollup'
-                [String] $SearchString = 'Monthly Quality Rollup.*x64'
+                If ( $Null -eq $SearchString ) { $SearchString = 'Monthly Quality Rollup.*x64' }
             }
             "Windows7" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4009472'
                 [String] $Build = 'Monthly Rollup'
-                [String] $SearchString = 'Monthly Quality Rollup.*x64'
+                If ( $Null -eq $SearchString ) { $SearchString = 'Monthly Quality Rollup.*x64' }
             }
         }
         Write-Verbose "Check updates for $Build $SearchString"
