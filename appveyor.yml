@@ -60,3 +60,4 @@ test_script:
 branches:
   except:
   - docs
+  - Win8-Win7
