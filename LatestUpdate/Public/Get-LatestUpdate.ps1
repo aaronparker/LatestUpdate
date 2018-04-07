@@ -93,7 +93,7 @@ Function Get-LatestUpdate {
             $args = @{
                 Name         = "SearchString"
                 Type         = [String]
-                ValidateSet  = @('Monthly Quality Rollup.*x64', 'Monthly Quality Rollup.*x86')
+                ValidateSet  = @('.*x64', '.*x86')
                 HelpMessage  = "Search query string."
                 DPDictionary = $Dictionary
             }
@@ -120,13 +120,13 @@ Function Get-LatestUpdate {
             }
             "Windows8" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4010477'
-                [String] $Build = 'Monthly Rollup'
-                If ( $Null -eq $SearchString ) { $SearchString = 'Monthly Quality Rollup.*x64' }
+                [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
+                If ( $Null -eq $SearchString ) { $SearchString = ".*x64" }
             }
             "Windows7" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4009472'
-                [String] $Build = 'Monthly Rollup'
-                If ( $Null -eq $SearchString ) { $SearchString = 'Monthly Quality Rollup.*x64' }
+                [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
+                If ( $Null -eq $SearchString ) { $SearchString = ".*x86" }
             }
         }
         Write-Verbose "Check updates for $Build $SearchString"
