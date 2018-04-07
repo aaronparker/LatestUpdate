@@ -16,7 +16,8 @@ Function Select-LatestUpdate {
     .PARAMETER Updates
         An array of updates retrieved by Get-LatestUpdate.
     #>
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", "", Justification="MaxObj is false positive.")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", "", `
+            Justification = "MaxObj is false positive.")]
     [CmdletBinding(SupportsShouldProcess = $False)]
     [OutputType([String])]
     Param(

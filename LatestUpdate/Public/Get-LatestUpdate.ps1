@@ -1,10 +1,15 @@
 Function Get-LatestUpdate {
     <#
     .SYNOPSIS
-        Get the latest Cumulative update for Windows
+        Get the latest Cumulative or Monthly Rollup update for Windows.
 
     .DESCRIPTION
-        This script will return the list of Cumulative updates for Windows 10 and Windows Server 2016 from the Microsoft Update Catalog. Optionally download the updates using the -Download parameter.
+        Returns the latest Cumulative or Monthly Rollup updates for Windows 10 / 8.1 / 7 and corresponding Windows Server from the Microsoft Update Catalog by querying the Update History page.
+
+        Get-LatestUpdate outputs the result as a table that can be passed to Save-LatestUpdate to download the update locally. Then do one or more of the following:
+        - Import the update into an MDT share with Import-LatestUpdate to speed up deployment of Windows (reference images etc.)
+        - Apply the update to an offline WIM using DISM
+        - Deploy the update with ConfigMgr (if not using WSUS)
 
     .NOTES
         Author: Aaron Parker
@@ -17,13 +22,13 @@ Function Get-LatestUpdate {
         https://support.microsoft.com/en-us/help/4043454
 
     .PARAMETER WindowsVersion
-        Specifiy the Windows version to search for updates. Valid values are Windows10, Windows8, Windows7.
+        Specifiy the Windows version to search for updates. Valid values are Windows10, Windows8, Windows7 (applies to desktop and server editions).
 
     .PARAMETER Build
-        Specify the Windows build number for searching cumulative updates. Supports '17133', '16299', '15063', '14393', '10586', '10240'.
+        Dynamic parameter used with -WindowsVersion 'Windows10' Specify the Windows 10 build number for searching cumulative updates. Supports '17133', '16299', '15063', '14393', '10586', '10240'.
 
     .PARAMETER SearchString
-        Specify a specific search string to change the target update behaviour. The default will only download Cumulative updates for x64.
+        Dynamic parameter. Specify a specific search string to change the target update behaviour. The default will only download Cumulative updates for x64.
 
     .EXAMPLE
         Get-LatestUpdate
@@ -50,13 +55,13 @@ Function Get-LatestUpdate {
         Enumerate the latest Monthly Update for Windows Server 2012 R2 / Windows 8.1 x64
 
     .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows8 -SearchString 'Monthly Quality Rollup.*x86'
+        Get-LatestUpdate -WindowsVersion Windows8 -SearchString '.*x86'
     
         Description:
         Enumerate the latest Monthly Update for Windows 8.1 x86
 
     .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows7 -SearchString 'Monthly Quality Rollup.*x86'
+        Get-LatestUpdate -WindowsVersion Windows7 -SearchString '.*x86'
     
         Description:
         Enumerate the latest Monthly Update for Windows 7 x86
@@ -121,12 +126,12 @@ Function Get-LatestUpdate {
             "Windows8" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4010477'
                 [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
-                If ( $Null -eq $SearchString ) { $SearchString = ".*x64" }
+                If ( $Null -eq $SearchString ) { [String] $SearchString = ".*x64" }
             }
             "Windows7" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4009472'
                 [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
-                If ( $Null -eq $SearchString ) { $SearchString = ".*x86" }
+                If ( $Null -eq $SearchString ) { [String] $SearchString = ".*x86" }
             }
         }
         Write-Verbose "Check updates for $Build $SearchString"

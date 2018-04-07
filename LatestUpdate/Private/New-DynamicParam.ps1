@@ -149,7 +149,8 @@ Function New-DynamicParam {
     .FUNCTIONALITY
         PowerShell Language
     #>
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification="Function does not change state.")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", `
+            Justification = "Function does not change state.")]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param(   
         [parameter()]
@@ -179,6 +180,7 @@ Function New-DynamicParam {
         [parameter()]
         [string] $HelpMessage,
 
+        [parameter()]
         [validatescript( {
                 if (-not ( $_ -is [System.Management.Automation.RuntimeDefinedParameterDictionary] -or -not $_) ) {
                     Throw "DPDictionary must be a System.Management.Automation.RuntimeDefinedParameterDictionary object, or not exist"
