@@ -149,33 +149,35 @@ Function New-DynamicParam {
     .FUNCTIONALITY
         PowerShell Language
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification="Function does not change state.")]
+    [CmdletBinding(SupportsShouldProcess = $False)]
     Param(   
-        [string]
-        $Name,
+        [parameter()]
+        [string] $Name,
     
-        [System.Type]
-        $Type = [string],
+        [parameter()]
+        [System.Type] $Type = [string],
 
-        [string[]]
-        $Alias = @(),
+        [parameter()]
+        [string[]] $Alias = @(),
 
-        [string[]]
-        $ValidateSet,
+        [parameter()]
+        [string[]] $ValidateSet,
     
-        [switch]
-        $Mandatory,
-    
-        [string]
-        $ParameterSetName = "__AllParameterSets",
-    
-        [int]
-        $Position,
-    
-        [switch]
-        $ValueFromPipelineByPropertyName,
-    
-        [string]
-        $HelpMessage,
+        [parameter()]
+        [switch] $Mandatory,
+
+        [parameter()]
+        [string] $ParameterSetName = "__AllParameterSets",
+
+        [parameter()]
+        [int] $Position,
+
+        [parameter()]
+        [switch] $ValueFromPipelineByPropertyName,
+
+        [parameter()]
+        [string] $HelpMessage,
 
         [validatescript( {
                 if (-not ( $_ -is [System.Management.Automation.RuntimeDefinedParameterDictionary] -or -not $_) ) {
@@ -200,7 +202,6 @@ Function New-DynamicParam {
     If ($HelpMessage) {
         $ParamAttr.HelpMessage = $HelpMessage
     }
- 
     $AttributeCollection = New-Object 'Collections.ObjectModel.Collection[System.Attribute]'
     $AttributeCollection.Add($ParamAttr)
     
@@ -215,7 +216,6 @@ Function New-DynamicParam {
         $ParamAlias = New-Object System.Management.Automation.AliasAttribute -ArgumentList $Alias
         $AttributeCollection.Add($ParamAlias)
     }
-
  
     #Create the dynamic parameter
     $Parameter = New-Object -TypeName System.Management.Automation.RuntimeDefinedParameter -ArgumentList @($Name, $Type, $AttributeCollection)

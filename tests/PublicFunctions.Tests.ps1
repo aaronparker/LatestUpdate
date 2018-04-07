@@ -22,42 +22,42 @@ Describe 'Get-LatestUpdate' {
             }
         }
     }
-    Context "Returns expected results with -SearchString" {
+    Context "Windows 10: Returns expected results with -SearchString" {
         It "Given 'Cumulative.*x86' returns updates for Windows 10 x86" {
-            $Updates = Get-LatestUpdate -SearchString "Cumulative.*x86"
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -SearchString "Cumulative.*x86"
             $Updates[0].Note -match "Cumulative.*x86" | Should -Be $True
         }
         It "Given 'Cumulative.*Server.*x64' returns updates for Windows Server only" {
-            $Updates = Get-LatestUpdate -SearchString "Cumulative.*Server.*x64"
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -SearchString "Cumulative.*Server.*x64"
             $Updates[0].Note -match "Cumulative.*Server.*x64" | Should -Be $True
         }
     }
-    Context "Returns expected results with -Build" {
+    Context "Windows 10: Returns expected results with -Build" {
         It "Given '16299' returns updates for build 1709" {
-            $Updates = Get-LatestUpdate -Build '16299'
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build '16299'
             $Updates[0].Note -match "Cumulative.*1709" | Should -Be $True
         }
         It "Given '15063' returns updates for build 1703" {
-            $Updates = Get-LatestUpdate -Build '15063'
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build '15063'
             $Updates[0].Note -match "Cumulative.*1703" | Should -Be $True
         }
         It "Given '14393' returns updates for build 1607" {
-            $Updates = Get-LatestUpdate -Build '14393'
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build '14393'
             $Updates[0].Note -match "Cumulative.*1607" | Should -Be $True
         }
         It "Given '10586' returns updates for build 1511" {
-            $Updates = Get-LatestUpdate -Build '10586'
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build '10586'
             $Updates[0].Note -match "Cumulative.*1511" | Should -Be $True
         }
         It "Given '10240' returns updates for build 1507" {
-            $Updates = Get-LatestUpdate -Build '10240'
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build '10240'
             $Updates[0].Note -match "Cumulative.*1507" | Should -Be $True
         }
     }
 }
 
 Describe 'Save-LatestUpdate' {
-    Context "Download the latest update" {
+    Context "Download the latest Windows 10 update" {
         It "Given updates returned from Get-LatestUpdate, it successfully downloads the update" {
             $Updates = Get-LatestUpdate
             $Url = Save-LatestUpdate -Updates $Updates -Path "$($ProjectRoot)\.."
