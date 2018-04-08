@@ -1,5 +1,25 @@
 # Change Log
 
+## v1.1.0.34
+
+### General
+
+- Update module version
+- Inline help updates
+- Module description updates
+
+### Public Functions
+
+- Add support for Windows 8.1 / 7 (and Windows Server 2012 R2 / 2008 R2) to `Get-LatestUpdate`
+- Change parameters with -WindowsVersion, -Build, -Architecture in `Get-LatestUpdate` to support Windows OS changes
+
+### Private Functions
+- Add private function New-DynamicParam to support -WindowsVersion, -Build, -Architecture in `Get-LatestUpdate`
+
+### Tests
+
+- Update Pester tests
+
 ## v1.0.1.27
 
 ### General
