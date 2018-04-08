@@ -34,19 +34,25 @@ Function Get-LatestUpdate {
         Get-LatestUpdate
 
         Description:
-        Get the latest Cumulative Update for Windows 10 x64
+        Get the latest Cumulative Update for Windows 10 x64 (Semi-Annual Channel)
 
     .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows10 -SearchString 'Cumulative.*x86'
+        Get-LatestUpdate -WindowsVersion Windows10 -Architecture x86
 
         Description:
         Enumerate the latest Cumulative Update for Windows 10 x86 (Semi-Annual Channel)
 
     .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows10 -Build 14393 -SearchString 'Cumulative.*Server.*x64'
+        Get-LatestUpdate -WindowsVersion Windows10 -Build 14393
     
         Description:
-        Enumerate the latest Cumulative Update for Windows Server 2016
+        Enumerate the latest Cumulative Update for Windows 10 1607 and Windows Server 2016
+
+    .EXAMPLE
+        Get-LatestUpdate -WindowsVersion Windows10 -Build 15063 -Architecture x86
+    
+        Description:
+        Enumerate the latest Cumulative Update for Windows 10 x86 1703
 
     .EXAMPLE
         Get-LatestUpdate -WindowsVersion Windows8
@@ -55,51 +61,54 @@ Function Get-LatestUpdate {
         Enumerate the latest Monthly Update for Windows Server 2012 R2 / Windows 8.1 x64
 
     .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows8 -SearchString '.*x86'
+        Get-LatestUpdate -WindowsVersion Windows8 -Architecture x86
     
         Description:
         Enumerate the latest Monthly Update for Windows 8.1 x86
 
     .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows7 -SearchString '.*x86'
+        Get-LatestUpdate -WindowsVersion Windows7 -Architecture x86
     
         Description:
-        Enumerate the latest Monthly Update for Windows 7 x86
+        Enumerate the latest Monthly Update for Windows 7 (and Windows 7 Embedded) x86
     #>
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param(
-        [Parameter(Mandatory = $False, HelpMessage = "Select the OS to search for updates")]
+        [Parameter(Mandatory = $False, Position = 0, HelpMessage = "Select the OS to search for updates")]
         [ValidateSet('Windows10', 'Windows8', 'Windows7')]
         [String] $WindowsVersion = "Windows10"
     )
     DynamicParam {
-        #Create the RuntimeDefinedParameterDictionary
+        # Create dynamic parameters. Windows 10 can use -Build and -Architecture
+        # Windows 8/7 use -Architecture only
         $Dictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
         If ( $WindowsVersion -eq "Windows10") {
             $args = @{
                 Name         = "Build"
                 Type         = [String]
                 ValidateSet  = @('17133', '16299', '15063', '14393', '10586', '10240')
+                Position     = 1
                 HelpMessage  = "Provide a Windows 10 build number"
                 DPDictionary = $Dictionary
             }
             New-DynamicParam @args
-
             $args = @{
-                Name         = "SearchString"
+                Name         = "Architecture"
                 Type         = [String]
-                ValidateSet  = @('Cumulative.*x64', 'Cumulative.*Server.*x64', 'Cumulative.*x86')
-                HelpMessage  = "Search query string."
+                ValidateSet  = @('x64', 'x86')
+                Position     = 2
+                HelpMessage  = "Processor architecture to return updates for."
                 DPDictionary = $Dictionary
             }
             New-DynamicParam @args
         }
         If ( ($WindowsVersion -eq "Windows8") -or ($WindowsVersion -eq "Windows7") ) {
             $args = @{
-                Name         = "SearchString"
+                Name         = "Architecture"
                 Type         = [String]
-                ValidateSet  = @('.*x64', '.*x86')
-                HelpMessage  = "Search query string."
+                ValidateSet  = @('x64', 'x86')
+                Position     = 1
+                HelpMessage  = "Processor architecture to return updates for."
                 DPDictionary = $Dictionary
             }
             New-DynamicParam @args
@@ -108,7 +117,7 @@ Function Get-LatestUpdate {
         Write-Output $Dictionary
     }
     Begin {
-        #Get common parameters, pick out bound parameters not in that set
+        # Get the dynamic parameters and assign to parameters
         Function _temp { [cmdletbinding()] param() }
         $BoundKeys = $PSBoundParameters.keys | Where-Object { (Get-Command _temp | Select-Object -ExpandProperty parameters).Keys -notcontains $_}
         ForEach ($param in $BoundKeys) {
@@ -117,21 +126,34 @@ Function Get-LatestUpdate {
                 Write-Verbose "Adding variable for dynamic parameter '$param' with value '$($PSBoundParameters.$param)'"
             }
         }
-        
+        # Set values for -Build and -SearchString as required for each platform
         Switch ( $WindowsVersion ) {
             "Windows10" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4000816'
-                If ( $Null -eq $SearchString ) { $SearchString = "Cumulative.*x64" }
+                If ( $Null -eq $Build ) { [String] $Build = "16299" }
+                [String] $SearchString = Switch ( $Architecture ) {
+                    "x64" { 'Cumulative.*x64' }
+                    "x86" { 'Cumulative.*x86' }
+                    Default { 'Cumulative.*x64' }
+                }
             }
             "Windows8" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4010477'
                 [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
-                If ( $Null -eq $SearchString ) { [String] $SearchString = ".*x64" }
+                [String] $SearchString = Switch ( $Architecture ) {
+                    "x64" { ".*x64" }
+                    "x86" { ".*x86" }
+                    Default { ".*x64" }
+                }
             }
             "Windows7" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4009472'
                 [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
-                If ( $Null -eq $SearchString ) { [String] $SearchString = ".*x86" }
+                [String] $SearchString = Switch ( $Architecture ) {
+                    "x64" { ".*x64" }
+                    "x86" { ".*x86" }
+                    Default { ".*x64" }
+                }
             }
         }
         Write-Verbose "Check updates for $Build $SearchString"
