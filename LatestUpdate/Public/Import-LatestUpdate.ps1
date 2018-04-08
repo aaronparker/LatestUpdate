@@ -26,8 +26,7 @@ Function Import-LatestUpdate {
         Before importing the latest updates into the target path, remove any existing update package.
 
     .EXAMPLE
-        $Updates = Get-LatestUpdate
-        Save-LatestUpdate -Updates $Updates -Path "C:\Temp\Updates" -Verbose
+        Get-LatestUpdate | Save-LatestUpdate -Path "C:\Temp\Updates"
         Import-LatestUpdate -UpdatePath "C:\Temp\Updates" -SharePath "\\server\reference" -PackagePath "Windows 10"
         
         Description:

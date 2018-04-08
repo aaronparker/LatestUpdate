@@ -4,7 +4,12 @@ Function Save-LatestUpdate {
         Downloads the latest cumulative update passed from Get-LatestUpdate.
 
     .DESCRIPTION
-        Downloads the latest cumulative update passed from Get-LatestUpdate to a local folder. The update can then be imported into an MDT share with Import-LatestUpdate.
+        Downloads the latest cumulative update passed from Get-LatestUpdate to a local folder.
+
+        Then do one or more of the following:
+        - Import the update into an MDT share with Import-LatestUpdate to speed up deployment of Windows (reference images etc.)
+        - Apply the update to an offline WIM using DISM
+        - Deploy the update with ConfigMgr (if not using WSUS)
 
     .NOTES
         Author: Aaron Parker
@@ -14,17 +19,17 @@ Function Save-LatestUpdate {
         The array of latest cumulative updates retreived by Get-LatestUpdate.
 
     .PARAMETER Path
-        A destination path for downloading the cumulative updates to. This path must exist.
+        A destination path for downloading the cumulative updates to. This path must exist. Uses the current diretory by default.
 
     .EXAMPLE
-        Get-LatestUpdate | Save-LatestUpdate -Path C:\Temp\Update
+        Get-LatestUpdate | Save-LatestUpdate
 
         Description:
         Retreives the latest Windows 10 Cumulative Update with Get-LatestUpdate and passes the array of updates to Save-LatestUpdate on the pipeline.
-        Save-LatestUpdate then downloads the latest updates to C:\Temp\Update.
+        Save-LatestUpdate then downloads the latest updates to the current directory.
 
     .EXAMPLE
-        $Updates = Get-LatestUpdate -Build 14393
+        $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build 14393
         Save-LatestUpdate -Updates $Updates -Path C:\Temp\Update
 
         Description:

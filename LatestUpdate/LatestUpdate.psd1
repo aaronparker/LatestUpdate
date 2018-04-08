@@ -12,7 +12,7 @@
 RootModule = 'LatestUpdate.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.1.27'
+ModuleVersion = '1.1.0.27'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -30,11 +30,11 @@ CompanyName = 'stealthpuppy'
 Copyright = '(c) 2018 stealthpuppy. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'A module for retrieving the latest Windows 10 / Windows Server cumulative update from the Microsoft Update History page, downloading the update file locally and importing into a Microsoft Deployment Toolkit deployment share. Importing the updates into an MDT share speeds the installation and patching of Windows 10.
+Description = 'A module for retrieving the latest Windows 10 / 8.1 / 7 (and Windows Server) Cumulative or Monthly Rollup updates from the Microsoft Update History page, downloading the update file locally and importing into a Microsoft Deployment Toolkit deployment share. Importing the updates into an MDT share speeds the installation and patching of Windows 10.
 
 Get-LatestUpdate supports querying for Windows builds and processor architecture for downloading updates to suit your specific environment.
 
-Get-LatestUpdate and Save-LatestUpdate support PowerShell Core; however, Import-LatestUpdate requires the Microsoft Deployment Toolkit, so requires Windows PowerShell at this time.'
+Get-LatestUpdate and Save-LatestUpdate support PowerShell Core; however, Import-LatestUpdate requires the Microsoft Deployment Toolkit, so requires Windows PowerShell until Microsoft updates the MDT PowerShell module to support PowerShell Core.'
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '5.0'
@@ -102,7 +102,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'Windows10','WindowsServer2016','CumulativeUpdate','LatestUpdate','MDT','MicrosoftDeploymentToolkit'
+        Tags = 'Windows10','WindowsServer2016','CumulativeUpdate','LatestUpdate','MDT','MicrosoftDeploymentToolkit', 'MonthlyUpdate'
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/aaronparker/LatestUpdate/blob/master/LICENSE'

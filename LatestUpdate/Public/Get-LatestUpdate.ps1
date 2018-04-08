@@ -1,10 +1,15 @@
 Function Get-LatestUpdate {
     <#
     .SYNOPSIS
-        Get the latest Cumulative update for Windows
+        Get the latest Cumulative or Monthly Rollup update for Windows.
 
     .DESCRIPTION
-        This script will return the list of Cumulative updates for Windows 10 and Windows Server 2016 from the Microsoft Update Catalog. Optionally download the updates using the -Download parameter.
+        Returns the latest Cumulative or Monthly Rollup updates for Windows 10 / 8.1 / 7 and corresponding Windows Server from the Microsoft Update Catalog by querying the Update History page.
+
+        Get-LatestUpdate outputs the result as a table that can be passed to Save-LatestUpdate to download the update locally. Then do one or more of the following:
+        - Import the update into an MDT share with Import-LatestUpdate to speed up deployment of Windows (reference images etc.)
+        - Apply the update to an offline WIM using DISM
+        - Deploy the update with ConfigMgr (if not using WSUS)
 
     .NOTES
         Author: Aaron Parker
@@ -16,47 +21,141 @@ Function Get-LatestUpdate {
     .LINK
         https://support.microsoft.com/en-us/help/4043454
 
+    .PARAMETER WindowsVersion
+        Specifiy the Windows version to search for updates. Valid values are Windows10, Windows8, Windows7 (applies to desktop and server editions).
+
     .PARAMETER Build
-        Specify the Windows build number for searching cumulative updates. Supports '16299', '15063', '14393', '10586', '10240'.
+        Dynamic parameter used with -WindowsVersion 'Windows10' Specify the Windows 10 build number for searching cumulative updates. Supports '17133', '16299', '15063', '14393', '10586', '10240'.
 
     .PARAMETER SearchString
-        Specify a specific search string to change the target update behaviour. The default will only download Cumulative updates for x64.
-
-    .PARAMETER StartKB
-        The JSON used to query updates. Should not need to change unless Microsoft changes the JSON URL.
+        Dynamic parameter. Specify a specific search string to change the target update behaviour. The default will only download Cumulative updates for x64.
 
     .EXAMPLE
         Get-LatestUpdate
 
         Description:
-        Get the latest Cumulative Update for Windows 10 x64
+        Get the latest Cumulative Update for Windows 10 x64 (Semi-Annual Channel)
 
     .EXAMPLE
-        Get-LatestUpdate -SearchString 'Cumulative.*x86'
+        Get-LatestUpdate -WindowsVersion Windows10 -Architecture x86
 
         Description:
         Enumerate the latest Cumulative Update for Windows 10 x86 (Semi-Annual Channel)
 
     .EXAMPLE
-        Get-LatestUpdate -SearchString 'Cumulative.*Server.*x64' -Build 14393    
+        Get-LatestUpdate -WindowsVersion Windows10 -Build 14393
     
         Description:
-        Enumerate the latest Cumulative Update for Windows Server 2016
+        Enumerate the latest Cumulative Update for Windows 10 1607 and Windows Server 2016
+
+    .EXAMPLE
+        Get-LatestUpdate -WindowsVersion Windows10 -Build 15063 -Architecture x86
+    
+        Description:
+        Enumerate the latest Cumulative Update for Windows 10 x86 1703
+
+    .EXAMPLE
+        Get-LatestUpdate -WindowsVersion Windows8
+    
+        Description:
+        Enumerate the latest Monthly Update for Windows Server 2012 R2 / Windows 8.1 x64
+
+    .EXAMPLE
+        Get-LatestUpdate -WindowsVersion Windows8 -Architecture x86
+    
+        Description:
+        Enumerate the latest Monthly Update for Windows 8.1 x86
+
+    .EXAMPLE
+        Get-LatestUpdate -WindowsVersion Windows7 -Architecture x86
+    
+        Description:
+        Enumerate the latest Monthly Update for Windows 7 (and Windows 7 Embedded) x86
     #>
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param(
-        [Parameter(Mandatory = $False, HelpMessage = "JSON source for the update KB articles.")]
-        [Parameter(ParameterSetName = 'Download', Mandatory = $False)]
-        [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4000816',
-
-        [Parameter(Mandatory = $False, HelpMessage = "Windows build number.")]
-        [ValidateSet('16299', '15063', '14393', '10586', '10240')]
-        [String] $Build = '16299',
-
-        [Parameter(Mandatory = $False, HelpMessage = "Search query string.")]
-        [String] $SearchString = 'Cumulative.*x64'
+        [Parameter(Mandatory = $False, Position = 0, HelpMessage = "Select the OS to search for updates")]
+        [ValidateSet('Windows10', 'Windows8', 'Windows7')]
+        [String] $WindowsVersion = "Windows10"
     )
+    DynamicParam {
+        # Create dynamic parameters. Windows 10 can use -Build and -Architecture
+        # Windows 8/7 use -Architecture only
+        $Dictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
+        If ( $WindowsVersion -eq "Windows10") {
+            $args = @{
+                Name         = "Build"
+                Type         = [String]
+                ValidateSet  = @('17133', '16299', '15063', '14393', '10586', '10240')
+                Position     = 1
+                HelpMessage  = "Provide a Windows 10 build number"
+                DPDictionary = $Dictionary
+            }
+            New-DynamicParam @args
+            $args = @{
+                Name         = "Architecture"
+                Type         = [String]
+                ValidateSet  = @('x64', 'x86')
+                Position     = 2
+                HelpMessage  = "Processor architecture to return updates for."
+                DPDictionary = $Dictionary
+            }
+            New-DynamicParam @args
+        }
+        If ( ($WindowsVersion -eq "Windows8") -or ($WindowsVersion -eq "Windows7") ) {
+            $args = @{
+                Name         = "Architecture"
+                Type         = [String]
+                ValidateSet  = @('x64', 'x86')
+                Position     = 1
+                HelpMessage  = "Processor architecture to return updates for."
+                DPDictionary = $Dictionary
+            }
+            New-DynamicParam @args
+        }
+        #return RuntimeDefinedParameterDictionary
+        Write-Output $Dictionary
+    }
     Begin {
+        # Get the dynamic parameters and assign to parameters
+        Function _temp { [cmdletbinding()] param() }
+        $BoundKeys = $PSBoundParameters.keys | Where-Object { (Get-Command _temp | Select-Object -ExpandProperty parameters).Keys -notcontains $_}
+        ForEach ($param in $BoundKeys) {
+            If (-not ( Get-Variable -name $param -scope 0 -ErrorAction SilentlyContinue ) ) {
+                New-Variable -Name $Param -Value $PSBoundParameters.$param
+                Write-Verbose "Adding variable for dynamic parameter '$param' with value '$($PSBoundParameters.$param)'"
+            }
+        }
+        # Set values for -Build and -SearchString as required for each platform
+        Switch ( $WindowsVersion ) {
+            "Windows10" {
+                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4000816'
+                If ( $Null -eq $Build ) { [String] $Build = "16299" }
+                [String] $SearchString = Switch ( $Architecture ) {
+                    "x64" { 'Cumulative.*x64' }
+                    "x86" { 'Cumulative.*x86' }
+                    Default { 'Cumulative.*x64' }
+                }
+            }
+            "Windows8" {
+                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4010477'
+                [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
+                [String] $SearchString = Switch ( $Architecture ) {
+                    "x64" { ".*x64" }
+                    "x86" { ".*x86" }
+                    Default { ".*x64" }
+                }
+            }
+            "Windows7" {
+                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4009472'
+                [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
+                [String] $SearchString = Switch ( $Architecture ) {
+                    "x64" { ".*x64" }
+                    "x86" { ".*x86" }
+                    Default { ".*x64" }
+                }
+            }
+        }
         Write-Verbose "Check updates for $Build $SearchString"
     }
     Process {
@@ -67,8 +166,9 @@ Function Get-LatestUpdate {
             Select-Object -ExpandProperty Links |
             Where-Object level -eq 2 |
             Where-Object text -match $Build |
-            Select-LatestUpdate |
-            Select-Object -First 1
+            # Select-LatestUpdate |
+        Select-Object -First 1
+        If ( $Null -eq $kbID ) { Write-Warning -Message "kbID is Null. Unable to read from the KB from the JSON." }
         #endregion
 
         #region get the download link from Windows Update
@@ -76,18 +176,24 @@ Function Get-LatestUpdate {
         Write-Verbose "Found ID: KB$($kbID.articleID)"
         $kbObj = Invoke-WebRequest -Uri "http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($kbID.articleID)"
 
-        # Parse the available KB IDs
+        # Write warnings if we can't read values
+        If ( $Null -eq $kbObj ) { Write-Warning -Message "kbObj is Null. Unable to read KB details from the Catalog." }
+        If ( $Null -eq $kbObj.InputFields ) { Write-Warning -Message "kbObj.InputFields is Null. Unable to read button details from the Catalog KB page." }
+        #endregion
+
+        #region Parse the available KB IDs
         $availableKbIDs = $kbObj.InputFields | 
             Where-Object { $_.Type -eq 'Button' -and $_.Value -eq 'Download' } | 
             Select-Object -ExpandProperty ID
         Write-Verbose "Ids found:"
-        ForEach ($id in $availableKbIDs) {
+        ForEach ( $id in $availableKbIDs ) {
             "`t$($id | Out-String)" | Write-Verbose
         }
+        #endregion
 
-        # Invoke-WebRequest on PowerShell Core doesn't return innerText
+        #region Invoke-WebRequest on PowerShell Core doesn't return innerText
         # (Same as Invoke-WebRequest -UseBasicParsing on Windows PS)
-        If (Test-PSCore) {
+        If ( Test-PSCore ) {
             Write-Verbose "Using outerHTML. Parsing KB notes"
             $kbIDs = $kbObj.Links | 
                 Where-Object ID -match '_link' |
@@ -103,12 +209,14 @@ Function Get-LatestUpdate {
                 ForEach-Object { $_.Id.Replace('_link', '') } |
                 Where-Object { $_ -in $availableKbIDs }
         }
+        #endregion
 
+        #region Read KB details
         $urls = @()
         ForEach ( $kbID in $kbIDs ) {
             Write-Verbose "Download $kbID"
-            $Post = @{ size = 0; updateID = $kbID; uidInfo = $kbID } | ConvertTo-Json -Compress
-            $PostBody = @{ updateIDs = "[$Post]" } 
+            $post = @{ size = 0; updateID = $kbID; uidInfo = $kbID } | ConvertTo-Json -Compress
+            $postBody = @{ updateIDs = "[$post]" } 
             $urls += Invoke-WebRequest -Uri 'http://www.catalog.update.microsoft.com/DownloadDialog.aspx' -Method Post -Body $postBody |
                 Select-Object -ExpandProperty Content |
                 Select-String -AllMatches -Pattern "(http[s]?\://download\.windowsupdate\.com\/[^\'\""]*)" | 
@@ -116,7 +224,7 @@ Function Get-LatestUpdate {
         }
         #endregion
 
-        # Select the update names
+        #region Select the update names
         If ( Test-PSCore ) {
             # Updated for PowerShell Core
             $notes = ([regex]'(?<note>\d{4}-\d{2}.*\(KB\d{7}\))').match($kbObj.RawContent).Value
@@ -125,7 +233,9 @@ Function Get-LatestUpdate {
             # Original code for Windows PowerShell
             $notes = $kbObj.ParsedHtml.body.getElementsByTagName('a') | ForEach-Object InnerText | Where-Object { $_ -match $SearchString }
         }
+        #endregion
 
+        #region Build the output array
         [int] $i = 0; $output = @()
         ForEach ( $url in $urls ) {
             $item = New-Object PSObject
@@ -140,6 +250,7 @@ Function Get-LatestUpdate {
             $output += $item
             $i = $i + 1
         }
+        #endregion
     }
     End {
         # Write the URLs list to the pipeline
