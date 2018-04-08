@@ -23,12 +23,12 @@ Describe 'Get-LatestUpdate' {
         }
     }
     Context "Windows 10: Returns expected results with -SearchString" {
-        It "Given 'Cumulative.*x86' returns updates for Windows 10 x86" {
-            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -SearchString "Cumulative.*x86"
+        It "Given '-Architecture x86' returns updates for Windows 10 x86" {
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Architecture x86
             $Updates[0].Note -match "Cumulative.*x86" | Should -Be $True
         }
-        It "Given 'Cumulative.*Server.*x64' returns updates for Windows Server only" {
-            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -SearchString "Cumulative.*Server.*x64"
+        It "Given '-Build 16299 -Architecture x64' returns updates for Windows Server 1709" {
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build 16299 -Architecture x64
             $Updates[0].Note -match "Cumulative.*Server.*x64" | Should -Be $True
         }
     }
