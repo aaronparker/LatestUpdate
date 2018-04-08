@@ -84,9 +84,9 @@ Updates for the following operating systems can be returned:
 
 Returning updates for specific versions, builds and processor architectures differs between Windows 10 and Windows 8.1/7. By default, updates for Windows 10 are returned.
 
-* -WindowsVersion: use to specific the version of Windows to search for updates. Windows10, Windows8 and Windows7
-* -Build: only available with '-WindowsVersion Windows10'. Specify a build number - '17133', '16299', '15063', '14393', '10586', '10240'.
-* -Architecture: Returned the desired processor architecture with x86 and x64
+* `-WindowsVersion`: use to specific the version of Windows to search for updates. Windows10, Windows8 and Windows7
+* `-Build`: only available with '-WindowsVersion Windows10'. Specify a build number - '17133', '16299', '15063', '14393', '10586', '10240'.
+* `-Architecture`: Returned the desired processor architecture with x86 and x64
 
 ## Download the Latest Update
 
