@@ -29,7 +29,7 @@ Function Save-LatestUpdate {
         Save-LatestUpdate then downloads the latest updates to the current directory.
 
     .EXAMPLE
-        $Updates = Get-LatestUpdate -Build 14393
+        $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build 14393
         Save-LatestUpdate -Updates $Updates -Path C:\Temp\Update
 
         Description:
