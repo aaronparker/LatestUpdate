@@ -2,6 +2,7 @@
 
 [![Build status][appveyor-badge]][appveyor-build]
 [![PowerShell Gallery][psgallery-badge]][psgallery]
+[![PowerShell Gallery][psgallery-version-badge][psgallery]
 [![GitHub Release][github-release-badge]][github-release]
 
 ## About
@@ -28,6 +29,7 @@ See [Usage](USAGE.MD) for details on using the LatestUpdate module.
 [appveyor-build]: https://ci.appveyor.com/project/aaronparker/latestupdate/
 [psgallery-badge]: https://img.shields.io/powershellgallery/dt/latestupdate.svg
 [psgallery]: https://www.powershellgallery.com/packages/latestupdate
+[psgallery-version-badge]: https://img.shields.io/powershellgallery/v/LatestUpdate.svg
 [gitbooks-badge]: https://www.gitbook.com/button/status/book/aaronparker/latestupdate/
 [gitbooks-build]: https://www.gitbook.com/book/aaronparker/latestupdate
 [github-release-badge]: https://img.shields.io/github/release/aaronparker/LatestUpdate.svg
