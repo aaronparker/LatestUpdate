@@ -4,7 +4,7 @@
 [![GitHub Release][github-release-badge]][github-release]
 [![PowerShell Gallery][psgallery-badge]][psgallery]
 [![PowerShell Gallery Version][psgallery-version-badge]][psgallery]
-[![License][license]][license-badge]
+[![License][license-badge]][license]
 
 ## About
 
