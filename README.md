@@ -2,7 +2,7 @@
 
 [![Build status][appveyor-badge]][appveyor-build]
 [![PowerShell Gallery][psgallery-badge]][psgallery]
-[![PowerShell Gallery Version][psgallery-version-badge][psgallery]
+[![PowerShell Gallery Version][psgallery-version-badge][psgallery-version]
 [![GitHub Release][github-release-badge]][github-release]
 
 ## About
@@ -30,3 +30,4 @@ See [Usage](USAGE.MD) for details on using the LatestUpdate module.
 [psgallery-badge]: https://img.shields.io/powershellgallery/dt/latestupdate.svg
 [psgallery]: https://www.powershellgallery.com/packages/latestupdate
 [psgallery-version-badge]: https://img.shields.io/powershellgallery/v/LatestUpdate.svg
+[psgallery-version]: https://www.powershellgallery.com/packages/latestupdate
