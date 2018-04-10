@@ -20,13 +20,13 @@ matrix:
   fast_finish: true
 
 install:
-  - pwsh -File "${env:TRAVIS_BUILD_DIR}/tests/Install.ps1"
+  - pwsh -File "${TRAVIS_BUILD_DIR}/tests/Install.ps1"
 
 before_script:
-  - pwsh -File "${env:TRAVIS_BUILD_DIR}/tests/Build.ps1"
+  - pwsh -File "${TRAVIS_BUILD_DIR}/tests/Build.ps1"
 
 script:
-  - pwsh -File "${env:TRAVIS_BUILD_DIR}/tests/Main.Tests.ps1"
+  - pwsh -File "${TRAVIS_BUILD_DIR}/tests/Main.Tests.ps1"
 
 after_success:
-#  - pwsh -File "${env:TRAVIS_BUILD_DIR}/deploy.ps1"
+#  - pwsh -File "${TRAVIS_BUILD_DIR}/deploy.ps1"
