@@ -1,9 +1,9 @@
 # LatestUpdate
 
 [![Build status][appveyor-badge]][appveyor-build]
+[![GitHub Release][github-release-badge]][github-release]
 [![PowerShell Gallery][psgallery-badge]][psgallery]
 [![PowerShell Gallery Version][psgallery-version-badge]][psgallery]
-[![GitHub Release][github-release-badge]][github-release]
 
 ## About
 
