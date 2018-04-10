@@ -4,6 +4,8 @@
 [![GitHub Release][github-release-badge]][github-release]
 [![PowerShell Gallery][psgallery-badge]][psgallery]
 [![PowerShell Gallery Version][psgallery-version-badge]][psgallery]
+[![License][license-badge]][license]
+[![Travis][travis-badge]][travis]
 
 ## About
 
@@ -25,11 +27,15 @@ LatestUpdate supports PowerShell 5.0 and above and is tested on macOS, Windows 1
 
 See [Usage](USAGE.MD) for details on using the LatestUpdate module.
 
-[appveyor-badge]: https://ci.appveyor.com/api/projects/status/s4g24puifpegq7kf/branch/master?svg=true
+[appveyor-badge]: https://img.shields.io/appveyor/ci/aaronparker/latestupdate/master.svg?style=flat-square&logo=appveyor
 [appveyor-build]: https://ci.appveyor.com/project/aaronparker/latestupdate/
-[psgallery-badge]: https://img.shields.io/powershellgallery/dt/latestupdate.svg
+[psgallery-badge]: https://img.shields.io/powershellgallery/dt/latestupdate.svg?style=flat-square
 [psgallery]: https://www.powershellgallery.com/packages/latestupdate
-[psgallery-version-badge]: https://img.shields.io/powershellgallery/v/LatestUpdate.svg
+[psgallery-version-badge]: https://img.shields.io/powershellgallery/v/LatestUpdate.svg?style=flat-square
 [psgallery-version]: https://www.powershellgallery.com/packages/latestupdate
-[github-release-badge]: https://img.shields.io/github/release/aaronparker/LatestUpdate.svg
+[github-release-badge]: https://img.shields.io/github/release/aaronparker/LatestUpdate.svg?style=flat-square
 [github-release]: https://github.com/aaronparker/LatestUpdate/releases/latest
+[license-badge]: https://img.shields.io/github/license/aaronparker/latestupdate.svg?style=flat-square
+[license]: https://github.com/aaronparker/LatestUpdate/blob/master/LICENSE
+[travis-badge]: https://img.shields.io/travis/aaronparker/latestupdate.svg?style=flat-square&logo=travis
+[travis]: https://travis-ci.org/aaronparker/LatestUpdate
