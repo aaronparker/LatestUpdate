@@ -2,7 +2,7 @@
 
 [![Build status][appveyor-badge]][appveyor-build]
 [![PowerShell Gallery][psgallery-badge]][psgallery]
-[![PowerShell Gallery Version][psgallery-version-badge][psgallery-version]
+[![PowerShell Gallery Version][psgallery-version-badge]][psgallery-version]
 [![GitHub Release][github-release-badge]][github-release]
 
 ## About
