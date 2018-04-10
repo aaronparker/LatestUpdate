@@ -20,10 +20,11 @@ matrix:
   fast_finish: true
 
 install:
-  - pwsh -File "${TRAVIS_BUILD_DIR}/tests/Install.ps1"
+  - pwsh -File "${TRAVIS_BUILD_DIR}/build/Install-Dependencies.ps1"
+  - pwsh -File "${TRAVIS_BUILD_DIR}/build/Initialize-Environment.ps1"
 
 before_script:
-  - pwsh -File "${TRAVIS_BUILD_DIR}/tests/Build.ps1"
+#  - pwsh -File "${TRAVIS_BUILD_DIR}/tests/Build.ps1"
 
 script:
   - pwsh -File "${TRAVIS_BUILD_DIR}/tests/Main.Tests.ps1"
