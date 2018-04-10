@@ -5,6 +5,7 @@
 [![PowerShell Gallery][psgallery-badge]][psgallery]
 [![PowerShell Gallery Version][psgallery-version-badge]][psgallery]
 [![License][license-badge]][license]
+[![Travis][travis-badge]][travis]
 
 ## About
 
@@ -36,3 +37,5 @@ See [Usage](USAGE.MD) for details on using the LatestUpdate module.
 [github-release]: https://github.com/aaronparker/LatestUpdate/releases/latest
 [license-badge]: https://img.shields.io/github/license/aaronparker/latestupdate.svg?style=flat-square
 [license]: https://github.com/aaronparker/LatestUpdate/blob/master/LICENSE
+[travis-badge]: https://img.shields.io/travis/aaronparker/latestupdate.svg?style=flat-square&logo=travis
+[travis]: https://travis-ci.org/aaronparker/LatestUpdate
