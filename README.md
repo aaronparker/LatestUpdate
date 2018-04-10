@@ -4,6 +4,7 @@
 [![GitHub Release][github-release-badge]][github-release]
 [![PowerShell Gallery][psgallery-badge]][psgallery]
 [![PowerShell Gallery Version][psgallery-version-badge]][psgallery]
+[![License][license]][license-badge]
 
 ## About
 
@@ -33,3 +34,5 @@ See [Usage](USAGE.MD) for details on using the LatestUpdate module.
 [psgallery-version]: https://www.powershellgallery.com/packages/latestupdate
 [github-release-badge]: https://img.shields.io/github/release/aaronparker/LatestUpdate.svg?style=flat-square
 [github-release]: https://github.com/aaronparker/LatestUpdate/releases/latest
+[license-badge]: https://img.shields.io/github/license/aaronparker/latestupdate.svg?style=flat-square
+[license]: https://github.com/aaronparker/LatestUpdate/blob/master/LICENSE
