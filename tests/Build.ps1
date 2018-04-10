@@ -1,3 +1,11 @@
+If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
+    $ProjectRoot = $env:APPVEYOR_BUILD_FOLDER
+}
+Else {
+    # Local Testing 
+    $ProjectRoot = ((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName
+}
+
 # Line break for readability in AppVeyor console
 Write-Host -Object ''
 
@@ -14,7 +22,7 @@ Else {
     # This means that the major / minor / build values will be consistent across GitHub and the Gallery
     Try {
         # This is where the module manifest lives
-        $manifestPath = '.\LatestUpdate\LatestUpdate.psd1'
+        $manifestPath = Join-Path (Join-Path $projectRoot "LatestUpdate") "LatestUpdate.psd1"
 
         # Start by importing the manifest to determine the version, then add 1 to the revision
         $manifest = Test-ModuleManifest -Path $manifestPath
@@ -24,7 +32,7 @@ Else {
         Write-Output "New Version: $newVersion"
 
         # Update the manifest with the new version value and fix the weird string replace bug
-        $functionList = ((Get-ChildItem -Path .\LatestUpdate\Public).BaseName)
+        $functionList = ((Get-ChildItem -Path (Join-Path (Join-Path $projectRoot "LatestUpdate") "Public")).BaseName)
         Update-ModuleManifest -Path $manifestPath -ModuleVersion $newVersion -FunctionsToExport $functionList
         (Get-Content -Path $manifestPath) -replace 'PSGet_LatestUpdate', 'LatestUpdate' | Set-Content -Path $manifestPath
         (Get-Content -Path $manifestPath) -replace 'NewManifest', 'LatestUpdate' | Set-Content -Path $manifestPath
@@ -58,7 +66,7 @@ Else {
     Try {
         # Build a splat containing the required details and make sure to Stop for errors which will trigger the catch
         $PM = @{
-            Path        = '.\LatestUpdate'
+            Path        = Join-Path $projectRoot "LatestUpdate"
             NuGetApiKey = $env:NuGetApiKey
             ErrorAction = 'Stop'
         }

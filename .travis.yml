@@ -1,105 +1,4 @@
-#          YAML Reference Guide: https://docs.travis-ci.com/user/customizing-the-build/
-# Environmental Variables Guide: https://docs.travis-ci.com/user/environment-variables/
-#                YAML Validator: https://lint.travis-ci.org/
-
-# Notes:
-#   - Indent each level of configuration with 2 spaces. Do not use tabs!
-#   - All section names are case-sensitive.
-#   - Section names should be unique on each level.
-
-
-#---------------------------------#
-#      general configuration      #
-#---------------------------------#
-
-# branches to build
-#branches:
-  # whitelist
-  #only:
-    #- master
-
-  # blacklist
-  #except:
-
-#jobs:
-  #include:
-    #- stage:
-
 language: generic
-
-# Runtime
-#dotnet:
-#gemfile:
-#mono:
-#php:
-#python:
-#rvm:
-
-#git:
-  #depth:
-  #submodules:
-
-#---------------------------------#
-#    environment configuration    #
-#---------------------------------#
-
-# Build worker image (VM template)
-#os:
-  #- linux
-  #- osx
-
-#sudo: required
-
-#dist: trusty
-
-#osx_image: xcode9.1
-
-# environment variables
-env:
-  global:
-    # CI abstraction variables
-    - CI_BUILD_PATH="${TRAVIS_BUILD_DIR}"
-    - CI_BUILD_SCRIPTS_PATH="${CI_BUILD_PATH}/build"
-    - CI_OWNER_NAME="$(echo $TRAVIS_REPO_SLUG | cut -d '/' -f1)"
-    - CI_PROJECT_NAME="$(echo $TRAVIS_REPO_SLUG | cut -d '/' -f2)"
-
-    # Coveralls environment variables
-    - CI_NAME='Travis'
-    - CI_BUILD_NUMBER="${TRAVIS_BUILD_NUMBER}"
-    - CI_BUILD_URL="https://travis-ci.org/${env:CI_OWNER_NAME}/${env:CI_PROJECT_NAME}/jobs/${env:TRAVIS_JOB_ID}"
-    - CI_BRANCH="${TRAVIS_BRANCH}"
-    - CI_PULL_REQUEST="${TRAVIS_PULL_REQUEST}"
-
-    # Module variables
-    - CI_MODULE_NAME='Armor'
-    - CI_MODULE_PATH="${CI_BUILD_PATH}/${CI_MODULE_NAME}"
-    - CI_MODULE_LIB_PATH="${CI_MODULE_PATH}/Lib"
-    - CI_MODULE_PRIVATE_PATH="${CI_MODULE_PATH}/Private"
-    - CI_MODULE_PUBLIC_PATH="${CI_MODULE_PATH}/Public"
-    - CI_MODULE_MANIFEST_PATH="${CI_MODULE_PATH}/${CI_MODULE_NAME}.psd1"
-    - CI_MODULE_VERSION="$( grep 'ModuleVersion' $CI_MODULE_MANIFEST_PATH | cut -d \' -f2 )"
-
-    # Testing variables
-    - CI_TESTS_PATH="${CI_BUILD_PATH}/tests"
-    - CI_TEST_RESULTS_PATH="${CI_BUILD_PATH}/TestResults.xml"
-    - CI_COVERAGE_RESULTS_PATH="${CI_BUILD_PATH}/CodeCoverageResults.xml"
-
-    # Deployment variables
-    - CI_DEPLOY_SCRIPTS_PATH="${CI_BUILD_PATH}/deploy"
-
-    # Documentation variables
-    - CI_DOCS_PATH="${CI_BUILD_PATH}/docs"
-
-    # Script path variables
-    - CI_INITIALIZE_ENVIRONMENT_SCRIPT_PATH="${CI_BUILD_SCRIPTS_PATH}/Initialize-Environment.ps1"
-    - CI_INSTALL_DEPENDENCIES_SCRIPT_PATH="${CI_BUILD_SCRIPTS_PATH}/Install-Dependencies.ps1"
-    - CI_BUILD_PROJECT_SCRIPT_PATH="${CI_BUILD_SCRIPTS_PATH}/Build-Project.ps1"
-    - CI_START_TESTS_SCRIPT_PATH="${CI_TESTS_PATH}/Start-Tests.ps1"
-    - CI_PUBLISH_PROJECT_SCRIPT_PATH="${CI_DEPLOY_SCRIPTS_PATH}/Publish-Project.ps1"
-
-    # Encrypted environment variables
-    - secure: 
-  #matrix:
 
 matrix:
   include:
@@ -113,98 +12,21 @@ matrix:
               key_url: "https://packages.microsoft.com/keys/microsoft.asc"
           packages:
             - powershell
-#   - os: osx
+#    - os: osx
 #      osx_image: xcode9.1
 #      before_install:
 #        - brew tap caskroom/cask
 #        - brew cask install powershell
   fast_finish: true
-  #allow_failures:
-  #exclude:
-
-# build cache to preserve files/folders between builds
-#cache:
-
-# enable service required for build/tests
-#services:
-  #- cassandra           # start Apache Cassandra
-  #- couchdb             # start CouchDB
-  #- elasticsearch       # start ElasticSearch
-  #- memcached           # start Memcached
-  #- mongodb             # start MongoDB
-  #- mysql               # start MySQL
-  #- neo4j               # start Neo4j Community Edition
-  #- postgresql          # start PostgreSQL
-  #- rabbitmq            # start RabbitMQ
-  #- redis-server        # start Redis
-  #- riak                # start Riak
-
-#addons:
-  #apt:
-    #sources:
-      #- sourceline: "deb https://packages.microsoft.com/config/ubuntu/14.04/prod.list main"
-        #key_url: "https://packages.microsoft.com/keys/microsoft.asc"
-    #packages:
-      #- powershell
-  #artifacts:
-    #paths:
-      #- ./tests/results/Travis*.xml
-  #chrome:
-  #firefox:
-  #hosts:
-  #mariadb:
-  #rethinkdb:
-  #sauce_connect:
-    #username:
-    #access_key:
-  #ssh_known_hosts:
-
-#before_install:
 
 install:
-  - pwsh -File $CI_INITIALIZE_ENVIRONMENT_SCRIPT_PATH
-  - pwsh -File $CI_INSTALL_DEPENDENCIES_SCRIPT_PATH
+  - pwsh -f "${env:TRAVIS_BUILD_DIR}/Install.ps1"
 
-
-#---------------------------------#
-#       tests configuration       #
-#---------------------------------#
-
-#before_script:
+before_script:
+  - pwsh -f "${env:TRAVIS_BUILD_DIR}/Build.ps1"
 
 script:
-  - pwsh -File $CI_BUILD_PROJECT_SCRIPT_PATH
-  - pwsh -File $CI_START_TESTS_SCRIPT_PATH
+  - pwsh -f "${env:TRAVIS_BUILD_DIR}/Main.Tests.ps1"
 
-#before_cache:
-
-# on successful build
-#after_success:
-
-# on build failure
-#after_failure:
-
-
-#---------------------------------#
-#     deployment configuration    #
-#---------------------------------#
-
-# scripts to run before deployment
-#before_deploy:
-
-#deploy:
-  #skip_cleanup:
-
-# scripts to run after deployment
-#after_deploy:
-
-# after build failure or success
-#after_script:
-
-
-#---------------------------------#
-#         notifications           #
-#---------------------------------#
-
-notifications:
-  email: false
+after_success:
+#  - pwsh -f "${env:TRAVIS_BUILD_DIR}/deploy.ps1"
