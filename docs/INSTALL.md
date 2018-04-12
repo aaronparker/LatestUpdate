@@ -39,3 +39,11 @@ Once installation is complete, you can validate that the module exists by runnin
 ```powershell
 Import-Module LatestUpdate
 ```
+
+## Using the Module
+
+To use the module, we follow 3 tasks:
+
+1. Get the latest update with Get-LatestUpdate
+2. Download the update/s with Save-LatestUpdate
+3. Optionally import the update/s into an MDT deployment share
