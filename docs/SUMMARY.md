@@ -1,7 +1,10 @@
-# Table of contents
+# Summary
 
-* [LatestUpdate](README.md)
+* [Introduction](README.md)
 * [Change log](CHANGELOG.md)
+* [Supported Platforms](SUPPORTED.md)
 * [Installing the module](INSTALL.md)
-* [Using the module](USING.md)
-* [Importing updates](IMPORT.md)
+* Usage
+    * [Retreving the updates](GET.md)
+    * [Downloading the updates](DOWNLOAD.md)
+    * [Importing updates into MDT](IMPORT.md)
