@@ -13,6 +13,10 @@ Importing a cumulative update into [the Packages nodes in an MDT share](https://
 
 This module is a re-write of the Update scripts found here: [https://github.com/aaronparker/MDT/tree/master/Updates](https://github.com/aaronparker/MDT/tree/master/Updates). Re-writing them as a PowerShell module enables better code management and publishing to the PowerShell Gallery for easier installation with `Install-Module`.
 
+## Documentation
+
+Full documentation for the module is located at [https://docs.stealthpuppy.com/latestupdate/](https://docs.stealthpuppy.com/latestupdate/)
+
 ## Supported Platforms
 
 LatestUpdate supports PowerShell 5.0 and above and is tested on macOS, Windows 10 and Windows Server 2016. Some basic testing has been done on Windows 7 with WMF 5.1. If you are running an earlier version of PowerShell, update to the latest release of the [Windows Management Framework](https://docs.microsoft.com/en-us/powershell/wmf/readme) or please use the [previous scripts](https://github.com/aaronparker/MDT/tree/master/Updates) instead.
