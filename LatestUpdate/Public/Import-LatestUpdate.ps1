@@ -27,10 +27,16 @@ Function Import-LatestUpdate {
 
     .EXAMPLE
         Get-LatestUpdate | Save-LatestUpdate -Path "C:\Temp\Updates"
-        Import-LatestUpdate -UpdatePath "C:\Temp\Updates" -SharePath "\\server\reference" -PackagePath "Windows 10"
+        Import-LatestUpdate -UpdatePath "C:\Temp\Updates" -DeployRoot "\\server\reference" -PackagePath "Windows 10"
         
         Description:
         Import the latest update gathered from Get-LatestUpdate into the deployment share \\server\reference under 'Packages\Windows 10'.
+
+    .EXAMPLE
+        Import-LatestUpdate -UpdatePath "C:\Temp\Updates" -DeployRoot "\\server\reference" -PackagePath "Windows 10" -Clean
+        
+        Description:
+        Import the update stored in C:\Temp\Updates into the deployment share \\server\reference under 'Packages\Windows 10'. Any existing packages will be removed before the import.
     #>
     [CmdletBinding(SupportsShouldProcess = $True)]
     Param (
