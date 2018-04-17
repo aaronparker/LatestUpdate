@@ -1,5 +1,15 @@
 # Change Log
 
+## v1.1.0.36
+
+### Public Functions
+
+- Fix inline help examples for `Import-LatestUpdate` to address issue #11
+
+### Tests
+
+- Update Pester tests in `PublicFunctions.Tests.ps1` to ensure successful tests for `Get-LatestUpdate` using `Should -Not -BeNullOrEmpty`
+
 ## v1.1.0.34
 
 ### General
@@ -11,10 +21,10 @@
 ### Public Functions
 
 - Add support for Windows 8.1 / 7 (and Windows Server 2012 R2 / 2008 R2) to `Get-LatestUpdate`
-- Change parameters with -WindowsVersion, -Build, -Architecture in `Get-LatestUpdate` to support Windows OS changes
+- Change parameters with `-WindowsVersion`, `-Build`, `-Architecture` in `Get-LatestUpdate` to support Windows OS changes
 
 ### Private Functions
-- Add private function New-DynamicParam to support -WindowsVersion, -Build, -Architecture in `Get-LatestUpdate`
+- Add private function New-DynamicParam to support `-WindowsVersion`, `-Build`, `-Architecture` in `Get-LatestUpdate`
 
 ### Tests
 
