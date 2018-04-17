@@ -38,6 +38,7 @@ skip_commits:
 only_commits:
   files:
     - LatestUpdate/
+    - tests/
 
 # Install Pester to enable tests
 install:
