@@ -21,14 +21,14 @@ Paste the verbose output from the command here
 Please provide detailed steps for reproducing the issue.
 
 1. Step 1
-1. Step 2
-1. Step 3 (and so on)
+2. Step 2
+3. Step 3 (and so on)
 
 ## Context
 
 Please provide any relevant information about your setup. This is important in case the issue is not reproducible except for under certain conditions.
 
-* **VcRedist Version**: Use `Get-Module -ListAvailable LatestUpdate`
+* **LatestUpdate Version**: Use `Get-Module -ListAvailable LatestUpdate`
 * **PowerShell Version**: Use `Get-PSVersion`
 * **Operating System**:
 
