@@ -86,7 +86,7 @@ Function Get-LatestUpdate {
             $args = @{
                 Name         = "Build"
                 Type         = [String]
-                ValidateSet  = @('17133', '16299', '15063', '14393', '10586', '10240')
+                ValidateSet  = @('17134', '16299', '15063', '14393', '10586', '10240')
                 Position     = 1
                 HelpMessage  = "Provide a Windows 10 build number"
                 DPDictionary = $Dictionary
@@ -130,7 +130,7 @@ Function Get-LatestUpdate {
         Switch ( $WindowsVersion ) {
             "Windows10" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4000816'
-                If ( $Null -eq $Build ) { [String] $Build = "16299" }
+                If ( $Null -eq $Build ) { [String] $Build = "17134" }
                 [String] $SearchString = Switch ( $Architecture ) {
                     "x64" { 'Cumulative.*x64' }
                     "x86" { 'Cumulative.*x86' }
