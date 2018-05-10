@@ -1,5 +1,11 @@
 # Change Log
 
+## v1.1.0.37
+
+### Public Functions
+
+- Updated `Get-LatestUpdate` to support Windows 10 1803 (17134)
+
 ## v1.1.0.36
 
 ### Public Functions
