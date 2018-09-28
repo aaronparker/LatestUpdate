@@ -167,8 +167,8 @@ Function Get-LatestUpdate {
         $XML = [xml](Get-Content -Path $tempfile)
         Remove-Item -Path $tempfile
         #! end fix
-        $ID = $xml.feed.entry | Where-Object -Property title -match $build |  Sort-Object -Property ID -Descending | select -first 1 | Select-Object -ExpandProperty ID
-        $kbID = $ID.split(':') | select -last 1
+        $ID = $xml.feed.entry | Where-Object -Property title -match $build |  Sort-Object -Property ID -Descending | Select-Object -first 1 | Select-Object -ExpandProperty ID
+        $kbID = $ID.split(':') | Select-Object -last 1
 
         If ( $Null -eq $kbID ) { Write-Warning -Message "kbID is Null. Unable to read from the KB from the JSON." }
         #endregion
