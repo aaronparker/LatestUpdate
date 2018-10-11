@@ -86,7 +86,7 @@ Function Get-LatestUpdate {
             $args = @{
                 Name         = "Build"
                 Type         = [String]
-                ValidateSet  = @('17134', '16299', '15063', '14393', '10586', '10240')
+                ValidateSet  = @('17763', '17134', '16299', '15063', '14393', '10586', '10240')
                 Position     = 1
                 HelpMessage  = "Provide a Windows 10 build number"
                 DPDictionary = $Dictionary
