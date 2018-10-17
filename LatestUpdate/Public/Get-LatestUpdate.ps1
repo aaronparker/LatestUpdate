@@ -130,7 +130,7 @@ Function Get-LatestUpdate {
         Switch ( $WindowsVersion ) {
             "Windows10" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom'
-                If ( $Null -eq $Build ) { [String] $Build = "17134" }
+                If ( $Null -eq $Build ) { [String] $Build = "17763" }
                 [String] $SearchString = Switch ( $Architecture ) {
                     "x64" { 'Cumulative.*x64' }
                     "x86" { 'Cumulative.*x86' }
@@ -167,9 +167,20 @@ Function Get-LatestUpdate {
         $XML = [xml](Get-Content -Path $tempfile)
         Remove-Item -Path $tempfile
         #! end fix
-        $ID = $xml.feed.entry | Where-Object -Property title -match $build |  Sort-Object -Property ID -Descending | Select-Object -first 1 | Select-Object -ExpandProperty ID
-        $kbID = $ID.split(':') | Select-Object -last 1
-
+        
+        Switch ( $WindowsVersion ) {
+            "Windows10" { 
+                [regex]$rx = "$build.(\d+)"
+                $BuilMatches = $xml.feed.entry | Where-Object -Property title -match $build
+                $LatestVersion = $BuilMatches | ForEach-Object { ($rx.match($_.title)).value.split('.') | Select-Object -Last 1} | ForEach-Object { [convert]::ToInt32($_, 10) } | Sort-Object -Descending | Select-Object -First 1
+                $kbID = $xml.feed.entry | Where-Object -Property title -Match "$build.$LatestVersion" | Select-Object -ExpandProperty ID | ForEach-Object { $_.split(':') | Select-Object -last 1} | Sort-Object -Descending | select-object -First 1
+            }
+            default {
+                $BuilMatches = $xml.feed.entry | Where-Object -Property title -match $build
+                $kbID = $BuilMatches | Select-Object -ExpandProperty ID | ForEach-Object { $_.split(':') | Select-Object -last 1} | Sort-Object -Descending | select-object -First 1   
+            }
+        }
+        
         If ( $Null -eq $kbID ) { Write-Warning -Message "kbID is Null. Unable to read from the KB from the JSON." }
         #endregion
 
