@@ -33,6 +33,14 @@ Describe 'Get-LatestUpdate' {
         }
     }
     Context "Windows 10: Returns expected results with -Build" {
+        It "Given '17763' returns updates for build 1809" {
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build '17763'
+            $Updates.Note -match "Cumulative.*1803" | Should -Not -BeNullOrEmpty
+        }
+        It "Given '17134' returns updates for build 1803" {
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build '17134'
+            $Updates.Note -match "Cumulative.*1803" | Should -Not -BeNullOrEmpty
+        }
         It "Given '16299' returns updates for build 1709" {
             $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build '16299'
             $Updates.Note -match "Cumulative.*1709" | Should -Not -BeNullOrEmpty
