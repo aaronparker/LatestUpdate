@@ -1,5 +1,11 @@
 # Change Log
 
+## v1.1.0.38
+
+### Public Functions
+
+- Modified `Invoke-WebRequest` calls within `Get-LatestUpdate` and `Save-LatestUpdate` to use the `UseBasicParsing` parameter, removing the reliance on Internet Explorer, and enabling the script to work in PowerShell 6
+
 ## v1.1.0.37
 
 ### Public Functions
