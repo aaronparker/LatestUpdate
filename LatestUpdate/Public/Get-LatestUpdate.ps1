@@ -260,6 +260,6 @@ Function Get-LatestUpdate {
     }
     End {
         # Write the URLs list to the pipeline
-        Write-Output $output
+        Write-Output ($output | Sort-Object URL -Unique)
     }
 }
