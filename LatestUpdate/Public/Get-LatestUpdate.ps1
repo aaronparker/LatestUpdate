@@ -161,23 +161,33 @@ Function Get-LatestUpdate {
     Process {
         #region Find the KB Article Number
         Write-Verbose "Downloading $StartKB to retrieve the list of updates."
-        #! fix for invoke-webrequests creating BOM in XML files
-        $tempfile = Join-Path -Path $env:temp -ChildPath ([System.IO.Path]::GetRandomFileName())
-        Invoke-WebRequest -uri $StartKB -ContentType 'application/atom+xml; charset=utf-8' -OutFile $tempfile
-        $XML = [xml](Get-Content -Path $tempfile)
-        Remove-Item -Path $tempfile
-        #! end fix
+        
+        #! Fix for Invoke-WebRequest creating BOM in XML files; Handle Temp locations on Windows, macOS / Linux
+        If (Test-Path env:Temp) {
+            $tempDir = $env:Temp
+        }
+        ElseIf (Test-Path env:TMPDIR) {
+            $tempDir = $env:TMPDIR
+        }
+        $tempFile = Join-Path -Path $tempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
+        Invoke-WebRequest -Uri $StartKB -ContentType 'application/atom+xml; charset=utf-8' -UseBasicParsing -OutFile $tempFile
+        $xml = [xml] (Get-Content -Path $tempFile)
+        Remove-Item -Path $tempFile
+        #! End fix
         
         Switch ( $WindowsVersion ) {
             "Windows10" { 
-                [regex]$rx = "$build.(\d+)"
-                $BuilMatches = $xml.feed.entry | Where-Object -Property title -match $build
-                $LatestVersion = $BuilMatches | ForEach-Object { ($rx.match($_.title)).value.split('.') | Select-Object -Last 1} | ForEach-Object { [convert]::ToInt32($_, 10) } | Sort-Object -Descending | Select-Object -First 1
-                $kbID = $xml.feed.entry | Where-Object -Property title -Match "$build.$LatestVersion" | Select-Object -ExpandProperty ID | ForEach-Object { $_.split(':') | Select-Object -last 1} | Sort-Object -Descending | select-object -First 1
+                [regex] $rx = "$build.(\d+)"
+                $buildMatches = $xml.feed.entry | Where-Object -Property title -match $build
+                $LatestVersion = $buildMatches | ForEach-Object { ($rx.match($_.title)).value.split('.') | Select-Object -Last 1} `
+                    | ForEach-Object { [convert]::ToInt32($_, 10) } | Sort-Object -Descending | Select-Object -First 1
+                $kbID = $xml.feed.entry | Where-Object -Property title -match "$build.$LatestVersion" | Select-Object -ExpandProperty ID `
+                    | ForEach-Object { $_.split(':') | Select-Object -Last 1} | Sort-Object -Descending | select-object -First 1
             }
             default {
-                $BuilMatches = $xml.feed.entry | Where-Object -Property title -match $build
-                $kbID = $BuilMatches | Select-Object -ExpandProperty ID | ForEach-Object { $_.split(':') | Select-Object -last 1} | Sort-Object -Descending | select-object -First 1   
+                $buildMatches = $xml.feed.entry | Where-Object -Property title -match $build
+                $kbID = $buildMatches | Select-Object -ExpandProperty ID | ForEach-Object { $_.split(':') | Select-Object -last 1} `
+                    | Sort-Object -Descending | select-object -First 1   
             }
         }
         
@@ -187,7 +197,7 @@ Function Get-LatestUpdate {
         #region get the download link from Windows Update
         $kb = $kbID
         Write-Verbose "Found ID: KB$($kbID)"
-        $kbObj = Invoke-WebRequest -Uri "http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($kbID)"
+        $kbObj = Invoke-WebRequest -Uri "http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($kbID)" -UseBasicParsing
 
         # Write warnings if we can't read values
         If ( $Null -eq $kbObj ) { Write-Warning -Message "kbObj is Null. Unable to read KB details from the Catalog." }
