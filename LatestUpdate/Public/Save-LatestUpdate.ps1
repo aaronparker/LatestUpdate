@@ -73,7 +73,7 @@ Function Save-LatestUpdate {
                 Else {
                     # BITS isn't available (likely PowerShell Core)
                     If ( $pscmdlet.ShouldProcess($url, "WebDownload") ) {
-                        Invoke-WebRequest -Uri $url -OutFile $target
+                        Invoke-WebRequest -Uri $url -OutFile $target -UseBasicParsing
                     }
                 }
             }

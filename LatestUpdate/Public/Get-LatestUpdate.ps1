@@ -206,22 +206,12 @@ Function Get-LatestUpdate {
 
         #region Invoke-WebRequest on PowerShell Core doesn't return innerText
         # (Same as Invoke-WebRequest -UseBasicParsing on Windows PS)
-        If ( Test-PSCore ) {
-            Write-Verbose "Using outerHTML. Parsing KB notes"
-            $kbIDs = $kbObj.Links | 
-                Where-Object ID -match '_link' |
-                Where-Object outerHTML -match $SearchString |
-                ForEach-Object { $_.Id.Replace('_link', '') } |
-                Where-Object { $_ -in $availableKbIDs }
-        }
-        Else {
-            Write-Verbose "innerText found. Parsing KB notes"
-            $kbIDs = $kbObj.Links | 
-                Where-Object ID -match '_link' |
-                Where-Object innerText -match $SearchString |
-                ForEach-Object { $_.Id.Replace('_link', '') } |
-                Where-Object { $_ -in $availableKbIDs }
-        }
+        Write-Verbose "Parsing KB notes"
+        $kbIDs = $kbObj.Links | 
+            Where-Object ID -match '_link' |
+            Where-Object outerHTML -match $SearchString |
+            ForEach-Object { $_.Id.Replace('_link', '') } |
+            Where-Object { $_ -in $availableKbIDs }
         #endregion
 
         #region Read KB details
@@ -230,7 +220,7 @@ Function Get-LatestUpdate {
             Write-Verbose "Download $kbID"
             $post = @{ size = 0; updateID = $kbID; uidInfo = $kbID } | ConvertTo-Json -Compress
             $postBody = @{ updateIDs = "[$post]" } 
-            $urls += Invoke-WebRequest -Uri 'http://www.catalog.update.microsoft.com/DownloadDialog.aspx' -Method Post -Body $postBody |
+            $urls += Invoke-WebRequest -Uri 'http://www.catalog.update.microsoft.com/DownloadDialog.aspx' -Method Post -Body $postBody -UseBasicParsing |
                 Select-Object -ExpandProperty Content |
                 Select-String -AllMatches -Pattern "(http[s]?\://download\.windowsupdate\.com\/[^\'\""]*)" | 
                 ForEach-Object { $_.matches.value }
@@ -238,14 +228,7 @@ Function Get-LatestUpdate {
         #endregion
 
         #region Select the update names
-        If ( Test-PSCore ) {
-            # Updated for PowerShell Core
-            $notes = ([regex]'(?<note>\d{4}-\d{2}.*\(KB\d{7}\))').match($kbObj.RawContent).Value
-        }
-        Else {
-            # Original code for Windows PowerShell
-            $notes = $kbObj.ParsedHtml.body.getElementsByTagName('a') | ForEach-Object InnerText | Where-Object { $_ -match $SearchString }
-        }
+        $notes = ([regex]'(?<note>\d{4}-\d{2}.*\(KB\d{7}\))').match($kbObj.RawContent).Value
         #endregion
 
         #region Build the output array

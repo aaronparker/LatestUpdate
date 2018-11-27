@@ -1,9 +1,15 @@
 # Change Log
 
-## V1.1.0.39
+## v1.1.0.39
 
 - changed to use RSS Atom feed for each version of windows. This feed is kept up to date by microsoft
 - Changed process to determin latest update based on windows 10 build minor number instead of KB number
+
+## v1.1.0.38
+
+### Public Functions
+
+- Modified `Invoke-WebRequest` calls within `Get-LatestUpdate` and `Save-LatestUpdate` to use the `UseBasicParsing` parameter, removing the reliance on Internet Explorer, and enabling the script to work in PowerShell 6
 
 ## v1.1.0.37
 
