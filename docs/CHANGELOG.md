@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.1.0.39
+
+- changed to use RSS Atom feed for each version of windows. This feed is kept up to date by microsoft
+- Changed process to determin latest update based on windows 10 build minor number instead of KB number
+
 ## v1.1.0.38
 
 ### Public Functions

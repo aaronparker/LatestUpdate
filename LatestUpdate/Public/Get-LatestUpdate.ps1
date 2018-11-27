@@ -86,7 +86,7 @@ Function Get-LatestUpdate {
             $args = @{
                 Name         = "Build"
                 Type         = [String]
-                ValidateSet  = @('17134', '16299', '15063', '14393', '10586', '10240')
+                ValidateSet  = @('17763', '17134', '16299', '15063', '14393', '10586', '10240')
                 Position     = 1
                 HelpMessage  = "Provide a Windows 10 build number"
                 DPDictionary = $Dictionary
@@ -129,8 +129,8 @@ Function Get-LatestUpdate {
         # Set values for -Build and -SearchString as required for each platform
         Switch ( $WindowsVersion ) {
             "Windows10" {
-                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4000816'
-                If ( $Null -eq $Build ) { [String] $Build = "17134" }
+                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom'
+                If ( $Null -eq $Build ) { [String] $Build = "17763" }
                 [String] $SearchString = Switch ( $Architecture ) {
                     "x64" { 'Cumulative.*x64' }
                     "x86" { 'Cumulative.*x86' }
@@ -138,7 +138,7 @@ Function Get-LatestUpdate {
                 }
             }
             "Windows8" {
-                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4010477'
+                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/b905caa1-d413-c90c-bed3-20aead901092/atom'
                 [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
                 [String] $SearchString = Switch ( $Architecture ) {
                     "x64" { ".*x64" }
@@ -147,7 +147,7 @@ Function Get-LatestUpdate {
                 }
             }
             "Windows7" {
-                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/asset/en-us/4009472'
+                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/f825ca23-c7d1-aab8-4513-64980e1c3007/atom'
                 [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
                 [String] $SearchString = Switch ( $Architecture ) {
                     "x64" { ".*x64" }
@@ -161,20 +161,33 @@ Function Get-LatestUpdate {
     Process {
         #region Find the KB Article Number
         Write-Verbose "Downloading $StartKB to retrieve the list of updates."
-        $kbID = (Invoke-WebRequest -Uri $StartKB -UseBasicParsing).Content |
-            ConvertFrom-Json |
-            Select-Object -ExpandProperty Links |
-            Where-Object level -eq 2 |
-            Where-Object text -match $Build |
-            # Select-LatestUpdate |
-            Select-Object -First 1
+        #! fix for invoke-webrequests creating BOM in XML files
+        $tempfile = Join-Path -Path $env:temp -ChildPath ([System.IO.Path]::GetRandomFileName())
+        Invoke-WebRequest -uri $StartKB -ContentType 'application/atom+xml; charset=utf-8' -OutFile $tempfile
+        $XML = [xml](Get-Content -Path $tempfile)
+        Remove-Item -Path $tempfile
+        #! end fix
+        
+        Switch ( $WindowsVersion ) {
+            "Windows10" { 
+                [regex]$rx = "$build.(\d+)"
+                $BuilMatches = $xml.feed.entry | Where-Object -Property title -match $build
+                $LatestVersion = $BuilMatches | ForEach-Object { ($rx.match($_.title)).value.split('.') | Select-Object -Last 1} | ForEach-Object { [convert]::ToInt32($_, 10) } | Sort-Object -Descending | Select-Object -First 1
+                $kbID = $xml.feed.entry | Where-Object -Property title -Match "$build.$LatestVersion" | Select-Object -ExpandProperty ID | ForEach-Object { $_.split(':') | Select-Object -last 1} | Sort-Object -Descending | select-object -First 1
+            }
+            default {
+                $BuilMatches = $xml.feed.entry | Where-Object -Property title -match $build
+                $kbID = $BuilMatches | Select-Object -ExpandProperty ID | ForEach-Object { $_.split(':') | Select-Object -last 1} | Sort-Object -Descending | select-object -First 1   
+            }
+        }
+        
         If ( $Null -eq $kbID ) { Write-Warning -Message "kbID is Null. Unable to read from the KB from the JSON." }
         #endregion
 
         #region get the download link from Windows Update
-        $kb = $kbID.articleID
-        Write-Verbose "Found ID: KB$($kbID.articleID)"
-        $kbObj = Invoke-WebRequest -Uri "http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($kbID.articleID)" -UseBasicParsing
+        $kb = $kbID
+        Write-Verbose "Found ID: KB$($kbID)"
+        $kbObj = Invoke-WebRequest -Uri "http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($kbID)"
 
         # Write warnings if we can't read values
         If ( $Null -eq $kbObj ) { Write-Warning -Message "kbObj is Null. Unable to read KB details from the Catalog." }
