@@ -30,7 +30,7 @@ CompanyName = 'stealthpuppy'
 Copyright = '(c) 2018 stealthpuppy. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'A module for retrieving the latest Windows 10 / 8.1 / 7 (and Windows Server) Cumulative or Monthly Rollup updates from the Microsoft Update History page, downloading the update file locally and importing into a Microsoft Deployment Toolkit deployment share. Importing the updates into an MDT share speeds the installation and patching of Windows 10.
+Description = 'A module for retrieving the latest Windows 10 / 8.1 / 7 (and Windows Server) Cumulative or Monthly Rollup updates from the Microsoft Update History page. In addition, the module provide functions for downloading the update file/s locally and importing into a Microsoft Deployment Toolkit deployment share. Importing the updates into an MDT share speeds the installation and patching of Windows 10.
 
 Get-LatestUpdate supports querying for Windows builds and processor architecture for downloading updates to suit your specific environment.
 
@@ -102,7 +102,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'Windows10','WindowsServer2016','CumulativeUpdate','LatestUpdate','MDT','MicrosoftDeploymentToolkit','MonthlyUpdate'
+        Tags = 'Windows10',,'WindowsServer2019','WindowsServer2016','CumulativeUpdate','LatestUpdate','MDT','MicrosoftDeploymentToolkit','MonthlyUpdate'
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/aaronparker/LatestUpdate/blob/master/LICENSE'

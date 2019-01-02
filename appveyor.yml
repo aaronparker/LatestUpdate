@@ -8,7 +8,7 @@
 build: off
 
 # Version number
-version: 2.0.1.{build}
+version: 2.0.0.{build}
 
 # There's no need to alter the build number for a Pull Request (PR) since they don't modify anything
 pull_requests:
@@ -56,7 +56,7 @@ test_script:
   - git config --global user.name "Aaron Parker"
   - git config --global core.autocrlf true
   - git config --global core.safecrlf false
-  # - ps: . .\tests\Build.ps1
+  - ps: . .\tests\Build.ps1
 
 branches:
   except:

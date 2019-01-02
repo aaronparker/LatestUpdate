@@ -54,7 +54,6 @@ Else {
         Throw $_
     }
 
-    <#
     # Publish the new version to the PowerShell Gallery
     Try {
         # Build a splat containing the required details and make sure to Stop for errors which will trigger the catch
@@ -71,5 +70,4 @@ Else {
         Write-Warning "Publishing update $newVersion to the PowerShell Gallery failed."
         throw $_
     }
-    #>
 }

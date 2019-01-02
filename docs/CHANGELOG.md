@@ -1,9 +1,17 @@
 # Change Log
 
-## v1.1.0.39
+## v2.0.0.51
 
-- Changed to use RSS Atom feed for each version of Windows. This feed is kept up to date by Microsoft
-- Changed process to determine latest update based on Windows 10 build minor number instead of KB number
+### Public Functions
+
+- Changed to use RSS Atom feed for each version of Windows. This feed is kept up to date by Microsoft (Thanks to @BladeFireLight)
+- Changed process to determine latest update based on Windows 10 build minor number instead of KB number (Thanks to @BladeFireLight)
+- Updated `Get-LatestUpdate` to return an array of all processor architectures. Returns KB, Architecture, Note, URL to the pipeline that can be filtered in a script
+- Removed dynamic parameters -Architecture, -SearchString as these are no longer needed
+- Updated `Get-LatestUpdate` to support Windows 10 1809
+- Improved error handling and feed retrieval in `Get-LatestUpdate`
+- Updated `Save-LatestUpdate` to support new output from `Get-LatestUpdate`
+- Update Pester tests to support new output format in `Get-LatestUpdate`
 
 ## v1.1.0.38
 
