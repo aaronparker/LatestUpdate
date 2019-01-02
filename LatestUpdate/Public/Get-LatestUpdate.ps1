@@ -67,40 +67,18 @@ Function Get-LatestUpdate {
     Param(
         [Parameter(Mandatory = $False, Position = 0, HelpMessage = "Select the OS to search for updates")]
         [ValidateSet('Windows10', 'Windows8', 'Windows7')]
-        [String] $WindowsVersion = "Windows10"
-    )
-    DynamicParam {
-        # Create dynamic parameters. Windows 10 can use -Build
-        $Dictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
-        If ($WindowsVersion -eq "Windows10") {
-            $args = @{
-                Name         = "Build"
-                Type         = [String]
-                ValidateSet  = @('17763', '17134', '16299', '15063', '14393', '10586', '10240')
-                Position     = 1
-                HelpMessage  = "Provide a Windows 10 build number"
-                DPDictionary = $Dictionary
-            }
-        }
-        #return RuntimeDefinedParameterDictionary
-        Write-Output $Dictionary
-    }
-    Begin {
-        # Get the dynamic parameters and assign to parameters
-        Function _temp { [cmdletbinding()] param() }
-        $BoundKeys = $PSBoundParameters.keys | Where-Object { (Get-Command _temp | Select-Object -ExpandProperty parameters).Keys -notcontains $_}
-        ForEach ($param in $BoundKeys) {
-            If (-not ( Get-Variable -name $param -scope 0 -ErrorAction SilentlyContinue ) ) {
-                New-Variable -Name $Param -Value $PSBoundParameters.$param
-                Write-Verbose -Message "Adding variable for dynamic parameter '$param' with value '$($PSBoundParameters.$param)'"
-            }
-        }
+        [String] $WindowsVersion = "Windows10",
 
+        [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Provide a Windows 10 build number")]
+        [ValidateSet('17763', '17134', '16299', '15063', '14393', '10586', '10240', '^(?!.*Preview)(?=.*Monthly).*')]
+        [String] $Build = "17763"
+    )
+    Begin {
         # Set values for -Build and -SearchString as required for each platform
         Switch ($WindowsVersion) {
             "Windows10" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom'
-                If ( $Null -eq $Build ) { [String] $Build = "17763" }
+                If ($Build -eq "^(?!.*Preview)(?=.*Monthly).*") { $Build = "17763" }
             }
             "Windows8" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/b905caa1-d413-c90c-bed3-20aead901092/atom'
