@@ -58,12 +58,12 @@ Function Import-LatestUpdate {
     )
     Begin {
         # If running on PowerShell Core, error and exit.
-        If ( Test-PSCore ) {
+        If (Test-PSCore) {
             Write-Error -Message "PowerShell Core doesn't support PSSnapins. We can't load the MicrosoftDeploymentToolkit module." -ErrorAction Stop
         }
 
-        If ( Import-MdtModule ) {
-            If ( $pscmdlet.ShouldProcess($Path, "Mapping") ) {
+        If (Import-MdtModule) {
+            If ($pscmdlet.ShouldProcess($Path, "Mapping")) {
                 [String] $drive = "DS004"
                 $drive = New-PSDrive -Name $drive -PSProvider MDTProvider -Root $DeployRoot
             }
@@ -76,9 +76,9 @@ Function Import-LatestUpdate {
     }
     Process {
         # If $PackagePath is specified, use a sub-folder of MDT Share\Packages
-        If ( $PSBoundParameters.ContainsKey('PackagePath') ) {
+        If ($PSBoundParameters.ContainsKey('PackagePath')) {
             $dest = "$($drive):\Packages\$($PackagePath)"
-            If ( $pscmdlet.ShouldProcess($PackagePath, "New Package Folder") ) {
+            If ($pscmdlet.ShouldProcess($PackagePath, "New Package Folder")) {
                 Try {
                     New-MdtPackagesFolder -Drive $drive -Path $PackagePath
                 }
@@ -94,7 +94,7 @@ Function Import-LatestUpdate {
         Write-Verbose "Destination is $($dest)"
 
         # If -Clean is specified, enumerate existing packages from the target destination and remove before importing
-        If ( $Clean ) {
+        If ($Clean) {
             Push-Location $dest
             Get-ChildItem | Where-Object { $_.Name -like "Package*" } | ForEach-Object { 
                 If ( $pscmdlet.ShouldProcess($_.Name, "Remove package") ) {
@@ -106,8 +106,8 @@ Function Import-LatestUpdate {
         }
 
         # Validate the provided local path and import the update package
-        If ( $UpdatePath -ne $False ) {
-            If ( $pscmdlet.ShouldProcess("From $($UpdatePath) to $($dest)", "Importing") ) {
+        If ($UpdatePath -ne $False) {
+            If ($pscmdlet.ShouldProcess("From $($UpdatePath) to $($dest)", "Importing")) {
                 Try {
                     Import-MdtPackage -Path $dest -SourcePath $UpdatePath -ErrorAction SilentlyContinue -ErrorVariable importError
                 }
@@ -121,6 +121,6 @@ Function Import-LatestUpdate {
         }
     }
     End {
-        If ( $importError ) { Write-Output $importError }
+        If ($importError) { Write-Output $importError }
     }
 }

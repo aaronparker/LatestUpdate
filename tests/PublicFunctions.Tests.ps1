@@ -72,11 +72,12 @@ Describe 'Get-LatestUpdate' {
 Describe 'Save-LatestUpdate' {
     Context "Download the latest Windows 10 update" {
         It "Given updates returned from Get-LatestUpdate, it successfully downloads the update" {
+            $Target = "$($ProjectRoot)\.."
             $Updates = Get-LatestUpdate
+            Save-LatestUpdate -Updates $Updates -Path $Target
             ForEach ($Update in $Updates) {
-                Save-LatestUpdate -Updates $Update.URL -Path "$($ProjectRoot)\.."
                 $Filename = Split-Path $Update.$Url -Leaf
-                "$($ProjectRoot)\..\$($Filename)" | Should -Exist
+                "$Target\$Filename" | Should -Exist
             }
         }
     }

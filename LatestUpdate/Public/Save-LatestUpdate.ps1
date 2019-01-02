@@ -53,27 +53,27 @@ Function Save-LatestUpdate {
         $Path = Get-ValidPath $Path
     } 
     Process {
-        $Urls = $Updates | Select-UniqueUrl
-        ForEach ( $url in $urls ) {
-            $filename = Split-Path $url -Leaf
+        # $Urls = $Updates | Select-UniqueUrl
+        ForEach ($update in $Updates) {
+            $filename = Split-Path $update.url -Leaf
             $target = "$($Path)\$($filename)"
             Write-Verbose "Download target will be $target"
-            $displayName = $Updates | Where-Object { $_.Url -eq $url } | Select-Object -ExpandProperty Note | Select-Object -First 1
+            # $displayName = $Updates | Where-Object { $_.Url -eq $url } | Select-Object -ExpandProperty Note | Select-Object -First 1
+            $displayName = $update.Note
             
             # If the update is not already downloaded, download it.
-            If (!( Test-Path -Path $target )) {
-                If ( Get-Command Start-BitsTransfer -ErrorAction SilentlyContinue ) {
-                    # If BITS is available, let us it
-                    If ( $pscmdlet.ShouldProcess($(Split-Path $url -Leaf), "BitsDownload") ) {
-                        Start-BitsTransfer -Source $url -Destination $target `
+            If (!(Test-Path -Path $target)) {
+                If (Get-Command Start-BitsTransfer -ErrorAction SilentlyContinue) {
+                    If ($pscmdlet.ShouldProcess($(Split-Path $update.url -Leaf), "BitsDownload")) {
+                        Start-BitsTransfer -Source $update.url -Destination $target `
                             -Priority High -ErrorAction Continue -ErrorVariable $ErrorBits `
-                            -DisplayName $displayName -Description "Downloading $($url)"
+                            -DisplayName $displayName -Description "Downloading $($update.url)"
                     }
                 }
                 Else {
                     # BITS isn't available (likely PowerShell Core)
-                    If ( $pscmdlet.ShouldProcess($url, "WebDownload") ) {
-                        Invoke-WebRequest -Uri $url -OutFile $target -UseBasicParsing
+                    If ($pscmdlet.ShouldProcess($update.url, "WebDownload")) {
+                        Invoke-WebRequest -Uri $update.url -OutFile $target -UseBasicParsing
                     }
                 }
             }
@@ -83,6 +83,6 @@ Function Save-LatestUpdate {
         }
     }
     End {
-        Write-Output $urls
+        # Write-Output $urls
     }
 }
