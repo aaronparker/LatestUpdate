@@ -19,7 +19,7 @@ Function Get-LatestUpdate {
         Forked from: https://gist.github.com/keithga/1ad0abd1f7ba6e2f8aff63d94ab03048
 
     .LINK
-        https://support.microsoft.com/en-us/help/4043454
+        https://support.microsoft.com/en-au/help/4464619
 
     .PARAMETER WindowsVersion
         Specifiy the Windows version to search for updates. Valid values are Windows10, Windows8, Windows7 (applies to desktop and server editions).
@@ -27,50 +27,41 @@ Function Get-LatestUpdate {
     .PARAMETER Build
         Dynamic parameter used with -WindowsVersion 'Windows10' Specify the Windows 10 build number for searching cumulative updates. Supports '17133', '16299', '15063', '14393', '10586', '10240'.
 
-    .PARAMETER SearchString
-        Dynamic parameter. Specify a specific search string to change the target update behaviour. The default will only download Cumulative updates for x64.
-
     .EXAMPLE
         Get-LatestUpdate
 
         Description:
-        Get the latest Cumulative Update for Windows 10 x64 (Semi-Annual Channel)
+        Get the latest Cumulative Update for Windows 10 Semi-Annual Channel.
 
     .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows10 -Architecture x86
+        Get-LatestUpdate -WindowsVersion Windows10
 
         Description:
-        Enumerate the latest Cumulative Update for Windows 10 x86 (Semi-Annual Channel)
+        Get the latest Cumulative Update for Windows 10 Semi-Annual Channel.
 
     .EXAMPLE
         Get-LatestUpdate -WindowsVersion Windows10 -Build 14393
     
         Description:
-        Enumerate the latest Cumulative Update for Windows 10 1607 and Windows Server 2016
+        Enumerate the latest Cumulative Update for Windows 10 1607 and Windows Server 2016.
 
     .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows10 -Build 15063 -Architecture x86
+        Get-LatestUpdate -WindowsVersion Windows10 -Build 15063
     
         Description:
-        Enumerate the latest Cumulative Update for Windows 10 x86 1703
+        Enumerate the latest Cumulative Update for Windows 10 1703.
 
     .EXAMPLE
         Get-LatestUpdate -WindowsVersion Windows8
     
         Description:
-        Enumerate the latest Monthly Update for Windows Server 2012 R2 / Windows 8.1 x64
+        Enumerate the latest Monthly Update for Windows Server 2012 R2 / Windows 8.1.
 
     .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows8 -Architecture x86
+        Get-LatestUpdate -WindowsVersion Windows7
     
         Description:
-        Enumerate the latest Monthly Update for Windows 8.1 x86
-
-    .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows7 -Architecture x86
-    
-        Description:
-        Enumerate the latest Monthly Update for Windows 7 (and Windows 7 Embedded) x86
+        Enumerate the latest Monthly Update for Windows 7 (and Windows 7 Embedded).
     #>
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param(
@@ -79,8 +70,7 @@ Function Get-LatestUpdate {
         [String] $WindowsVersion = "Windows10"
     )
     DynamicParam {
-        # Create dynamic parameters. Windows 10 can use -Build and -Architecture
-        # Windows 8/7 use -Architecture only
+        # Create dynamic parameters. Windows 10 can use -Build
         $Dictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
         If ($WindowsVersion -eq "Windows10") {
             $args = @{
@@ -91,32 +81,7 @@ Function Get-LatestUpdate {
                 HelpMessage  = "Provide a Windows 10 build number"
                 DPDictionary = $Dictionary
             }
-            <#
-            New-DynamicParam @args
-            $args = @{
-                Name         = "Architecture"
-                Type         = [String]
-                ValidateSet  = @('x64', 'x86')
-                Position     = 2
-                HelpMessage  = "Processor architecture to return updates for."
-                DPDictionary = $Dictionary
-            }
-            New-DynamicParam @args
-            #>
         }
-        <#
-        If (($WindowsVersion -eq "Windows8") -or ($WindowsVersion -eq "Windows7")) {
-            $args = @{
-                Name         = "Architecture"
-                Type         = [String]
-                ValidateSet  = @('x64', 'x86')
-                Position     = 1
-                HelpMessage  = "Processor architecture to return updates for."
-                DPDictionary = $Dictionary
-            }
-            New-DynamicParam @args
-        }
-        #>
         #return RuntimeDefinedParameterDictionary
         Write-Output $Dictionary
     }
@@ -136,34 +101,14 @@ Function Get-LatestUpdate {
             "Windows10" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom'
                 If ( $Null -eq $Build ) { [String] $Build = "17763" }
-                <#
-                [String] $SearchString = Switch ( $Architecture ) {
-                    "x64" { 'Cumulative.*x64' }
-                    "x86" { 'Cumulative.*x86' }
-                    Default { 'Cumulative.*x64' }
-                }
-                #>
             }
             "Windows8" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/b905caa1-d413-c90c-bed3-20aead901092/atom'
                 [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
-                <#
-                [String] $SearchString = Switch ( $Architecture ) {
-                    "x64" { ".*x64" }
-                    "x86" { ".*x86" }
-                    Default { ".*x64" }
-                #>
             }
             "Windows7" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/f825ca23-c7d1-aab8-4513-64980e1c3007/atom'
                 [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
-                <#
-                [String] $SearchString = Switch ( $Architecture ) {
-                    "x64" { ".*x64" }
-                    "x86" { ".*x86" }
-                    Default { ".*x64" }
-                }
-                #>
             }
         }
         Write-Verbose -Message "Checking updates for $WindowsVersion $Build."
@@ -189,8 +134,20 @@ Function Get-LatestUpdate {
             Break
         }
         
-        $xml = [xml] (Get-Content -Path $tempFile)
-        Remove-Item -Path $tempFile -ErrorAction SilentlyContinue
+        # Import the XML from the feed into a variable and delete the temp file
+        try {
+            $xml = [xml] (Get-Content -Path $tempFile -ErrorAction SilentlyContinue)
+        }
+        catch {
+            Write-Error "Failed to read XML from $tempFile."
+            Break
+        }
+        try {
+            Remove-Item -Path $tempFile -ErrorAction SilentlyContinue
+        }
+        catch {
+            Write-Warning -Message "Failed to remove file $tempFile."
+        }
         #! End fix
         
         try {
@@ -207,9 +164,6 @@ Function Get-LatestUpdate {
                     Write-Verbose -Message "Latest Windows 10 build is: $Build.$LatestVersion."
                     $kbID = $xml.feed.entry | Where-Object -Property title -match "$Build.$LatestVersion" | Select-Object -ExpandProperty id `
                         | ForEach-Object { $_.split(':') | Select-Object -Last 1 }
-
-                    <# $kbID = $xml.feed.entry | Where-Object -Property title -match "$Build.$LatestVersion" | Select-Object -ExpandProperty id `
-                    | ForEach-Object { $_.split(':') | Select-Object -Last 1 } | Sort-Object -Descending | Select-Object -First 1 #>
                 }
                 default {
                     $buildMatches = $xml.feed.entry | Where-Object -Property title -match $Build
@@ -219,7 +173,7 @@ Function Get-LatestUpdate {
             }
         }
         catch {   
-            If ( $Null -eq $kbID ) { Write-Warning -Message "kbID is Null. Unable to read from the KB from the JSON." }
+            If ($Null -eq $kbID) { Write-Warning -Message "kbID is Null. Unable to read from the KB from the JSON." }
             Break
         }
         #endregion
@@ -233,23 +187,11 @@ Function Get-LatestUpdate {
         }
         catch {
             # Write warnings if we can't read values
-            If ( $Null -eq $kbObj ) { Write-Warning -Message "kbObj is Null. Unable to read KB details from the Catalog." }
-            If ( $Null -eq $kbObj.InputFields ) { Write-Warning -Message "kbObj.InputFields is Null. Unable to read button details from the Catalog KB page." }
+            If ($Null -eq $kbObj) { Write-Warning -Message "kbObj is Null. Unable to read KB details from the Catalog." }
+            If ($Null -eq $kbObj.InputFields) { Write-Warning -Message "kbObj.InputFields is Null. Unable to read button details from the Catalog KB page." }
             Throw $_
             Break
         }
-        #endregion
-
-        #region Parse the available KB IDs
-        <#
-        $availableKbIDs = $kbObj.InputFields | `
-            Where-Object { $_.Type -eq 'Button' -and $_.Value -eq 'Download' } | `
-            Select-Object -ExpandProperty ID
-        Write-Verbose "Ids found:"
-        ForEach ( $id in $availableKbIDs ) {
-            Write-Verbose -Message "`t$($id | Out-String)"
-        }
-        #>
         #endregion
 
         # Contruct a table with KB, Id and Update description
@@ -259,32 +201,8 @@ Function Get-LatestUpdate {
             Select-Object @{n = "KB"; e = {"KB$kbID"}}, @{n = "Id"; e = {$_.id.Replace('_link', '')}}, `
         @{n = "Note"; e = {(($_.outerHTML -replace $rx, '$1').TrimStart()).TrimEnd()}}
 
-        #region Invoke-WebRequest on PowerShell Core doesn't return innerText
-        # (Same as Invoke-WebRequest -UseBasicParsing on Windows PS)
-        <#
-        Write-Verbose "Parsing KB notes"
-        $kbIDs = $kbObj.Links | 
-            Where-Object ID -match '_link' |
-            Where-Object outerHTML -match $SearchString |
-            ForEach-Object { $_.Id.Replace('_link', '') } |
-            Where-Object { $_ -in $availableKbIDs }
-        #endregion
-
-        #region Read KB details
-        $urls = @()
-        ForEach ( $id in $kbIDs ) {
-            Write-Verbose "Download $id"
-            $post = @{ size = 0; updateID = $id; uidInfo = $id } | ConvertTo-Json -Compress
-            $postBody = @{ updateIDs = "[$post]" } 
-            $urls += Invoke-WebRequest -Uri 'http://www.catalog.update.microsoft.com/DownloadDialog.aspx' -Method Post -Body $postBody -UseBasicParsing |
-                Select-Object -ExpandProperty Content |
-                Select-String -AllMatches -Pattern "(http[s]?\://download\.windowsupdate\.com\/[^\'\""]*)" | 
-                ForEach-Object { $_.matches.value }
-        }
-        #>
-
         $output = @()
-        ForEach ( $idItem in $idTable ) {
+        ForEach ($idItem in $idTable) {
             try {
                 Write-Verbose -Message "Checking Microsoft Update Catalog for Id: $($idItem.id)."
                 $post = @{ size = 0; updateID = $idItem.id; uidInfo = $idItem.id } | ConvertTo-Json -Compress
@@ -313,33 +231,9 @@ Function Get-LatestUpdate {
             }
         }
         #endregion
-
-        #region Select the update names
-        <#
-        $notes = ([regex]'(?<note>\d{4}-\d{2}.*\(KB\d{7}\))').match($kbObj.RawContent).Value
-        #endregion
-
-        #region Build the output array
-        [int] $i = 0; $output = @()
-        ForEach ( $url in $urls ) {
-            $item = New-Object PSObject
-            $item | Add-Member -type NoteProperty -Name 'KB' -Value "KB$kbID"
-            If ( $notes.Count -eq 1 ) {
-                $item | Add-Member -type NoteProperty -Name 'Note' -Value $notes
-            }
-            Else {
-                $item | Add-Member -type NoteProperty -Name 'Note' -Value $notes[$i]
-            }
-            $item | Add-Member -type NoteProperty -Name 'URL' -Value $url
-            $output += $item
-            $i = $i + 1
-        }
-        #>
-        #endregion
     }
     End {
         # Write the URLs list to the pipeline
-        # Write-Output ($output | Sort-Object -InputObject URL -Unique)
         Write-Output $output
     }
 }
