@@ -82,7 +82,7 @@ Function Get-LatestUpdate {
         # Create dynamic parameters. Windows 10 can use -Build and -Architecture
         # Windows 8/7 use -Architecture only
         $Dictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
-        If ( $WindowsVersion -eq "Windows10") {
+        If ($WindowsVersion -eq "Windows10") {
             $args = @{
                 Name         = "Build"
                 Type         = [String]
@@ -91,6 +91,7 @@ Function Get-LatestUpdate {
                 HelpMessage  = "Provide a Windows 10 build number"
                 DPDictionary = $Dictionary
             }
+            <#
             New-DynamicParam @args
             $args = @{
                 Name         = "Architecture"
@@ -101,8 +102,10 @@ Function Get-LatestUpdate {
                 DPDictionary = $Dictionary
             }
             New-DynamicParam @args
+            #>
         }
-        If ( ($WindowsVersion -eq "Windows8") -or ($WindowsVersion -eq "Windows7") ) {
+        <#
+        If (($WindowsVersion -eq "Windows8") -or ($WindowsVersion -eq "Windows7")) {
             $args = @{
                 Name         = "Architecture"
                 Type         = [String]
@@ -113,6 +116,7 @@ Function Get-LatestUpdate {
             }
             New-DynamicParam @args
         }
+        #>
         #return RuntimeDefinedParameterDictionary
         Write-Output $Dictionary
     }
@@ -123,99 +127,141 @@ Function Get-LatestUpdate {
         ForEach ($param in $BoundKeys) {
             If (-not ( Get-Variable -name $param -scope 0 -ErrorAction SilentlyContinue ) ) {
                 New-Variable -Name $Param -Value $PSBoundParameters.$param
-                Write-Verbose "Adding variable for dynamic parameter '$param' with value '$($PSBoundParameters.$param)'"
+                Write-Verbose -Message "Adding variable for dynamic parameter '$param' with value '$($PSBoundParameters.$param)'"
             }
         }
+
         # Set values for -Build and -SearchString as required for each platform
-        Switch ( $WindowsVersion ) {
+        Switch ($WindowsVersion) {
             "Windows10" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom'
                 If ( $Null -eq $Build ) { [String] $Build = "17763" }
+                <#
                 [String] $SearchString = Switch ( $Architecture ) {
                     "x64" { 'Cumulative.*x64' }
                     "x86" { 'Cumulative.*x86' }
                     Default { 'Cumulative.*x64' }
                 }
+                #>
             }
             "Windows8" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/b905caa1-d413-c90c-bed3-20aead901092/atom'
                 [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
+                <#
                 [String] $SearchString = Switch ( $Architecture ) {
                     "x64" { ".*x64" }
                     "x86" { ".*x86" }
                     Default { ".*x64" }
-                }
+                #>
             }
             "Windows7" {
                 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/f825ca23-c7d1-aab8-4513-64980e1c3007/atom'
                 [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
+                <#
                 [String] $SearchString = Switch ( $Architecture ) {
                     "x64" { ".*x64" }
                     "x86" { ".*x86" }
                     Default { ".*x64" }
                 }
+                #>
             }
         }
-        Write-Verbose "Check updates for $Build $SearchString"
+        Write-Verbose -Message "Checking updates for $WindowsVersion $Build."
     }
     Process {
         #region Find the KB Article Number
-        Write-Verbose "Downloading $StartKB to retrieve the list of updates."
-        
         #! Fix for Invoke-WebRequest creating BOM in XML files; Handle Temp locations on Windows, macOS / Linux
-        If (Test-Path env:Temp) {
-            $tempDir = $env:Temp
+        try {
+            If (Test-Path env:Temp) {
+                $tempDir = $env:Temp
+            }
+            ElseIf (Test-Path env:TMPDIR) {
+                $tempDir = $env:TMPDIR
+            }
+            $tempFile = Join-Path -Path $tempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
+            Write-Verbose -Message "Downloading $StartKB to retrieve the list of updates."
+            Invoke-WebRequest -Uri $StartKB -ContentType 'application/atom+xml; charset=utf-8' `
+                -UseBasicParsing -OutFile $tempFile -ErrorAction SilentlyContinue
+            Write-Verbose -Message "Read RSS feed into $tempFile."
         }
-        ElseIf (Test-Path env:TMPDIR) {
-            $tempDir = $env:TMPDIR
+        catch {
+            Throw $_
+            Break
         }
-        $tempFile = Join-Path -Path $tempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
-        Invoke-WebRequest -Uri $StartKB -ContentType 'application/atom+xml; charset=utf-8' -UseBasicParsing -OutFile $tempFile
+        
         $xml = [xml] (Get-Content -Path $tempFile)
-        Remove-Item -Path $tempFile
+        Remove-Item -Path $tempFile -ErrorAction SilentlyContinue
         #! End fix
         
-        Switch ( $WindowsVersion ) {
-            "Windows10" { 
-                [regex] $rx = "$build.(\d+)"
-                $buildMatches = $xml.feed.entry | Where-Object -Property title -match $build
-                $LatestVersion = $buildMatches | ForEach-Object { ($rx.match($_.title)).value.split('.') | Select-Object -Last 1} `
-                    | ForEach-Object { [convert]::ToInt32($_, 10) } | Sort-Object -Descending | Select-Object -First 1
-                $kbID = $xml.feed.entry | Where-Object -Property title -match "$build.$LatestVersion" | Select-Object -ExpandProperty ID `
-                    | ForEach-Object { $_.split(':') | Select-Object -Last 1} | Sort-Object -Descending | select-object -First 1
-            }
-            default {
-                $buildMatches = $xml.feed.entry | Where-Object -Property title -match $build
-                $kbID = $buildMatches | Select-Object -ExpandProperty ID | ForEach-Object { $_.split(':') | Select-Object -last 1} `
-                    | Sort-Object -Descending | select-object -First 1   
+        try {
+            Switch ( $WindowsVersion ) {
+                "Windows10" { 
+                    # Sort feed for titles that match Build number; Find the largest minor build number
+                    [regex] $rx = "$Build.(\d+)"
+                    $buildMatches = $xml.feed.entry | Where-Object -Property title -match $Build
+                    Write-Verbose -Message "Found $($buildMatches.Count) items matching build $Build."
+                    $LatestVersion = $buildMatches | ForEach-Object { ($rx.match($_.title)).value.split('.') | Select-Object -Last 1} `
+                        | ForEach-Object { [convert]::ToInt32($_, 10) } | Sort-Object -Descending | Select-Object -First 1
+
+                    # Re-match feed for major.minor number and return the KB number from the Id field
+                    Write-Verbose -Message "Latest Windows 10 build is: $Build.$LatestVersion."
+                    $kbID = $xml.feed.entry | Where-Object -Property title -match "$Build.$LatestVersion" | Select-Object -ExpandProperty id `
+                        | ForEach-Object { $_.split(':') | Select-Object -Last 1 }
+
+                    <# $kbID = $xml.feed.entry | Where-Object -Property title -match "$Build.$LatestVersion" | Select-Object -ExpandProperty id `
+                    | ForEach-Object { $_.split(':') | Select-Object -Last 1 } | Sort-Object -Descending | Select-Object -First 1 #>
+                }
+                default {
+                    $buildMatches = $xml.feed.entry | Where-Object -Property title -match $Build
+                    $kbID = $buildMatches | Select-Object -ExpandProperty ID | ForEach-Object { $_.split(':') | Select-Object -Last 1 } `
+                        | Sort-Object -Descending | Select-Object -First 1   
+                }
             }
         }
-        
-        If ( $Null -eq $kbID ) { Write-Warning -Message "kbID is Null. Unable to read from the KB from the JSON." }
+        catch {   
+            If ( $Null -eq $kbID ) { Write-Warning -Message "kbID is Null. Unable to read from the KB from the JSON." }
+            Break
+        }
         #endregion
 
         #region get the download link from Windows Update
-        $kb = $kbID
-        Write-Verbose "Found ID: KB$($kbID)"
-        $kbObj = Invoke-WebRequest -Uri "http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($kbID)" -UseBasicParsing
-
-        # Write warnings if we can't read values
-        If ( $Null -eq $kbObj ) { Write-Warning -Message "kbObj is Null. Unable to read KB details from the Catalog." }
-        If ( $Null -eq $kbObj.InputFields ) { Write-Warning -Message "kbObj.InputFields is Null. Unable to read button details from the Catalog KB page." }
-        #endregion
-
-        #region Parse the available KB IDs
-        $availableKbIDs = $kbObj.InputFields | 
-            Where-Object { $_.Type -eq 'Button' -and $_.Value -eq 'Download' } | 
-            Select-Object -ExpandProperty ID
-        Write-Verbose "Ids found:"
-        ForEach ( $id in $availableKbIDs ) {
-            "`t$($id | Out-String)" | Write-Verbose
+        try {
+            Write-Verbose -Message "Found ID: KB$($kbID)"
+            Write-Verbose -Message "Reading http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($kbID)."
+            $kbObj = Invoke-WebRequest -Uri "http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($kbID)" `
+                -UseBasicParsing -ErrorAction SilentlyContinue
+        }
+        catch {
+            # Write warnings if we can't read values
+            If ( $Null -eq $kbObj ) { Write-Warning -Message "kbObj is Null. Unable to read KB details from the Catalog." }
+            If ( $Null -eq $kbObj.InputFields ) { Write-Warning -Message "kbObj.InputFields is Null. Unable to read button details from the Catalog KB page." }
+            Throw $_
+            Break
         }
         #endregion
 
+        #region Parse the available KB IDs
+        <#
+        $availableKbIDs = $kbObj.InputFields | `
+            Where-Object { $_.Type -eq 'Button' -and $_.Value -eq 'Download' } | `
+            Select-Object -ExpandProperty ID
+        Write-Verbose "Ids found:"
+        ForEach ( $id in $availableKbIDs ) {
+            Write-Verbose -Message "`t$($id | Out-String)"
+        }
+        #>
+        #endregion
+
+        # Contruct a table with KB, Id and Update description
+        Write-Verbose -Message "Contructing temporary table with KB, ID and URL."
+        [regex] $rx = "<a[^>]*>([^<]+)<\/a>"
+        $idTable = $kbObj.Links | Where-Object ID -match '_link' | `
+            Select-Object @{n = "KB"; e = {"KB$kbID"}}, @{n = "Id"; e = {$_.id.Replace('_link', '')}}, `
+        @{n = "Note"; e = {(($_.outerHTML -replace $rx, '$1').TrimStart()).TrimEnd()}}
+
         #region Invoke-WebRequest on PowerShell Core doesn't return innerText
         # (Same as Invoke-WebRequest -UseBasicParsing on Windows PS)
+        <#
         Write-Verbose "Parsing KB notes"
         $kbIDs = $kbObj.Links | 
             Where-Object ID -match '_link' |
@@ -226,18 +272,50 @@ Function Get-LatestUpdate {
 
         #region Read KB details
         $urls = @()
-        ForEach ( $kbID in $kbIDs ) {
-            Write-Verbose "Download $kbID"
-            $post = @{ size = 0; updateID = $kbID; uidInfo = $kbID } | ConvertTo-Json -Compress
+        ForEach ( $id in $kbIDs ) {
+            Write-Verbose "Download $id"
+            $post = @{ size = 0; updateID = $id; uidInfo = $id } | ConvertTo-Json -Compress
             $postBody = @{ updateIDs = "[$post]" } 
             $urls += Invoke-WebRequest -Uri 'http://www.catalog.update.microsoft.com/DownloadDialog.aspx' -Method Post -Body $postBody -UseBasicParsing |
                 Select-Object -ExpandProperty Content |
                 Select-String -AllMatches -Pattern "(http[s]?\://download\.windowsupdate\.com\/[^\'\""]*)" | 
                 ForEach-Object { $_.matches.value }
         }
+        #>
+
+        $output = @()
+        ForEach ( $idItem in $idTable ) {
+            try {
+                Write-Verbose -Message "Checking Microsoft Update Catalog for Id: $($idItem.id)."
+                $post = @{ size = 0; updateID = $idItem.id; uidInfo = $idItem.id } | ConvertTo-Json -Compress
+                $postBody = @{ updateIDs = "[$post]" }
+                $url = Invoke-WebRequest -Uri 'http://www.catalog.update.microsoft.com/DownloadDialog.aspx' `
+                    -Method Post -Body $postBody -UseBasicParsing -ErrorAction SilentlyContinue |
+                    Select-Object -ExpandProperty Content |
+                    Select-String -AllMatches -Pattern "(http[s]?\://download\.windowsupdate\.com\/[^\'\""]*)" | 
+                    ForEach-Object { $_.matches.value }
+            }
+            catch {
+                Throw $_
+                Write-Warning "Failed to parse Microsoft Update Catalog for Id: $($idItem.id)."
+                Break
+            }
+            finally {
+                Write-Verbose -Message "Adding $url to output."
+                $newItem = New-Object PSObject
+                $newItem | Add-Member -type NoteProperty -Name 'KB' -Value $idItem.KB
+                [regex] $rx = "\s+([a-zA-Z0-9]+)-based"
+                $idItem.Note -match $rx > $Null
+                $newItem | Add-Member -type NoteProperty -Name 'Arch' -Value $Matches[1]
+                $newItem | Add-Member -type NoteProperty -Name 'Note' -Value $idItem.Note
+                $newItem | Add-Member -type NoteProperty -Name 'URL' -Value $url
+                $output += $newItem
+            }
+        }
         #endregion
 
         #region Select the update names
+        <#
         $notes = ([regex]'(?<note>\d{4}-\d{2}.*\(KB\d{7}\))').match($kbObj.RawContent).Value
         #endregion
 
@@ -245,7 +323,7 @@ Function Get-LatestUpdate {
         [int] $i = 0; $output = @()
         ForEach ( $url in $urls ) {
             $item = New-Object PSObject
-            $item | Add-Member -type NoteProperty -Name 'KB' -Value "KB$Kb"
+            $item | Add-Member -type NoteProperty -Name 'KB' -Value "KB$kbID"
             If ( $notes.Count -eq 1 ) {
                 $item | Add-Member -type NoteProperty -Name 'Note' -Value $notes
             }
@@ -256,10 +334,12 @@ Function Get-LatestUpdate {
             $output += $item
             $i = $i + 1
         }
+        #>
         #endregion
     }
     End {
         # Write the URLs list to the pipeline
-        Write-Output ($output | Sort-Object URL -Unique)
+        # Write-Output ($output | Sort-Object -InputObject URL -Unique)
+        Write-Output $output
     }
 }

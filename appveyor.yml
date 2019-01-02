@@ -8,7 +8,7 @@
 build: off
 
 # Version number
-version: 1.0.1.{build}
+version: 2.0.1.{build}
 
 # There's no need to alter the build number for a Pull Request (PR) since they don't modify anything
 pull_requests:
@@ -33,7 +33,7 @@ skip_commits:
     - img/*
     - scripts/*
     - TestsResults.xml
-  message: /update version.*|update appveyor.*/
+  message: /updated readme.*|update readme.*s|update docs.*|update version.*|update appveyor.*|Merge branch 'master' of.*/
 
 only_commits:
   files:
