@@ -73,7 +73,7 @@ Describe 'Save-LatestUpdate' {
     Context "Download the latest Windows 10 update" {
         $Updates = Get-LatestUpdate
         $Target = $env:TEMP
-        Save-LatestUpdate -Updates $Updates -Path $Target -Verbose
+        Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest -Verbose
         It "Given updates returned from Get-LatestUpdate, it successfully downloads the update" {
             ForEach ($Update in $Updates) {
                 $Filename = Split-Path $Update.Url -Leaf
