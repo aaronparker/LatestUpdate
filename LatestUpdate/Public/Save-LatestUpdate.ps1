@@ -21,6 +21,9 @@ Function Save-LatestUpdate {
         .PARAMETER Path
             A destination path for downloading the cumulative updates to. This path must exist. Uses the current diretory by default.
 
+        .PARAMETER ForceWebRequest
+            Forces the use of Invoke-WebRequest over Start-BitsTransfer on Windows PowerShell.
+
         .EXAMPLE
             Get-LatestUpdate | Save-LatestUpdate
 
@@ -35,6 +38,14 @@ Function Save-LatestUpdate {
             Description:
             Retreives the latest Windows 10 build 14393 (1607) Cumulative Update with Get-LatestUpdate, saved to the variable $Updates.
             Save-LatestUpdate then downloads the latest updates to C:\Temp\Update.
+
+        .EXAMPLE
+            $Updates = Get-LatestUpdate
+            Save-LatestUpdate -Updates $Updates -Path C:\Temp\Update -ForceWebRequest
+
+            Description:
+            Retreives the latest Windows 10 build Cumulative Update with Get-LatestUpdate, saved to the variable $Updates.
+            Save-LatestUpdate then downloads the latest updates to C:\Temp\Update using Invoke-WebRequest instead of Start-BitsTransfer.
     #>
     [CmdletBinding(SupportsShouldProcess = $True)]
     [OutputType([Array])]
@@ -52,7 +63,10 @@ Function Save-LatestUpdate {
                     Throw "Cannot find path $_"
                 }
             })]
-        [System.IO.Path] $Path = $PWD
+        [System.IO.Path] $Path = $PWD,
+
+        [Parameter(Mandatory = $False)]
+        [switch] $ForceWebRequest
     )
     Begin {
         $Path = Get-ValidPath $Path
@@ -71,9 +85,9 @@ Function Save-LatestUpdate {
             
             # If the update is not already downloaded, download it.
             If (!(Test-Path -Path $target)) {
-                If (Test-PSCore) {
+                If ($ForceWebRequest -or (Test-PSCore)) {
 
-                    # Running on PowerShell Core
+                    # Running on PowerShell Core or ForceWebRequest
                     If ($pscmdlet.ShouldProcess($update.URL, "WebDownload")) {
                         try {
                             Invoke-WebRequest -Uri $update.URL -OutFile $target -UseBasicParsing -ErrorAction SilentlyContinue
