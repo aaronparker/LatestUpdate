@@ -25,10 +25,6 @@ LatestUpdate supports PowerShell 5.0 and above and is tested on macOS, Windows 1
 
 `Get-LatestUpdate` and `Save-LatestUpdate` support PowerShell Core; however, because `Import-LatestUpdate` requires the MDT Workbench, full support for PowerShell Core will depend on Microsoft updating the MDT PowerShell module to support it.
 
-## Known Issues
-
-- On PowerShell Core, the incorrect Note property is returned; however the correct update URL is returned OK.
-
 [appveyor-badge]: https://ci.appveyor.com/api/projects/status/s4g24puifpegq7kf/branch/master?svg=true
 [appveyor-build]: https://ci.appveyor.com/project/aaronparker/latestupdate/
 [psgallery-badge]: https://img.shields.io/powershellgallery/dt/latestupdate.svg

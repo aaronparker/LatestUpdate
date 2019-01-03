@@ -16,7 +16,7 @@ Save-LatestUpdate -Updates $Updates -Path "C:\Temp\Updates"
 To download update for a specific version and architecture of Windows, modify the parameters for `Get-LatestUpdate`.
 
 ```powershell
-$Updates = Get-LatestUpdate -WindowsVersion Windows8 -Architecture x86
+$Updates = Get-LatestUpdate -WindowsVersion Windows8
 Save-LatestUpdate -Updates $Updates -Path "C:\Temp\Updates"
 ```
 

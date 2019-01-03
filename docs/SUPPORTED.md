@@ -1,6 +1,6 @@
 # Supported Platforms
 
-## Windows Verisons
+## Windows Versions
 
 LatestUpdate supports retrieving the latest Cumulative Update for Windows 10 / Windows Server builds. Additionally Monthly Updates for Windows Server 2012 R2, Windows 8.1, Windows Server 2008 R2 and Windows 7 are supported.
 

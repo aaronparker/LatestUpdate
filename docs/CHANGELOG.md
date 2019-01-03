@@ -11,7 +11,10 @@
 - Updated `Get-LatestUpdate` to support Windows 10 1809
 - Improved error handling and feed retrieval in `Get-LatestUpdate`
 - Updated `Save-LatestUpdate` to support new output from `Get-LatestUpdate`
-- Update Pester tests to support new output format in `Get-LatestUpdate`
+
+### Tests
+
+- Update Pester tests in `PublicFunctions.Tests.ps1` to support new output format in `Get-LatestUpdate`
 
 ## v1.1.0.38
 
