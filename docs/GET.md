@@ -26,6 +26,19 @@ Return the cumulative update for latest release of Windows 10 and Windows Server
 PS C:\> Get-LatestUpdate -WindowsVersion Windows10 -Build 16299
 ```
 
+## Output
+
+`Get-LatestUpdate` returns an array of available updates with KB article (KB), processor architecture (Arch), update description (Note) and the URL to the update itself (URL). An example output for Windows 10 is shown below.
+
+```powershell
+KB        Arch  Note                                                                                      URL                                                                                                                                               
+--        ----  ----                                                                                      ---                                                                                                                                               
+KB4483235 ARM64 2018-12 Cumulative Update for Windows 10 Version 1809 for ARM64-based Systems (KB4483235) http://download.windowsupdate.com/d/msdownload/update/software/secu/2018/12/windows10.0-kb4483235-arm64_f2375c94f1bd67092a35c0f867b50f8a4f44f914.msu
+KB4483235 x86   2018-12 Cumulative Update for Windows 10 Version 1809 for x86-based Systems (KB4483235)   http://download.windowsupdate.com/c/msdownload/update/software/secu/2018/12/windows10.0-kb4483235-x86_651ecd2feec0f84ef346e918a7c50049f0384810.msu
+KB4483235 x64   2018-12 Cumulative Update for Windows Server 2019 for x64-based Systems (KB4483235)       http://download.windowsupdate.com/d/msdownload/update/software/secu/2018/12/windows10.0-kb4483235-x64_9d25f46d4a9da7dd295f8a6412a64eca9de4ed82.msu
+KB4483235 x64   2018-12 Cumulative Update for Windows 10 Version 1809 for x64-based Systems (KB4483235)   http://download.windowsupdate.com/d/msdownload/update/software/secu/2018/12/windows10.0-kb4483235-x64_9d25f46d4a9da7dd295f8a6412a64eca9de4ed82.msu
+```
+
 ## Operating System Support
 
 Updates for the following operating systems can be returned:
