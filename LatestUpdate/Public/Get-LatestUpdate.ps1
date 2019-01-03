@@ -200,9 +200,8 @@ Function Get-LatestUpdate {
                 Write-Verbose -Message "Adding $url to output."
                 $newItem = New-Object PSObject
                 $newItem | Add-Member -type NoteProperty -Name 'KB' -Value $idItem.KB
-                [regex] $rx = "\s+([a-zA-Z0-9]+)-based"
-                $idItem.Note -match $rx > $Null
-                $newItem | Add-Member -type NoteProperty -Name 'Arch' -Value $Matches[1]
+                $newItem | Add-Member -type NoteProperty -Name 'Arch' `
+                    -Value (Get-RxString -String $idItem.Note -RegEx "\s+([a-zA-Z0-9]+)-based")
                 $newItem | Add-Member -type NoteProperty -Name 'Note' -Value $idItem.Note
                 $newItem | Add-Member -type NoteProperty -Name 'URL' -Value $url
                 $output += $newItem
