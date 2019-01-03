@@ -1,40 +1,40 @@
 Function Save-LatestUpdate {
     <#
-    .SYNOPSIS
-        Downloads the latest cumulative update passed from Get-LatestUpdate.
+        .SYNOPSIS
+            Downloads the latest cumulative update passed from Get-LatestUpdate.
 
-    .DESCRIPTION
-        Downloads the latest cumulative update passed from Get-LatestUpdate to a local folder.
+        .DESCRIPTION
+            Downloads the latest cumulative update passed from Get-LatestUpdate to a local folder.
 
-        Then do one or more of the following:
-        - Import the update into an MDT share with Import-LatestUpdate to speed up deployment of Windows (reference images etc.)
-        - Apply the update to an offline WIM using DISM
-        - Deploy the update with ConfigMgr (if not using WSUS)
+            Then do one or more of the following:
+            - Import the update into an MDT share with Import-LatestUpdate to speed up deployment of Windows (reference images etc.)
+            - Apply the update to an offline WIM using DISM
+            - Deploy the update with ConfigMgr (if not using WSUS)
 
-    .NOTES
-        Author: Aaron Parker
-        Twitter: @stealthpuppy
+        .NOTES
+            Author: Aaron Parker
+            Twitter: @stealthpuppy
 
-    .PARAMETER Updates
-        The array of latest cumulative updates retreived by Get-LatestUpdate.
+        .PARAMETER Updates
+            The array of latest cumulative updates retreived by Get-LatestUpdate.
 
-    .PARAMETER Path
-        A destination path for downloading the cumulative updates to. This path must exist. Uses the current diretory by default.
+        .PARAMETER Path
+            A destination path for downloading the cumulative updates to. This path must exist. Uses the current diretory by default.
 
-    .EXAMPLE
-        Get-LatestUpdate | Save-LatestUpdate
+        .EXAMPLE
+            Get-LatestUpdate | Save-LatestUpdate
 
-        Description:
-        Retreives the latest Windows 10 Cumulative Update with Get-LatestUpdate and passes the array of updates to Save-LatestUpdate on the pipeline.
-        Save-LatestUpdate then downloads the latest updates to the current directory.
+            Description:
+            Retreives the latest Windows 10 Cumulative Update with Get-LatestUpdate and passes the array of updates to Save-LatestUpdate on the pipeline.
+            Save-LatestUpdate then downloads the latest updates to the current directory.
 
-    .EXAMPLE
-        $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build 14393
-        Save-LatestUpdate -Updates $Updates -Path C:\Temp\Update
+        .EXAMPLE
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build 14393
+            Save-LatestUpdate -Updates $Updates -Path C:\Temp\Update
 
-        Description:
-        Retreives the latest Windows 10 build 14393 (1607) Cumulative Update with Get-LatestUpdate, saved to the variable $Updates.
-        Save-LatestUpdate then downloads the latest updates to C:\Temp\Update.
+            Description:
+            Retreives the latest Windows 10 build 14393 (1607) Cumulative Update with Get-LatestUpdate, saved to the variable $Updates.
+            Save-LatestUpdate then downloads the latest updates to C:\Temp\Update.
     #>
     [CmdletBinding(SupportsShouldProcess = $True)]
     [OutputType([Array])]
@@ -46,34 +46,55 @@ Function Save-LatestUpdate {
     
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline = $False, `
                 HelpMessage = "Specify a target path to download the update(s) to.")]
-        [ValidateScript( { If (Test-Path $_ -PathType 'Container') { $True } Else { Throw "Cannot find path $_" } })]
-        [String] $Path = $PWD
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {
+                If (!(Test-Path -Path $_ -PathType 'Container')) {
+                    Throw "Cannot find path $_"
+                }
+            })]
+        [System.IO.Path] $Path = $PWD
     )
     Begin {
         $Path = Get-ValidPath $Path
+        $output = @()
     } 
     Process {
-        # $Urls = $Updates | Select-UniqueUrl
+
+        # Step through each update in $Updates
         ForEach ($update in $Updates) {
-            $filename = Split-Path $update.url -Leaf
-            $target = "$($Path)\$($filename)"
+
+            # Create the target file path where the update will be saved
+            $filename = Split-Path $update.URL -Leaf
+            $target = Join-Path $Path $filename
+            $output += $filename
             Write-Verbose "Download target will be $target"
-            # $displayName = $Updates | Where-Object { $_.Url -eq $url } | Select-Object -ExpandProperty Note | Select-Object -First 1
-            $displayName = $update.Note
             
             # If the update is not already downloaded, download it.
             If (!(Test-Path -Path $target)) {
-                If (Get-Command Start-BitsTransfer -ErrorAction SilentlyContinue) {
-                    If ($pscmdlet.ShouldProcess($(Split-Path $update.url -Leaf), "BitsDownload")) {
-                        Start-BitsTransfer -Source $update.url -Destination $target `
-                            -Priority High -ErrorAction Continue -ErrorVariable $ErrorBits `
-                            -DisplayName $displayName -Description "Downloading $($update.url)"
+                If (Test-PSCore) {
+
+                    # Running on PowerShell Core
+                    If ($pscmdlet.ShouldProcess($update.URL, "WebDownload")) {
+                        try {
+                            Invoke-WebRequest -Uri $update.URL -OutFile $target -UseBasicParsing -ErrorAction SilentlyContinue
+                        }
+                        catch {
+                            Throw $_
+                        }
                     }
                 }
                 Else {
-                    # BITS isn't available (likely PowerShell Core)
-                    If ($pscmdlet.ShouldProcess($update.url, "WebDownload")) {
-                        Invoke-WebRequest -Uri $update.url -OutFile $target -UseBasicParsing
+
+                    # Running on Windows PowerShell
+                    If ($pscmdlet.ShouldProcess($(Split-Path $update.URL -Leaf), "BitsDownload")) {
+                        try {
+                            Start-BitsTransfer -Source $update.URL -Destination $target `
+                                -Priority High -ErrorAction SilentlyContinue -ErrorVariable $ErrorBits `
+                                -DisplayName $update.Note -Description "Downloading $($update.URL)"
+                        }
+                        catch {
+                            Throw $_
+                        }
                     }
                 }
             }
@@ -83,6 +104,6 @@ Function Save-LatestUpdate {
         }
     }
     End {
-        # Write-Output $urls
+        Write-Output $output
     }
 }
