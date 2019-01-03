@@ -12,7 +12,7 @@
 RootModule = 'LatestUpdate.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.0.0.51'
+ModuleVersion = '2.1.0.51'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -73,7 +73,7 @@ PowerShellVersion = '5.0'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Get-LatestUpdate', 'Import-LatestUpdate', 'Save-LatestUpdate')
+FunctionsToExport = @('Get-LatestUpdate', 'Get-LatestFlash', 'Import-LatestUpdate', 'Save-LatestUpdate')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
@@ -102,7 +102,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'Windows10','System.Object[]','WindowsServer2016','CumulativeUpdate','LatestUpdate','MDT','MicrosoftDeploymentToolkit','MonthlyUpdate'
+        Tags = 'Windows10','WindowsServer2019','WindowsServer2016','CumulativeUpdate','AdobeFlash','LatestUpdate','MDT','MicrosoftDeploymentToolkit','MonthlyUpdate'
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/aaronparker/LatestUpdate/blob/master/LICENSE'

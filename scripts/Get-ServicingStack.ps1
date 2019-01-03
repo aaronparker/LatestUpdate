@@ -1,6 +1,5 @@
-[String] $WindowsVersion = "Windows10"
 [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom'
-[regex] $Flash = "Servicing stack update.*"
+[regex] $ssu = "Servicing stack update.*"
 
 $tempDir = $env:TMPDIR
 $tempFile = Join-Path -Path $tempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
@@ -10,12 +9,12 @@ Invoke-WebRequest -Uri $StartKB -ContentType 'application/atom+xml; charset=utf-
 $xml = [xml] (Get-Content -Path $tempFile -ErrorAction SilentlyContinue)
 
 [regex] $rxM = "(\d{4}-\d{2}-\d{2})"
-[regex] $rxT = "(\d{2}:\d{2}:\d{2})"
+# [regex] $rxT = "(\d{2}:\d{2}:\d{2})"
 
-$date = $xml.feed.entry | Where-Object { $_.title -match $Flash } | Select-Object -ExpandProperty updated | `
+$date = $xml.feed.entry | Where-Object { $_.title -match $ssu } | Select-Object -ExpandProperty updated | `
     ForEach-Object { Get-RxString -String $_ -RegEx $rxM } | Sort-Object | Select-Object -Last 1
 
-$kbID = $xml.feed.entry | Where-Object { ($_.title -match $Flash) -and ($_.updated -match $date ) } | Select-Object -ExpandProperty id `
+$kbID = $xml.feed.entry | Where-Object { ($_.title -match $ssu) -and ($_.updated -match $date ) } | Select-Object -ExpandProperty id `
     | ForEach-Object { $_.split(':') | Select-Object -Last 1 }
 
 $kbObj = Invoke-WebRequest -Uri "http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($kbID)" `

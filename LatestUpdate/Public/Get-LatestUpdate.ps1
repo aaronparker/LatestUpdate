@@ -1,67 +1,67 @@
 Function Get-LatestUpdate {
     <#
-    .SYNOPSIS
-        Get the latest Cumulative or Monthly Rollup update for Windows.
+        .SYNOPSIS
+            Get the latest Cumulative or Monthly Rollup update for Windows.
 
-    .DESCRIPTION
-        Returns the latest Cumulative or Monthly Rollup updates for Windows 10 / 8.1 / 7 and corresponding Windows Server from the Microsoft Update Catalog by querying the Update History page.
+        .DESCRIPTION
+            Returns the latest Cumulative or Monthly Rollup updates for Windows 10 / 8.1 / 7 and corresponding Windows Server from the Microsoft Update Catalog by querying the Update History page.
 
-        Get-LatestUpdate outputs the result as a table that can be passed to Save-LatestUpdate to download the update locally. Then do one or more of the following:
-        - Import the update into an MDT share with Import-LatestUpdate to speed up deployment of Windows (reference images etc.)
-        - Apply the update to an offline WIM using DISM
-        - Deploy the update with ConfigMgr (if not using WSUS)
+            Get-LatestUpdate outputs the result as a table that can be passed to Save-LatestUpdate to download the update locally. Then do one or more of the following:
+            - Import the update into an MDT share with Import-LatestUpdate to speed up deployment of Windows (reference images etc.)
+            - Apply the update to an offline WIM using DISM
+            - Deploy the update with ConfigMgr (if not using WSUS)
 
-    .NOTES
-        Author: Aaron Parker
-        Twitter: @stealthpuppy
+        .NOTES
+            Author: Aaron Parker
+            Twitter: @stealthpuppy
 
-        Original script: Copyright Keith Garner, All rights reserved.
-        Forked from: https://gist.github.com/keithga/1ad0abd1f7ba6e2f8aff63d94ab03048
+            Original script: Copyright Keith Garner, All rights reserved.
+            Forked from: https://gist.github.com/keithga/1ad0abd1f7ba6e2f8aff63d94ab03048
 
-    .LINK
-        https://support.microsoft.com/en-au/help/4464619
+        .LINK
+            https://support.microsoft.com/en-au/help/4464619
 
-    .PARAMETER WindowsVersion
-        Specifiy the Windows version to search for updates. Valid values are Windows10, Windows8, Windows7 (applies to desktop and server editions).
+        .PARAMETER WindowsVersion
+            Specifiy the Windows version to search for updates. Valid values are Windows10, Windows8, Windows7 (applies to desktop and server editions).
 
-    .PARAMETER Build
-        Dynamic parameter used with -WindowsVersion 'Windows10' Specify the Windows 10 build number for searching cumulative updates. Supports '17133', '16299', '15063', '14393', '10586', '10240'.
+        .PARAMETER Build
+            Dynamic parameter used with -WindowsVersion 'Windows10' Specify the Windows 10 build number for searching cumulative updates. Supports '17133', '16299', '15063', '14393', '10586', '10240'.
 
-    .EXAMPLE
-        Get-LatestUpdate
+        .EXAMPLE
+            Get-LatestUpdate
 
-        Description:
-        Get the latest Cumulative Update for Windows 10 Semi-Annual Channel.
+            Description:
+            Get the latest Cumulative Update for Windows 10 Semi-Annual Channel.
 
-    .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows10
+        .EXAMPLE
+            Get-LatestUpdate -WindowsVersion Windows10
 
-        Description:
-        Get the latest Cumulative Update for Windows 10 Semi-Annual Channel.
+            Description:
+            Get the latest Cumulative Update for Windows 10 Semi-Annual Channel.
 
-    .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows10 -Build 14393
-    
-        Description:
-        Enumerate the latest Cumulative Update for Windows 10 1607 and Windows Server 2016.
+        .EXAMPLE
+            Get-LatestUpdate -WindowsVersion Windows10 -Build 14393
+        
+            Description:
+            Enumerate the latest Cumulative Update for Windows 10 1607 and Windows Server 2016.
 
-    .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows10 -Build 15063
-    
-        Description:
-        Enumerate the latest Cumulative Update for Windows 10 1703.
+        .EXAMPLE
+            Get-LatestUpdate -WindowsVersion Windows10 -Build 15063
+        
+            Description:
+            Enumerate the latest Cumulative Update for Windows 10 1703.
 
-    .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows8
-    
-        Description:
-        Enumerate the latest Monthly Update for Windows Server 2012 R2 / Windows 8.1.
+        .EXAMPLE
+            Get-LatestUpdate -WindowsVersion Windows8
+        
+            Description:
+            Enumerate the latest Monthly Update for Windows Server 2012 R2 / Windows 8.1.
 
-    .EXAMPLE
-        Get-LatestUpdate -WindowsVersion Windows7
-    
-        Description:
-        Enumerate the latest Monthly Update for Windows 7 (and Windows 7 Embedded).
+        .EXAMPLE
+            Get-LatestUpdate -WindowsVersion Windows7
+        
+            Description:
+            Enumerate the latest Monthly Update for Windows 7 (and Windows 7 Embedded).
     #>
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param(
@@ -172,7 +172,7 @@ Function Get-LatestUpdate {
         }
         #endregion
 
-        # Contruct a table with KB, Id and Update description
+        #region Contruct a table with KB, Id and Update description
         Write-Verbose -Message "Contructing temporary table with KB, ID and URL."
         [regex] $rx = "<a[^>]*>([^<]+)<\/a>"
         $idTable = $kbObj.Links | Where-Object ID -match '_link' | `
