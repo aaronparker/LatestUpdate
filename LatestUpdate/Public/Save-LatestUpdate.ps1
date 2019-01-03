@@ -62,8 +62,9 @@ Function Save-LatestUpdate {
                 If (!(Test-Path -Path $_ -PathType 'Container')) {
                     Throw "Cannot find path $_"
                 }
+                Return $True
             })]
-        [System.IO.Path] $Path = $PWD,
+        [String] $Path = $PWD,
 
         [Parameter(Mandatory = $False)]
         [switch] $ForceWebRequest
@@ -80,7 +81,7 @@ Function Save-LatestUpdate {
             # Create the target file path where the update will be saved
             $filename = Split-Path $update.URL -Leaf
             $target = Join-Path $Path $filename
-            $output += $filename
+            $output += $target
             Write-Verbose "Download target will be $target"
             
             # If the update is not already downloaded, download it.
