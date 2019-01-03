@@ -6,7 +6,7 @@ Else {
     # Local Testing 
     $ProjectRoot = "$(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)\..\"
 }
-Import-Module $ProjectRoot\LatestUpdate
+Import-Module (Join-Path $ProjectRoot "LatestUpdate")
 
 Describe 'Get-LatestUpdate' {
     Context "Returns a valid list of updates" {
@@ -72,13 +72,13 @@ Describe 'Get-LatestUpdate' {
 Describe 'Save-LatestUpdate' {
     Context "Download the latest Windows 10 update" {
         $Updates = Get-LatestUpdate
-        $Target = "$($ProjectRoot)\.."
+        $Target = $env:TEMP
         Save-LatestUpdate -Updates $Updates -Path $Target -Verbose
         It "Given updates returned from Get-LatestUpdate, it successfully downloads the update" {
             ForEach ($Update in $Updates) {
                 $Filename = Split-Path $Update.Url -Leaf
-                Write-Host "Check for $Target\$Filename."
-                "$Target\$Filename" | Should -Exist
+                Write-Host "Check for $(Join-Path $Target $Filename)."
+                (Join-Path $Target $Filename) | Should -Exist
             }
         }
     }
