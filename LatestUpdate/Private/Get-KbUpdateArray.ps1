@@ -1,4 +1,4 @@
-Function Get-KbUpdateTable {
+Function Get-KbUpdateArray {
     <#
         .SYNOPSIS
             Constructs a table with KB article, Update Id number and Update description from provided HTML links

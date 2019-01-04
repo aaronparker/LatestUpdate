@@ -79,63 +79,16 @@ Function Get-LatestFlash {
         }
         #endregion
 
-        #region get the download link from Windows Update
-        try {
-            Write-Verbose -Message "Found ID: KB$($kbID)"
-            Write-Verbose -Message "Reading http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($kbID)."
-            $kbObj = Invoke-WebRequest -Uri "http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($kbID)" `
-                -UseBasicParsing -ErrorAction SilentlyContinue
-        }
-        catch {
-            # Write warnings if we can't read values
-            If ($Null -eq $kbObj) { Write-Warning -Message "kbObj is Null. Unable to read KB details from the Catalog." }
-            If ($Null -eq $kbObj.InputFields) { Write-Warning -Message "kbObj.InputFields is Null. Unable to read button details from the Catalog KB page." }
-            Throw $_
-            Break
-        }
-        #endregion
+        # Get the download link from Windows Update
+        $kbObj = Get-UpdateCatalogLink -KB $kbID
+        If ($Null -ne $kbObj) {
 
-        # Contruct a table with KB, Id and Update description
-        $idTable = Get-KbUpdateTable -Links $kbObj.Links -KB $kbID
-        <#Write-Verbose -Message "Contructing temporary table with KB, ID and URL."
-        [regex] $rx = "<a[^>]*>([^<]+)<\/a>"
-        $idTable = $kbObj.Links | Where-Object ID -match '_link' | `
-            Select-Object @{n = "KB"; e = {"KB$kbID"}}, @{n = "Id"; e = {$_.id.Replace('_link', '')}}, `
-        @{n = "Note"; e = {(($_.outerHTML -replace $rx, '$1').TrimStart()).TrimEnd()}}
-        #>
+            # Contruct a table with KB, Id and Update description
+            $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB $kbID
 
-        # Process the IdTable to get a new array with KB, Architecture, Note and URL for each download
-        $downloadArray = Get-UpdateDownloadArray -IdTable $idTable
-        <#$output = @()
-        ForEach ($idItem in $idTable) {
-            try {
-                Write-Verbose -Message "Checking Microsoft Update Catalog for Id: $($idItem.id)."
-                $post = @{ size = 0; updateID = $idItem.id; uidInfo = $idItem.id } | ConvertTo-Json -Compress
-                $postBody = @{ updateIDs = "[$post]" }
-                $url = Invoke-WebRequest -Uri 'http://www.catalog.update.microsoft.com/DownloadDialog.aspx' `
-                    -Method Post -Body $postBody -UseBasicParsing -ErrorAction SilentlyContinue |
-                    Select-Object -ExpandProperty Content |
-                    Select-String -AllMatches -Pattern "(http[s]?\://download\.windowsupdate\.com\/[^\'\""]*)" | 
-                    ForEach-Object { $_.matches.value }
-            }
-            catch {
-                Throw $_
-                Write-Warning "Failed to parse Microsoft Update Catalog for Id: $($idItem.id)."
-                Break
-            }
-            finally {
-                Write-Verbose -Message "Adding $url to output."
-                $newItem = New-Object PSObject
-                $newItem | Add-Member -type NoteProperty -Name 'KB' -Value $idItem.KB
-                $newItem | Add-Member -type NoteProperty -Name 'Arch' `
-                    -Value (Get-RxString -String $idItem.Note -RegEx "\s+([a-zA-Z0-9]+)-based")
-                $newItem | Add-Member -type NoteProperty -Name 'Note' -Value $idItem.Note
-                $newItem | Add-Member -type NoteProperty -Name 'URL' -Value $url
-                $output += $newItem
-            }
+            # Process the IdTable to get a new array with KB, Architecture, Note and URL for each download
+            $downloadArray = Get-UpdateDownloadArray -IdTable $idTable
         }
-        #endregion
-        #>
     }
     End {
         # Write the URLs list to the pipeline
