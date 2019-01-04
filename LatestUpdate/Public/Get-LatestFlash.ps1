@@ -27,41 +27,8 @@ Function Get-LatestFlash {
     }
 
     Process {
-        #region Find the KB Article Number
-        #! Fix for Invoke-WebRequest creating BOM in XML files; Handle Temp locations on Windows, macOS / Linux
-        try {
-            If (Test-Path env:Temp) {
-                $tempDir = $env:Temp
-            }
-            ElseIf (Test-Path env:TMPDIR) {
-                $tempDir = $env:TMPDIR
-            }
-            $tempFile = Join-Path -Path $tempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
-            Write-Verbose -Message "Downloading $StartKB to retrieve the list of updates."
-            Invoke-WebRequest -Uri $StartKB -ContentType 'application/atom+xml; charset=utf-8' `
-                -UseBasicParsing -OutFile $tempFile -ErrorAction SilentlyContinue
-            Write-Verbose -Message "Read RSS feed into $tempFile."
-        }
-        catch {
-            Throw $_
-            Break
-        }
-
-        # Import the XML from the feed into a variable and delete the temp file
-        try {
-            $xml = [xml] (Get-Content -Path $tempFile -ErrorAction SilentlyContinue)
-        }
-        catch {
-            Write-Error "Failed to read XML from $tempFile."
-            Break
-        }
-        try {
-            Remove-Item -Path $tempFile -ErrorAction SilentlyContinue
-        }
-        catch {
-            Write-Warning -Message "Failed to remove file $tempFile."
-        }
-        #! End fix
+        # Find the KB Article Number
+        $xml = Get-UpdateFeed -UpdateFeed $StartKB
         
         try {
             [regex] $rxM = "(\d{4}-\d{2}-\d{2})"
