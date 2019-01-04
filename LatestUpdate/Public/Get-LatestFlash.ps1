@@ -95,14 +95,18 @@ Function Get-LatestFlash {
         }
         #endregion
 
-        #region Contruct a table with KB, Id and Update description
-        Write-Verbose -Message "Contructing temporary table with KB, ID and URL."
+        # Contruct a table with KB, Id and Update description
+        $idTable = Get-KbUpdateTable -Links $kbObj.Links -KB $kbID
+        <#Write-Verbose -Message "Contructing temporary table with KB, ID and URL."
         [regex] $rx = "<a[^>]*>([^<]+)<\/a>"
         $idTable = $kbObj.Links | Where-Object ID -match '_link' | `
             Select-Object @{n = "KB"; e = {"KB$kbID"}}, @{n = "Id"; e = {$_.id.Replace('_link', '')}}, `
         @{n = "Note"; e = {(($_.outerHTML -replace $rx, '$1').TrimStart()).TrimEnd()}}
+        #>
 
-        $output = @()
+        # Process the IdTable to get a new array with KB, Architecture, Note and URL for each download
+        $downloadArray = Get-UpdateDownloadArray -IdTable $idTable
+        <#$output = @()
         ForEach ($idItem in $idTable) {
             try {
                 Write-Verbose -Message "Checking Microsoft Update Catalog for Id: $($idItem.id)."
@@ -131,10 +135,10 @@ Function Get-LatestFlash {
             }
         }
         #endregion
+        #>
     }
-
     End {
         # Write the URLs list to the pipeline
-        Write-Output $output
+        Write-Output $downloadArray
     }
 }
