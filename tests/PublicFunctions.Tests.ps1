@@ -9,10 +9,13 @@ Else {
 Import-Module (Join-Path $ProjectRoot "LatestUpdate")
 
 Describe 'Get-LatestUpdate' {
-    Context "Returns a valid list of updates" {
+    Context "Returns a valid list of Cumulative or Monthly updates" {
         $Updates = Get-LatestUpdate
         It "Given no arguments, returns an array of updates" {
             $Updates | Should -BeOfType System.Management.Automation.PSCustomObject
+        }
+        It "Given no arguments, returns an array" {
+            $Updates.Count | Should -BeGreaterThan 0
         }
         It "Given no arguments, returns a valid array with expected properties" {
             ForEach ($Update in $Updates) {
@@ -69,12 +72,44 @@ Describe 'Get-LatestUpdate' {
     }
 }
 
+Describe 'Get-LatestFlash' {
+    Context "Returns a valid list of Adobe Flash Player updates" {
+        $Updates = Get-LatestFlash
+        It "Given no arguments, returns an array of updates" {
+            $Updates | Should -BeOfType System.Management.Automation.PSCustomObject
+        }
+        It "Given no arguments, returns an array" {
+            $Updates.Count | Should -BeGreaterThan 0
+        }
+        It "Given no arguments, returns a valid array with expected properties" {
+            ForEach ($Update in $Updates) {
+                $Update.KB.Length | Should -BeGreaterThan 0
+                $Update.Arch.Length | Should -BeGreaterThan 0
+                $Update.Note.Length | Should -BeGreaterThan 0
+                $Update.URL.Length | Should -BeGreaterThan 0
+            }
+        }
+    }
+}
+
 Describe 'Save-LatestUpdate' {
-    Context "Download the latest Windows 10 update" {
+    Context "Download the latest Windows 10 Cumulative updates" {
         $Updates = Get-LatestUpdate
         $Target = $env:TEMP
         Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest -Verbose
         It "Given updates returned from Get-LatestUpdate, it successfully downloads the update" {
+            ForEach ($Update in $Updates) {
+                $Filename = Split-Path $Update.Url -Leaf
+                Write-Host "Check for $(Join-Path $Target $Filename)."
+                (Join-Path $Target $Filename) | Should -Exist
+            }
+        }
+    }
+    Context "Download the latest Adobe Flash Player updates" {
+        $Updates = Get-LatestFlash
+        $Target = $env:TEMP
+        Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest -Verbose
+        It "Given updates returned from Get-LatestFlash, it successfully downloads the update" {
             ForEach ($Update in $Updates) {
                 $Filename = Split-Path $Update.Url -Leaf
                 Write-Host "Check for $(Join-Path $Target $Filename)."
