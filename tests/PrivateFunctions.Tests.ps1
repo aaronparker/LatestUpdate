@@ -149,4 +149,71 @@ InModuleScope LatestUpdate {
             }
         }
     }
+
+    Describe 'Get-UpdateFeed' {
+        [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom'
+        [String] $KB = 4483235
+        $xml = Get-UpdateFeed -UpdateFeed $StartKB
+        Context "Tests that Get-UpdateFeed returns valid XML" {
+            It "Returns valid XML" {
+                $xml | Should -BeOfType System.Xml.XmlNode
+            }
+        }
+    }
+
+    Describe 'Get-UpdateCatalogLink' {
+        $kbObj = Get-UpdateCatalogLink -KB "4483235"
+        Context "Tests that Get-UpdateCatalogLink returns valid response" {
+            It "Returns valid response" {
+                $kbObj | Should -BeOfType Microsoft.PowerShell.Commands.WebResponseObject
+            }
+        }
+    }
+
+    Describe 'Get-KbUpdateArray' {
+        $kbObj = Get-UpdateCatalogLink -KB "4483235"
+        $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB $kbID
+        Context "Tests that Get-KbUpdateArray returns a valid array" {
+            It "Returns a valid array" {
+                $idTable | Should -BeOfType System.array
+            }
+            It "Returns an array with valid properties" {
+                ForEach ($id in $idTable) {
+                    $Update.KB.Length | Should -BeGreaterThan 0
+                    $Update.Id.Length | Should -BeGreaterThan 0
+                    $Update.Note.Length | Should -BeGreaterThan 0
+                }
+            }
+        }
+    }
+
+    Describe 'Get-UpdateDownloadArray' {
+        $kbObj = Get-UpdateCatalogLink -KB "4483235"
+        $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB $kbID
+        $Updates = Get-UpdateDownloadArray -IdTable $idTable
+        Context "Returns a valid list of Cumulative updates" {
+            It "Updates array returned should be of valid type" {
+                $Updates | Should -BeOfType System.Management.Automation.PSCustomObject
+            }
+            It "Updtes array returned should have a count greater than 0" {
+                $Updates.Count | Should -BeGreaterThan 0
+            }
+            It "Returns a valid array with expected properties" {
+                ForEach ($Update in $Updates) {
+                    $Update.KB.Length | Should -BeGreaterThan 0
+                    $Update.Arch.Length | Should -BeGreaterThan 0
+                    $Update.Note.Length | Should -BeGreaterThan 0
+                    $Update.URL.Length | Should -BeGreaterThan 0
+                }
+            }
+        }
+    }
+
+    Describe 'Get-RxString' {
+        Context "Returns the expected substring" {
+            It "Given the string '2018-09-07T17:55:12Z', returns '2018-09-07'" {
+                Get-RxString -String "2018-09-07T17:55:12Z" -RegEx "(\d{4}-\d{2}-\d{2})" | Should -Be "2018-09-07"
+            }
+        }
+    }
 }
