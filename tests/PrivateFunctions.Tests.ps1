@@ -172,7 +172,7 @@ InModuleScope LatestUpdate {
 
     Describe 'Get-KbUpdateArray' {
         $kbObj = Get-UpdateCatalogLink -KB "4483235"
-        $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB $kbID
+        $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB "4483235"
         Context "Tests that Get-KbUpdateArray returns a valid array" {
             It "Returns a valid array" {
                 $idTable | Should -BeOfType System.array
@@ -189,7 +189,7 @@ InModuleScope LatestUpdate {
 
     Describe 'Get-UpdateDownloadArray' {
         $kbObj = Get-UpdateCatalogLink -KB "4483235"
-        $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB $kbID
+        $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB "4483235"
         $Updates = Get-UpdateDownloadArray -IdTable $idTable
         Context "Returns a valid list of Cumulative updates" {
             It "Updates array returned should be of valid type" {
