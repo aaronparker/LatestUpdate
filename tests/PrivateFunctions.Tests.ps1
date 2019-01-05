@@ -175,13 +175,13 @@ InModuleScope LatestUpdate {
         $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB "4483235"
         Context "Tests that Get-KbUpdateArray returns a valid array" {
             It "Returns a valid array" {
-                $idTable | Should -BeOfType System.array
+                $idTable | Should -BeOfType PSCustomObject
             }
             It "Returns an array with valid properties" {
                 ForEach ($id in $idTable) {
-                    $Update.KB.Length | Should -BeGreaterThan 0
-                    $Update.Id.Length | Should -BeGreaterThan 0
-                    $Update.Note.Length | Should -BeGreaterThan 0
+                    $id.KB.Length | Should -BeGreaterThan 0
+                    $id.Id.Length | Should -BeGreaterThan 0
+                    $id.Note.Length | Should -BeGreaterThan 0
                 }
             }
         }
