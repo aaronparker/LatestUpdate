@@ -7,7 +7,7 @@
 
 ## About
 
-This repository is a module for retrieving the latest Cumulative Update for Windows 10 / Windows Server builds, downloading the update file and importing it into a Microsoft Deployment Toolkit deployment share for speeding up creating reference images or Windows deployments. Windows Server 2012 R2, Windows 8.1, Windows Server 2008 R2 and Windows 7 Monthly Updates can also be queried for and downloaded.
+This repository is a module for retrieving the latest Cumulative Update and Adobe Flash Player updates for Windows 10 / Windows Server builds from the Microsoft Update Catalog. The module also supports the latest Monthly Rollups for Windows 8.1 / Windows Server 2012 R2, Windows 7 / Windows Server 2008 R2. In addition, it provides functions for downloading the update files and importing them into a Microsoft Deployment Toolkit deployment share for speeding the creation of reference images or Windows deployments.
 
 Importing a cumulative update into [the Packages nodes in an MDT share](https://docs.microsoft.com/en-us/sccm/mdt/use-the-mdt#ConfiguringPackagesintheDeploymentWorkbench) enables updates during the offline phase of Windows setup, speeding up an installation of Windows. Updates could also be [applied directly to a WIM](https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/dism-operating-system-package-servicing-command-line-options).
 

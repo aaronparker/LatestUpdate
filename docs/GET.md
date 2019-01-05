@@ -1,12 +1,31 @@
-# Get the Latest Update
+# Get the Latest Windows Cumulative or Monthly Rollup Updates
 
-`Get-LatestUpdate` retrieves the latest update from the Windows 10 Update History page at [https://support.microsoft.com/en-au/help/4464619](https://support.microsoft.com/en-au/help/4464619). Run `Get-LatestUpdate` with no additional switches to return the latest update for the most recent Windows 10 build for all processor architectures.
+`Get-LatestUpdate` retrieves the latest Cumulative update from the Windows 10 Update History page at [https://support.microsoft.com/en-au/help/4464619](https://support.microsoft.com/en-au/help/4464619). Run `Get-LatestUpdate` with no additional switches to return the latest update for the most recent Windows 10 build for all processor architectures.
 
 ```powershell
 PS C:\> Get-LatestUpdate
 ```
 
-This returns the most recent update for Windows 10 x86, x64 and ARM64 as well as Windows Server. Additional examples of Get-LatestUpdate syntax include:
+This returns the most recent update for Windows 10 x86, x64 and ARM64 as well as Windows Server.
+
+## Operating System Support
+
+Updates for the following operating systems can be returned:
+
+* Windows 10 and Windows Server (including the available builds). Returns the latest Cumulative update for these versions of Windows.
+* Windows 8.1 and Windows Server 2012 R2. Returns the latest Monthly Rollup for these version of Windows.
+* Windows 7 and Windows Server 2008 R2. Returns the latest Monthly Rollup for these version of Windows.
+
+### Filtering for Windows versions
+
+Returning updates for specific versions, builds and processor architectures differs between Windows 10 and Windows 8.1/7. By default, updates for Windows 10 are returned.
+
+* `-WindowsVersion`: use to specific the version of Windows to search for updates. Windows10, Windows8 and Windows7
+* `-Build`: only applicable with '-WindowsVersion Windows10'. Specify a build number - '17763', '17134', '16299', '15063', '14393', '10586', '10240'.
+
+## Examples
+
+Additional examples of Get-LatestUpdate syntax include:
 
 Return the cumulative update for Windows 10 1607 and Windows Server 2016:
 
@@ -39,17 +58,33 @@ KB4483235 x64   2018-12 Cumulative Update for Windows Server 2019 for x64-based 
 KB4483235 x64   2018-12 Cumulative Update for Windows 10 Version 1809 for x64-based Systems (KB4483235)   http://download.windowsupdate.com/d/msdownload/update/software/secu/2018/12/windows10.0-kb4483235-x64_9d25f46d4a9da7dd295f8a6412a64eca9de4ed82.msu
 ```
 
-## Operating System Support
+## Filter Output
 
-Updates for the following operating systems can be returned:
+Output from `Get-LatestUpdate` can be filtered to find updates for a specific processor architecture or Windows version. For example, to filter for only the 32-bit version of Windows 10, use the following syntax:
 
-* Windows 10 and Windows Server (including the available builds). Returns the latest Cumulative update for these versions of Windows.
-* Windows 8.1 and Windows Server 2012 R2. Returns the latest Monthly Rollup for these version of Windows.
-* Windows 7 and Windows Server 2008 R2. Returns the latest Monthly Rollup for these version of Windows.
+```powershell
+Get-LatestUpdate | Where-Object { $_.Arch -eq "x86" }
+```
 
-### Filtering for Windows versions
+This will return output similar to the following:
 
-Returning updates for specific versions, builds and processor architectures differs between Windows 10 and Windows 8.1/7. By default, updates for Windows 10 are returned.
+```powershell
+KB        Arch  Note                                                                                      URL                                                                                                                                               
+--        ----  ----                                                                                      ---                                                                                                                                               
+KB4483235 x86   2018-12 Cumulative Update for Windows 10 Version 1809 for x86-based Systems (KB4483235)   http://download.windowsupdate.com/c/msdownload/update/software/secu/2018/12/windows10.0-kb4483235-x86_651ecd2feec0f84ef346e918a7c50049f0384810.msu
+```
 
-* `-WindowsVersion`: use to specific the version of Windows to search for updates. Windows10, Windows8 and Windows7
-* `-Build`: only applicable with '-WindowsVersion Windows10'. Specify a build number - '17763', '17134', '16299', '15063', '14393', '10586', '10240'.
+`Get-LatestUpdate` will return updates for both Windows 10 x64 and Windows Server 2016 / Windows Server 2019 / Windows Server Semi Annual Channel. In this case, output will look similar to the following, where two entires in the array will both point to the same update URL.
+
+```powershell
+KB        Arch  Note                                                                                      URL                                                                                                                                               
+--        ----  ----                                                                                      ---                                                                                                                                               
+KB4483235 x64   2018-12 Cumulative Update for Windows Server 2019 for x64-based Systems (KB4483235)       http://download.windowsupdate.com/d/msdownload/update/software/secu/2018/12/windows10.0-kb4483235-x64_9d25f46d4a9da7dd295f8a6412a64eca9de4ed82.msu
+KB4483235 x64   2018-12 Cumulative Update for Windows 10 Version 1809 for x64-based Systems (KB4483235)   http://download.windowsupdate.com/d/msdownload/update/software/secu/2018/12/windows10.0-kb4483235-x64_9d25f46d4a9da7dd295f8a6412a64eca9de4ed82.msu
+```
+
+If this output is passed to `Save-LatestUpdate`, the update package will only be downloaded once; however, if you would still like to filter for a single x64 update, the following syntax could be used:
+
+```powershell
+Get-LatestUpdate | Where-Object { ($_.Arch -eq "x64") -and ($_.Note -like "*Windows 10*") }
+```

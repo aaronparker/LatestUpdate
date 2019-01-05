@@ -1,5 +1,22 @@
 # Change Log
 
+## v2.1.0.69
+
+### Public Functions
+
+- Added `Get-LastestFlash` public function to return the latest Adobe Flash Player updates for Windows 10, Windows Server 2016 / 2019 etc.
+- Update module version to 2.1
+- Add -ForceWebRequest parameter to `Save-LatestUpdate` to enable force usage of `Invoke-WebRequest` over `Start-BitsTransfer` even on Windows PowerShell
+- Update `Save-WebRequest` to use private function `Test-PSCore` to test whether module is running under PowerShell Core and to use `Invoke-WebRequest` over `Start-BitsTransfer`
+
+### Private Functions
+
+- Added private functions `Get-KbUpdateArray`, `Get-RxString`, `Get-UpdateCatalogLink`, `Get-UpdateCatalogLink`, `Get-UpdateDownloadArray`, `Get-UpdateFeed` to optimise shared code across `Get-LastestFlash` and `Get-LatestUpdate` public functions.
+
+### Tests
+
+- Update Public and Private function Pester tests
+
 ## v2.0.0.51
 
 ### Public Functions
