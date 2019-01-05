@@ -29,25 +29,25 @@ InModuleScope LatestUpdate {
         Context "Creates a new MDT drive" {
             Mock -CommandName Get-MdtPersistentDrive -MockWith {
                 $obj = [PSCustomObject]@{
-                    Name = $Drive
-                    Path = $Path
+                    Name        = $Drive
+                    Path        = $Path
                     Description = "MDT drive created by New-MdtDrive"
                 }
                 Write-Output $obj
             }
             Mock -CommandName New-PSDrive -MockWith {
                 $obj = [PSCustomObject]@{
-                    Name = $Drive
+                    Name     = $Drive
                     Provider = "MDTProvider"
-                    Root = $Path
+                    Root     = $Path
                 }
                 Write-Output $obj
             }
             Mock -CommandName Add-MdtPersistentDrive -MockWith {
                 $obj = [PSCustomObject]@{
-                    Name = $Drive
+                    Name     = $Drive
                     Provider = "MDTProvider"
-                    Root = $Path
+                    Root     = $Path
                 }
                 Write-Output $obj
             }
@@ -92,17 +92,17 @@ InModuleScope LatestUpdate {
 
     Describe 'Select-LatestUpdate' {
         $Upd1 = [PSCustomObject]@{
-            id = 148
-            text = "KB4089848 (OS Build 16299.334)"
-            level = 2
-            articleId = "4089848"
+            id          = 148
+            text        = "KB4089848 (OS Build 16299.334)"
+            level       = 2
+            articleId   = "4089848"
             articleType = "article"
         }
         $Upd2 = [PSCustomObject]@{
-            id = 144
-            text = "KB4088776 (OS Build 16299.309)"
-            level = 2
-            articleId = "4088776"
+            id          = 144
+            text        = "KB4088776 (OS Build 16299.309)"
+            level       = 2
+            articleId   = "4088776"
             articleType = "article"
         }
         $KbId = @($Upd1, $Upd2)
@@ -115,14 +115,14 @@ InModuleScope LatestUpdate {
 
     Describe 'Select-UniqueUrl' {
         $Upd1 = [PSCustomObject]@{
-            KB = "KB4089848"
+            KB   = "KB4089848"
             Note = "2018-03 Cumulative Update for Windows Server 2016 (1709) for x64-based Systems (KB4089848)"
-            URL = "http://download.windowsupdate.com/d/msdownload/update/software/updt/2018/03/windows10.0-kb4089848-x64_db7c5aad31c520c6983a937c3d53170e84372b11.msu"
+            URL  = "http://download.windowsupdate.com/d/msdownload/update/software/updt/2018/03/windows10.0-kb4089848-x64_db7c5aad31c520c6983a937c3d53170e84372b11.msu"
         }
         $Upd2 = [PSCustomObject]@{
-            KB = "KB4089848"
+            KB   = "KB4089848"
             Note = "2018-03 Cumulative Update for Windows 10 Version 1709 for x64-based Systems (KB4089848)"
-            URL = "http://download.windowsupdate.com/d/msdownload/update/software/updt/2018/03/windows10.0-kb4089848-x64_db7c5aad31c520c6983a937c3d53170e84372b11.msu"
+            URL  = "http://download.windowsupdate.com/d/msdownload/update/software/updt/2018/03/windows10.0-kb4089848-x64_db7c5aad31c520c6983a937c3d53170e84372b11.msu"
         }
         $Updates = @($Upd1, $Upd2)
         Context "Select a single update" {
@@ -146,6 +146,73 @@ InModuleScope LatestUpdate {
                 If (($PSVersionTable.PSVersion -lt [version]::Parse($Version)) -and ($PSVersionTable.PSEdition -eq "Desktop")) {
                     Test-PSCore | Should Be $False
                 }
+            }
+        }
+    }
+
+    Describe 'Get-UpdateFeed' {
+        [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom'
+        [String] $KB = 4483235
+        $xml = Get-UpdateFeed -UpdateFeed $StartKB
+        Context "Tests that Get-UpdateFeed returns valid XML" {
+            It "Returns valid XML" {
+                $xml | Should -BeOfType System.Xml.XmlNode
+            }
+        }
+    }
+
+    Describe 'Get-UpdateCatalogLink' {
+        $kbObj = Get-UpdateCatalogLink -KB "4483235"
+        Context "Tests that Get-UpdateCatalogLink returns valid response" {
+            It "Returns valid response" {
+                $kbObj | Should -BeOfType Microsoft.PowerShell.Commands.WebResponseObject
+            }
+        }
+    }
+
+    Describe 'Get-KbUpdateArray' {
+        $kbObj = Get-UpdateCatalogLink -KB "4483235"
+        $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB "4483235"
+        Context "Tests that Get-KbUpdateArray returns a valid array" {
+            It "Returns a valid array" {
+                $idTable | Should -BeOfType PSCustomObject
+            }
+            It "Returns an array with valid properties" {
+                ForEach ($id in $idTable) {
+                    $id.KB.Length | Should -BeGreaterThan 0
+                    $id.Id.Length | Should -BeGreaterThan 0
+                    $id.Note.Length | Should -BeGreaterThan 0
+                }
+            }
+        }
+    }
+
+    Describe 'Get-UpdateDownloadArray' {
+        $kbObj = Get-UpdateCatalogLink -KB "4483235"
+        $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB "4483235"
+        $Updates = Get-UpdateDownloadArray -IdTable $idTable
+        Context "Returns a valid list of Cumulative updates" {
+            It "Updates array returned should be of valid type" {
+                $Updates | Should -BeOfType System.Management.Automation.PSCustomObject
+            }
+            It "Updtes array returned should have a count greater than 0" {
+                $Updates.Count | Should -BeGreaterThan 0
+            }
+            It "Returns a valid array with expected properties" {
+                ForEach ($Update in $Updates) {
+                    $Update.KB.Length | Should -BeGreaterThan 0
+                    $Update.Arch.Length | Should -BeGreaterThan 0
+                    $Update.Note.Length | Should -BeGreaterThan 0
+                    $Update.URL.Length | Should -BeGreaterThan 0
+                }
+            }
+        }
+    }
+
+    Describe 'Get-RxString' {
+        Context "Returns the expected substring" {
+            It "Given the string '2018-09-07T17:55:12Z', returns '2018-09-07'" {
+                Get-RxString -String "2018-09-07T17:55:12Z" -RegEx "(\d{4}-\d{2}-\d{2})" | Should -Be "2018-09-07"
             }
         }
     }

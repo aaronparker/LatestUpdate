@@ -23,13 +23,14 @@ Function New-MdtPackagesFolder {
     )
     If ((Test-Path -Path "$($Drive):\Packages\$Path" -Type 'Container')) {
         Write-Output $True
-    } Else {
+    }
+    Else {
         If ($pscmdlet.ShouldProcess("$($Drive):\Packages\$Path", "Creating")) {
             Write-Verbose "Creating folder $($Drive):\Packages\$($Path)."
             Try {
                 New-Item -Path "$($Drive):\Packages" -Enable "True" -Name $Path `
-                -Comments "Created by 'New-MdtPackagesFolder'" `
-                -ItemType "Folder"
+                    -Comments "Created by 'New-MdtPackagesFolder'" `
+                    -ItemType "Folder"
             }
             Catch {
                 Throw "Failed to create Packages folder."

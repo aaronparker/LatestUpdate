@@ -26,7 +26,8 @@ Function New-MdtDrive {
     If ($mdtDrives = Get-MdtPersistentDrive | Where-Object { ($_.Path -eq $Path) -and ($_.Description -eq $Description) }) {
         Write-Verbose "Found MDT drive: $($mdtDrives[0].Name)"
         $output = $mdtDrives[0].Name
-    } Else {
+    }
+    Else {
         If ($pscmdlet.ShouldProcess("$($Drive): to $($Path)", "Mapping")) {
             New-PSDrive -Name $Drive -PSProvider "MDTProvider" -Root $Path `
                 -NetworkPath $Path -Description $description | Add-MDTPersistentDrive

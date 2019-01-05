@@ -29,7 +29,7 @@ Function Select-LatestUpdate {
         $maxValue = [version]::new("0.0")
     }
     Process {
-        ForEach ( $update in $Updates ) {
+        ForEach ($update in $Updates) {
             Select-String -InputObject $Update -AllMatches -Pattern "(\d+\.)?(\d+\.)?(\d+\.)?(\*|\d+)" |
                 ForEach-Object { $_.matches.value } |
                 ForEach-Object { $_ -as [version] } |
