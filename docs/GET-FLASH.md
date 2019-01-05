@@ -49,7 +49,7 @@ Get-LatestFlash | Where-Object { ($_.Arch -eq "x86") -and ($_.Note -match ".*Win
 This will return output similar to the following:
 
 ```powershell
-KB        Arch  Note                                                                                      URL                                                                                                                                               
---        ----  ----                                                                                      ---                                                                                                                                               
+KB        Arch  Note                                                                                                             URL                                                                                                                                                 
+--        ----  ----                                                                                                             ---                                                                                                                        
 KB4471331 x64   2018-12 Security Update for Adobe Flash Player for Windows 10 Version 1809 for x64-based Systems (KB4471331)     http://download.windowsupdate.com/c/msdownload/update/software/secu/2018/12/windows10.0-kb4471331-x64_f40a66c873644c2b88ed389882364a8d1fc52328.msu  
 ```
