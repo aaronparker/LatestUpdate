@@ -107,6 +107,35 @@ Describe 'Get-LatestFlash' {
     }
 }
 
+Describe 'Get-LatestServicingStack' {
+    $Updates = Get-LatestServicingStack
+    Context "Returns a valid list of Servicing Stack updates" {
+        It "Given no arguments, returns an array of updates" {
+            $Updates | Should -BeOfType System.Management.Automation.PSCustomObject
+        }
+        It "Given no arguments, returns an array" {
+            $Updates.Count | Should -BeGreaterThan 0
+        }
+        It "Given no arguments, returns a valid array with expected properties" {
+            ForEach ($Update in $Updates) {
+                $Update.KB.Length | Should -BeGreaterThan 0
+                $Update.Arch.Length | Should -BeGreaterThan 0
+                $Update.Version.Length | Should -BeGreaterThan 0
+                $Update.Note.Length | Should -BeGreaterThan 0
+                $Update.URL.Length | Should -BeGreaterThan 0
+            }
+        }
+    }
+    Context "Returns expected results with Servicing Stack updates array" {
+        It "Given no arguments, returns updates for Servicing Stack" {
+            ForEach ($Update in $Updates) {
+                $Update.Note -match "Servicing stack update.*" | Should -Not -BeNullOrEmpty
+                $Update.Arch -match "x86|x64|ARM64" | Should -Not -BeNullOrEmpty
+            }
+        }
+    }
+}
+
 Describe 'Save-LatestUpdate' {
     Context "Download the latest Windows 10 Cumulative updates" {
         $Updates = Get-LatestUpdate
@@ -125,6 +154,18 @@ Describe 'Save-LatestUpdate' {
         $Target = $env:TEMP
         Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest -Verbose
         It "Given updates returned from Get-LatestFlash, it successfully downloads the update" {
+            ForEach ($Update in $Updates) {
+                $Filename = Split-Path $Update.URL -Leaf
+                Write-Host "Check for $(Join-Path $Target $Filename)."
+                (Join-Path $Target $Filename) | Should -Exist
+            }
+        }
+    }
+    Context "Download the latest Servicing Stack updates" {
+        $Updates = Get-LatestServicingStack
+        $Target = $env:TEMP
+        Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest -Verbose
+        It "Given updates returned from Get-LatestServicingStack, it successfully downloads the update" {
             ForEach ($Update in $Updates) {
                 $Filename = Split-Path $Update.URL -Leaf
                 Write-Host "Check for $(Join-Path $Target $Filename)."
