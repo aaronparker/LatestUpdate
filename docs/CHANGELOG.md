@@ -1,5 +1,16 @@
 # Change Log
 
+## v.2.2.0.74
+
+### Public Functions
+
+- Add `Get-LatestServicingStack` Public function to return Servicing Stack updates for Windows 10 versions.
+- Update module description
+
+### Tests
+
+- Add Pester tests for `Get-LatestServicingStack`
+
 ## v2.1.0.69
 
 ### Public Functions
