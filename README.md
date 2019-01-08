@@ -7,15 +7,13 @@
 
 ## About
 
-This repository is a module for retrieving the latest Cumulative Update and Adobe Flash Player updates for Windows 10 / Windows Server builds from the Microsoft Update Catalog. The module also supports the latest Monthly Rollups for Windows 8.1 / Windows Server 2012 R2, Windows 7 / Windows Server 2008 R2. In addition, it provides functions for downloading the update files and importing them into a Microsoft Deployment Toolkit deployment share for speeding the creation of reference images or Windows deployments.
+This repository hosts a module for retrieving the latest Cumulative Update, Monthly Rollups, Servicing Stack and Adobe Flash Player updates for various Windows builds from the Microsoft Update Catalog. In addition, it provides functions for downloading the update files and importing them into a Microsoft Deployment Toolkit deployment share for speeding the creation of reference images or Windows deployments.
 
 Importing a cumulative update into [the Packages nodes in an MDT share](https://docs.microsoft.com/en-us/sccm/mdt/use-the-mdt#ConfiguringPackagesintheDeploymentWorkbench) enables updates during the offline phase of Windows setup, speeding up an installation of Windows. Updates could also be [applied directly to a WIM](https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/dism-operating-system-package-servicing-command-line-options).
 
-This module is a re-write of the Update scripts found here: [https://github.com/aaronparker/MDT/tree/master/Updates](https://github.com/aaronparker/MDT/tree/master/Updates). Re-writing them as a PowerShell module enables better code management and publishing to the PowerShell Gallery for easier installation with `Install-Module`.
-
 ## Documentation
 
-Full documentation for the module is located at [https://docs.stealthpuppy.com/latestupdate/](https://docs.stealthpuppy.com/latestupdate/)
+Regularly updated documentation for the module is located at [https://docs.stealthpuppy.com/latestupdate/](https://docs.stealthpuppy.com/latestupdate/)
 
 ## Supported Platforms
 
@@ -23,7 +21,7 @@ LatestUpdate supports PowerShell 5.0 and above and is tested on macOS, Windows 1
 
 ### PowerShell Core
 
-`Get-LatestUpdate` and `Save-LatestUpdate` support PowerShell Core; however, because `Import-LatestUpdate` requires the MDT Workbench, full support for PowerShell Core will depend on Microsoft updating the MDT PowerShell module to support it.
+`Get-LatestUpdate`, `Get-LatestFlash` and `Save-LatestUpdate` support PowerShell Core; however, because `Import-LatestUpdate` requires the MDT Workbench, full support for PowerShell Core will depend on Microsoft updating the MDT PowerShell module to support it.
 
 [appveyor-badge]: https://ci.appveyor.com/api/projects/status/s4g24puifpegq7kf/branch/master?svg=true
 [appveyor-build]: https://ci.appveyor.com/project/aaronparker/latestupdate/
