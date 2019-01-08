@@ -131,6 +131,7 @@ Describe 'Get-LatestServicingStack' {
             ForEach ($Update in $Updates) {
                 $Update.Note -match "Servicing stack update.*" | Should -Not -BeNullOrEmpty
                 $Update.Arch -match "x86|x64|ARM64" | Should -Not -BeNullOrEmpty
+                $Update.Version -match "1607|1703|1709|1803|1809" | Should -Not -BeNullOrEmpty
             }
         }
     }

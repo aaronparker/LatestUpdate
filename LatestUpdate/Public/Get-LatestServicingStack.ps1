@@ -111,6 +111,6 @@ Function Get-LatestServicingStack {
     End {
 
         # Return the array of Servicing Stack Updates to the pipeline
-        Write-Output ($output | Sort-Object -Property Version -Descending | Format-Table)
+        Write-Output ($output | Sort-Object -Property Version -Descending)
     }
 }
