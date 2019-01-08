@@ -74,18 +74,18 @@ Function Get-LatestUpdate {
         [String] $Build = "17763"
     )
     Begin {
-        # Set values for -Build and -SearchString as required for each platform
+        # Set values for -Build as required for each platform
         Switch ($WindowsVersion) {
             "Windows10" {
-                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom'
+                [String] $Feed = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom'
                 If ($Build -eq "^(?!.*Preview)(?=.*Monthly).*") { $Build = "17763" }
             }
             "Windows8" {
-                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/b905caa1-d413-c90c-bed3-20aead901092/atom'
+                [String] $Feed = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/b905caa1-d413-c90c-bed3-20aead901092/atom'
                 [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
             }
             "Windows7" {
-                [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/f825ca23-c7d1-aab8-4513-64980e1c3007/atom'
+                [String] $Feed = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/f825ca23-c7d1-aab8-4513-64980e1c3007/atom'
                 [String] $Build = "^(?!.*Preview)(?=.*Monthly).*"
             }
         }
@@ -93,16 +93,16 @@ Function Get-LatestUpdate {
     }
     Process {
         # Find the KB Article Number
-        $xml = Get-UpdateFeed -UpdateFeed $StartKB
+        $xml = Get-UpdateFeed -UpdateFeed $Feed
         
         try {
-            Switch ( $WindowsVersion ) {
+            Switch ($WindowsVersion) {
                 "Windows10" { 
                     # Sort feed for titles that match Build number; Find the largest minor build number
-                    [regex] $rx = "$Build.(\d+)"
+                    [regex] $rxB = "$Build.(\d+)"
                     $buildMatches = $xml.feed.entry | Where-Object -Property title -match $Build
                     Write-Verbose -Message "Found $($buildMatches.Count) items matching build $Build."
-                    $latestVersion = $buildMatches | ForEach-Object { ($rx.match($_.title)).value.split('.') | Select-Object -Last 1} `
+                    $latestVersion = $buildMatches | ForEach-Object { ($rxB.match($_.title)).value.split('.') | Select-Object -Last 1} `
                         | ForEach-Object { [convert]::ToInt32($_, 10) } | Sort-Object -Descending | Select-Object -First 1
 
                     # Re-match feed for major.minor number and return the KB number from the Id field

@@ -56,7 +56,7 @@ Function Get-LatestServicingStack {
                 ForEach-Object { ([regex]::match($_, $rxM).Groups[1].Value) } | Sort-Object | Select-Object -Last 1
 
             # Return the KB published for that most current date
-            $kbID = $servicingStacks | Where-Object { ($_.title -match $vItem) -and ($_.updated -match $date ) } | Select-Object -ExpandProperty id `
+            $kbID = $servicingStacks | Where-Object { ($_.title -match $vItem) -and ($_.updated -match $date) } | Select-Object -ExpandProperty id `
                 | ForEach-Object { $_.split(':') | Select-Object -Last 1 }
 
             # Multiple KBs could be returned, step through each
@@ -95,7 +95,7 @@ Function Get-LatestServicingStack {
                                 $newItem = New-Object PSObject
                                 $newItem | Add-Member -type NoteProperty -Name 'KB' -Value $idItem.KB
                                 $newItem | Add-Member -type NoteProperty -Name 'Arch' `
-                                    -Value ([regex]::match($idItem.Note, "\s+([a-zA-Z0-9]+)-based").Groups[1].Value)
+                                    -Value (Get-RxString -String $idItem.Note -RegEx "\s+([a-zA-Z0-9]+)-based")
                                 $newItem | Add-Member -type NoteProperty -Name 'Version' -Value $vItem
                                 $newItem | Add-Member -type NoteProperty -Name 'Note' -Value $idItem.Note
                                 $newItem | Add-Member -type NoteProperty -Name 'URL' -Value $url
