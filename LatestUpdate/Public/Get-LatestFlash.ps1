@@ -58,6 +58,6 @@ Function Get-LatestFlash {
     }
     End {
         # Write the URLs list to the pipeline
-        Write-Output $downloadArray
+        Write-Output ($downloadArray | Sort-Object -Property Version -Descending)
     }
 }
