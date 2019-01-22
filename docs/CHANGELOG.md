@@ -1,5 +1,15 @@
 # Change Log
 
+## v2.3.1.81
+
+### Private Functions
+
+- Fix version string for Windows Server 2016/2019, Windows Server 2008 R2, Windows 7 in `Get-UpdateDownloadArray`
+
+### Tests
+
+- Add Pester tests for `Get-LatestUpdate -WindowsBuild Windows8` and `Get-LatestUpdate -WindowsBuild Windows7`
+
 ## v2.3.0.78
 
 ### Public Functions
