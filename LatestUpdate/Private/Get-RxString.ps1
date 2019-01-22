@@ -16,15 +16,20 @@ Function Get-RxString {
     [CmdletBinding()]
     [OutputType([String])]
     Param (
-        [Parameter()]
+        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
+        [ValidateNotNull()]
         [string] $String,
 
-        [Parameter()]
+        [Parameter(Mandatory = $True, Position = 1)]
         [RegEx] $RegEx
     )
 
+    # Extract sub-string from $String via the RegEx and return on the pipeline
     $String -match $RegEx > $Null
-    Write-Output $Matches[1]
+    If ($Null -ne $Matches[1]) {
+        Write-Output $Matches[1]
+    }
 
+    # Alternative method for extracting sub-string
     # [regex]::match($String, $RegEx).Groups[1].Value
 }

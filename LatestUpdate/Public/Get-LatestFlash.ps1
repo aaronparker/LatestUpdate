@@ -22,29 +22,28 @@ Function Get-LatestFlash {
     Param()
 
     Begin {
-        [String] $StartKB = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom'
+        [String] $Feed = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom'
         [regex] $Flash = ".*Adobe Flash Player.*"
     }
 
     Process {
-        # Find the KB Article Number
-        $xml = Get-UpdateFeed -UpdateFeed $StartKB
+        # Return the XML from the feed and filter for the Flash updates
+        $xml = Get-UpdateFeed -UpdateFeed $Feed
         
         try {
+            # Find the most current date for the update
             [regex] $rxM = "(\d{4}-\d{2}-\d{2})"
-            # [regex] $rxT = "(\d{2}:\d{2}:\d{2})"
-
             $date = $xml.feed.entry | Where-Object { $_.title -match $Flash } | Select-Object -ExpandProperty updated | `
                 ForEach-Object { Get-RxString -String $_ -RegEx $rxM } | Sort-Object | Select-Object -Last 1
 
-            $kbID = $xml.feed.entry | Where-Object { ($_.title -match $Flash) -and ($_.updated -match $date ) } | Select-Object -ExpandProperty id `
+            # Return the KB published for that most current date
+            $kbID = $xml.feed.entry | Where-Object { ($_.title -match $Flash) -and ($_.updated -match $date) } | Select-Object -ExpandProperty id `
                 | ForEach-Object { $_.split(':') | Select-Object -Last 1 }
         }
         catch {   
             If ($Null -eq $kbID) { Write-Warning -Message "kbID is Null. Unable to read from the KB from the JSON." }
             Break
         }
-        #endregion
 
         # Get the download link from Windows Update
         $kbObj = Get-UpdateCatalogLink -KB $kbID
@@ -59,6 +58,6 @@ Function Get-LatestFlash {
     }
     End {
         # Write the URLs list to the pipeline
-        Write-Output $downloadArray
+        Write-Output ($downloadArray | Sort-Object -Property Version -Descending)
     }
 }

@@ -8,7 +8,7 @@
 build: off
 
 # Version number
-version: 2.2.0.{build}
+version: 2.3.0.{build}
 
 # There's no need to alter the build number for a Pull Request (PR) since they don't modify anything
 pull_requests:
@@ -61,4 +61,3 @@ test_script:
 branches:
   except:
   - docs
-  - Win8-Win7
