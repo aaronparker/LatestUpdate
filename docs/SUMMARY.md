@@ -10,3 +10,4 @@
     * [Downloading the updates](DOWNLOAD.md)
     * [Importing updates into MDT](IMPORT.md)
 * [Change log](CHANGELOG.md)
+* [Understanding LatestUpdate versioning](VERSION.md)

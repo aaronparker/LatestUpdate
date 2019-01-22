@@ -1,8 +1,10 @@
 # LatestUpdate
 
-This repository is a module for retrieving the latest Cumulative Update and Adobe Flash Player updates for Windows 10 / Windows Server builds from the Microsoft Update Catalog. The module also supports the latest Monthly Rollups for Windows 8.1 / Windows Server 2012 R2, Windows 7 / Windows Server 2008 R2. In addition, it provides functions for downloading the update files and importing them into a Microsoft Deployment Toolkit deployment share for speeding the creation of reference images or Windows deployments.
+This repository is a module for retrieving the latest Cumulative Update and Adobe Flash Player updates for Windows 10 / Windows Server builds from the Microsoft Update Catalog. The module also supports the latest Monthly Rollups for Windows 8.1 / Windows Server 2012 R2, Windows 7 / Windows Server 2008 R2.
 
-The module queries the Windows update history pages and returns details for the latest update including the download URL from the Microsoft Update Catalog, making it easy to find the latest update for your target operating system.
+In addition, it provides functions for downloading the update files and importing them into a Microsoft Deployment Toolkit deployment share for speeding the creation of reference images or Windows deployments.
+
+The module queries the Windows update history feeds and returns details for the latest update including the download URL from the Microsoft Update Catalog, making it easy to find the latest update for your target operating system.
 
 * [Windows 10 and Windows Server update history](https://support.microsoft.com/en-au/help/4043454)
 * [Windows 8.1 and Windows Server 2012 R2 update history](https://support.microsoft.com/en-us/help/4009470)
