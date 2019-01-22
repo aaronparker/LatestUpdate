@@ -1,5 +1,20 @@
 # Change Log
 
+## v2.3.0.78
+
+### Public Functions
+
+- Ensure `Get-LatestUpdate`, `Get-LatestServicingStack` & `Get-LatestFlash` return consistent output
+- Sort output in `Get-LatestFlash` and `Get-LatestUpdate` on Version property
+
+### Private Functions
+
+- Update `Get-UpdateDownloadArray` to add Version property to function outputs
+
+### Tests
+
+- Add tests for Version property in all public functions
+
 ## v.2.2.0.74
 
 ### Public Functions

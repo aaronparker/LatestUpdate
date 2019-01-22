@@ -10,4 +10,4 @@ LatestUpdate supports PowerShell 5.0 and above with testing completed on macOS, 
 
 ### PowerShell Core
 
-`Get-LatestUpdate` and `Save-LatestUpdate` support PowerShell Core; however, because `Import-LatestUpdate` requires the MDT Workbench, full support for PowerShell Core will depend on Microsoft updating the MDT PowerShell module to support it.
+`Get-LatestUpdate`, `Get-LatestFlash`, `Get-LatestServicingStack` and `Save-LatestUpdate` support PowerShell Core; however, because `Import-LatestUpdate` requires the MDT Workbench, `Import-LatestUpdate` only runs under Windows PowerShell.
