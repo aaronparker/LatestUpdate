@@ -60,8 +60,14 @@ Function Get-UpdateDownloadArray {
             ElseIf ($idItem.Note -match "Windows Embedded 8 Standard") {
                 $Version = "8Embedded"
             }
-            Else {
-                $Version = "NotFound"
+            ElseIf ($idItem.Note -match "Windows Server 2008 R2") {
+                $Version = "2008R2"
+            }
+            ElseIf ($idItem.Note -match "Windows 7") {
+                $Version = "7"
+            }
+            ElseIf ($idItem.Note -match "Windows Embedded Standard 7") {
+                $Version = "7Embedded"
             }
             $newItem | Add-Member -type NoteProperty -Name 'Version' -Value $Version
 
