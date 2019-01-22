@@ -21,7 +21,7 @@ LatestUpdate supports PowerShell 5.0 and above and is tested on macOS, Windows 1
 
 ### PowerShell Core
 
-`Get-LatestUpdate`, `Get-LatestFlash` and `Save-LatestUpdate` support PowerShell Core; however, because `Import-LatestUpdate` requires the MDT Workbench, full support for PowerShell Core will depend on Microsoft updating the MDT PowerShell module to support it.
+`Get-LatestUpdate`, `Get-LatestFlash`, `Get-LatestServicingStack` and `Save-LatestUpdate` support PowerShell Core; however, because `Import-LatestUpdate` requires the MDT Workbench, `Import-LatestUpdate` only runs under Windows PowerShell.
 
 [appveyor-badge]: https://ci.appveyor.com/api/projects/status/s4g24puifpegq7kf/branch/master?svg=true
 [appveyor-build]: https://ci.appveyor.com/project/aaronparker/latestupdate/
