@@ -61,4 +61,3 @@ test_script:
 branches:
   except:
   - docs
-  - development
