@@ -9,7 +9,7 @@ Else {
 Import-Module (Join-Path $ProjectRoot "LatestUpdate")
 
 Describe 'Get-LatestUpdate' {
-    Context "Returns a valid list of Cumulative or Monthly updates" {
+    Context "Returns a valid list of Cumulative updates" {
         $Updates = Get-LatestUpdate
         It "Given no arguments, returns an array of updates" {
             $Updates | Should -BeOfType System.Management.Automation.PSCustomObject
@@ -82,6 +82,56 @@ Describe 'Get-LatestUpdate' {
                 $Update.Note -match "Cumulative.*1507" | Should -Not -BeNullOrEmpty
                 $Update.Arch -match "x86|x64|ARM64" | Should -Not -BeNullOrEmpty
                 $Update.Version -match "1507" | Should -Not -BeNullOrEmpty
+            }
+        }
+    }
+    Context "Returns expected results for Windows 8.1" {
+        $Updates = Get-LatestUpdate -WindowsVersion Windows8
+        It "Given '-WindowsVersion Windows8' returns updates for Windows 8.1" {
+            ForEach ($Update in $Updates) {
+                $Update.Note -match "Security Monthly Quality Rollup*" | Should -Not -BeNullOrEmpty
+                $Update.Arch -match "x86|x64" | Should -Not -BeNullOrEmpty
+                $Update.Version -match "8.1|2012R2" | Should -Not -BeNullOrEmpty
+            }
+        }
+        It "Given no arguments, returns an array of updates" {
+            $Updates | Should -BeOfType System.Management.Automation.PSCustomObject
+        }
+        It "Given no arguments, returns an array" {
+            $Updates.Count | Should -BeGreaterThan 0
+        }
+        It "Given no arguments, returns a valid array with expected properties" {
+            ForEach ($Update in $Updates) {
+                $Update.KB.Length | Should -BeGreaterThan 0
+                $Update.Arch.Length | Should -BeGreaterThan 0
+                $Update.Version.Length | Should -BeGreaterThan 0
+                $Update.Note.Length | Should -BeGreaterThan 0
+                $Update.URL.Length | Should -BeGreaterThan 0
+            }
+        }
+    }
+    Context "Returns expected results for Windows 7" {
+        $Updates = Get-LatestUpdate -WindowsVersion Windows7
+        It "Given '-WindowsVersion Windows7' returns updates for Windows 7" {
+            ForEach ($Update in $Updates) {
+                $Update.Note -match "Security Monthly Quality Rollup*" | Should -Not -BeNullOrEmpty
+                $Update.Arch -match "x86|x64|Itanium" | Should -Not -BeNullOrEmpty
+                $Update.Version -match "7|2008R2|7Embedded" | Should -Not -BeNullOrEmpty
+            }
+        }
+        It "Given no arguments, returns an array of updates" {
+            $Updates | Should -BeOfType System.Management.Automation.PSCustomObject
+        }
+        It "Given no arguments, returns an array" {
+            $Updates.Count | Should -BeGreaterThan 0
+        }
+        It "Given no arguments, returns a valid array with expected properties" {
+            ForEach ($Update in $Updates) {
+                $Update.KB.Length | Should -BeGreaterThan 0
+                $Update.Arch.Length | Should -BeGreaterThan 0
+                $Update.Version.Length | Should -BeGreaterThan 0
+                $Update.Note.Length | Should -BeGreaterThan 0
+                $Update.URL.Length | Should -BeGreaterThan 0
             }
         }
     }
