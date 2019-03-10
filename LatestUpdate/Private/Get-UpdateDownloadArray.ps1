@@ -75,7 +75,12 @@ Function Get-UpdateDownloadArray {
             $newItem | Add-Member -type NoteProperty -Name 'Note' -Value $idItem.Note
 
             # Filter URL to ensure only .MSU updates are returned
-            $download = $url | Where-Object { (Split-Path -Path $_ -Extension) -match ".msu" }
+            If (Test-PSCore) {
+                $download = $url | Where-Object { (Split-Path -Path $_ -Extension) -match ".msu" }
+            }
+            Else {
+                $download = $url | Where-Object { ([IO.Path]::GetExtension($_)) -match ".msu" }
+            }
             $newItem | Add-Member -type NoteProperty -Name 'URL' -Value $download
 
             $output += $newItem
