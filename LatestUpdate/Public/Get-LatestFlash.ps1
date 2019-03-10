@@ -10,7 +10,7 @@ Function Get-LatestFlash {
             Twitter: @stealthpuppy
 
         .LINK
-
+            https://docs.stealthpuppy.com/latestupdate
 
         .EXAMPLE
             Get-LatestUpdate -WindowsVersion Windows7

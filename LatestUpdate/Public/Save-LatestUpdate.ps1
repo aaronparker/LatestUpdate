@@ -15,6 +15,9 @@ Function Save-LatestUpdate {
             Author: Aaron Parker
             Twitter: @stealthpuppy
 
+        .LINK
+            https://docs.stealthpuppy.com/latestupdate
+
         .PARAMETER Updates
             The array of latest cumulative updates retreived by Get-LatestUpdate.
 

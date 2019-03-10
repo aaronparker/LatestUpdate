@@ -11,7 +11,7 @@ Function Import-LatestUpdate {
         Twitter: @stealthpuppy
 
     .LINK
-        http://stealthpuppy.com
+        https://docs.stealthpuppy.com/latestupdate
 
     .PARAMETER UpdatePath
         The folder containing the updates to import into the MDT deployment share.

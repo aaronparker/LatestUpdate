@@ -16,6 +16,7 @@ Function Get-LatestServicingStack {
             Twitter: @stealthpuppy
 
         .LINK
+            https://docs.stealthpuppy.com/latestupdate
 
         .PARAMETER Version
             Windows 10 version to return the Servicing Stack Update for. Use the Year Month notation for Windows 10 versions. Supports 1607+.
