@@ -22,13 +22,17 @@ Function New-MdtPackagesFolder {
         [String] $Path
     )
 
-    # If $Path does not exist, attempt to create it
-    If (!(Test-Path -Path "$($Drive):\Packages\$Path" -Type 'Container')) {
-
+    # Test path and create if it does not already exist
+    If ((Test-Path -Path "$($Drive):\Packages\$Path" -Type 'Container')) {
+        Write-Verbose "Path exists: $($Drive):\Packages\$Path"
+        Write-Output $True
+    }
+    Else {
         # If path with multiple folders specified, create each one
         $folders = $Path -split "\\"
         $parent = "$($Drive):\Packages"
-        
+               
+        # Walkthrough each folder in the path to create
         ForEach ($folder in $folders) {
             If (!(Test-Path -Path "$parent\$folder" -Type 'Container')) {
                 If ($pscmdlet.ShouldProcess("$parent\$folder", "Creating")) {
@@ -43,12 +47,9 @@ Function New-MdtPackagesFolder {
                 }
             }
             $parent = "$parent\$folder"
-
+        
             # Return status from New-Item
             Write-Output $?
         }
-    }
-    Else {
-        Write-Verbose "Path exists: $($Drive):\Packages\$Path"
     }
 }
