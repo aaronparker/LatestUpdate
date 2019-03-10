@@ -45,6 +45,7 @@ Function Get-UpdateDownloadArray {
             $newItem | Add-Member -type NoteProperty -Name 'Arch' `
                 -Value (Get-RxString -String $idItem.Note -RegEx $rxArch)
 
+            # Add custom version note based on description returned from page
             If ($idItem.Note -match "Windows 10.*") {
                 $Version = Get-RxString -String $idItem.Note -RegEx $rx10
             }
@@ -72,7 +73,11 @@ Function Get-UpdateDownloadArray {
             $newItem | Add-Member -type NoteProperty -Name 'Version' -Value $Version
 
             $newItem | Add-Member -type NoteProperty -Name 'Note' -Value $idItem.Note
-            $newItem | Add-Member -type NoteProperty -Name 'URL' -Value $url
+
+            # Filter URL to ensure only .MSU updates are returned
+            $download = $url | Where-Object { (Split-Path -Path $_ -Extension) -match ".msu" }
+            $newItem | Add-Member -type NoteProperty -Name 'URL' -Value $download
+
             $output += $newItem
         }
     }
