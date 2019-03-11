@@ -1,5 +1,23 @@
 # Change Log
 
+## v2.4.0.89
+
+### Public Functions
+
+- Removed support for Windows 10 1511 (build 10586) in `Get-LatestUpdate` as updates for this build are no longer available in the update feed. Support for Windows 10 1511 finished in October 2017 with the last update being made available in April 2018
+- Updated `Get-LatestUpdate` to return only .MSU updates. Fixes issue #27  and #23
+- Account for missing architecture and version strings in `Get-LatestFlash`
+- Updated `Import-LatestUpdate` to create packages folders such as "Windows 10\1803", where the parent folder does not already exist. Fixes issue #30 
+- Updated code to fix removing existing packages with -Clean in `Import-LatestUpdate`. Fixes issue #29 
+- Updated LINK in comments in public functions to point to https://docs.stealthpuppy.com/latestupdate
+
+### Private Functions
+
+- Fix an issue where stepping through multiple KBs was not handled correctly in `Get-LatestServicingStack`
+- Add additional error checking to `Get-LatestServicingStack`
+- Update private function `Get-UpdateDownloadArray` to fix download URLs returned for .MSU and .EXE updaters for Windows 7
+- Update logic in private function `New-MdtPackagesFolder` to cater for multiple paths (e.g. parent\child)
+
 ## v2.3.1.81
 
 ### Private Functions
