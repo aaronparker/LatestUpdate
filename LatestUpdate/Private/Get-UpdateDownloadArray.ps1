@@ -42,34 +42,46 @@ Function Get-UpdateDownloadArray {
             Write-Verbose -Message "Adding $url to output."
             $newItem = New-Object PSObject
             $newItem | Add-Member -type NoteProperty -Name 'KB' -Value $idItem.KB
-            $newItem | Add-Member -type NoteProperty -Name 'Arch' `
-                -Value (Get-RxString -String $idItem.Note -RegEx $rxArch)
 
-            # Add custom version note based on description returned from page
+            # Add custom version note and check architecture based on description returned from page
+            $arch = Get-RxString -String $idItem.Note -RegEx $rxArch
             If ($idItem.Note -match "Windows 10.*") {
                 $Version = Get-RxString -String $idItem.Note -RegEx $rx10
+                If ($Null -eq $arch) { $arch = "x86" }
+            }
+            ElseIf ($idItem.Note -match "Windows Server 2016") {
+                $Version = "1607"
+                If ($Null -eq $arch) { $arch = "x64" }
             }
             ElseIf ($idItem.Note -match $rx2012) {
                 $Version = "2012"
+                If ($Null -eq $arch) { $arch = "x64" }
             }
             ElseIf ($idItem.Note -match "Windows Server 2012 R2") {
                 $Version = "2012R2"
+                If ($Null -eq $arch) { $arch = "x64" }
             }
             ElseIf ($idItem.Note -match "Windows 8.1") {
                 $Version = "8.1"
+                If ($Null -eq $arch) { $arch = "x86" }
             }
             ElseIf ($idItem.Note -match "Windows Embedded 8 Standard") {
                 $Version = "8Embedded"
+                If ($Null -eq $arch) { $arch = "x86" }
             }
             ElseIf ($idItem.Note -match "Windows Server 2008 R2") {
                 $Version = "2008R2"
+                If ($Null -eq $arch) { $arch = "x64" }
             }
             ElseIf ($idItem.Note -match "Windows 7") {
                 $Version = "7"
+                If ($Null -eq $arch) { $arch = "x86" }
             }
             ElseIf ($idItem.Note -match "Windows Embedded Standard 7") {
                 $Version = "7Embedded"
+                If ($Null -eq $arch) { $arch = "x86" }
             }
+            $newItem | Add-Member -type NoteProperty -Name 'Arch' -Value $arch
             $newItem | Add-Member -type NoteProperty -Name 'Version' -Value $Version
 
             $newItem | Add-Member -type NoteProperty -Name 'Note' -Value $idItem.Note
@@ -83,6 +95,7 @@ Function Get-UpdateDownloadArray {
             }
             $newItem | Add-Member -type NoteProperty -Name 'URL' -Value $download
 
+            # Add item to the output array
             $output += $newItem
         }
     }
