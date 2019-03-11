@@ -10,13 +10,13 @@ Function Get-LatestFlash {
             Twitter: @stealthpuppy
 
         .LINK
-
+            https://docs.stealthpuppy.com/latestupdate
 
         .EXAMPLE
-            Get-LatestUpdate -WindowsVersion Windows7
+            Get-LatestFlash
         
             Description:
-            Enumerate the latest Monthly Update for Windows 7 (and Windows 7 Embedded).
+            Enumerate the latest Adobe Flash Player update for the support versions of Windows.
     #>
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param()

@@ -19,7 +19,7 @@ Function Get-LatestUpdate {
             Forked from: https://gist.github.com/keithga/1ad0abd1f7ba6e2f8aff63d94ab03048
 
         .LINK
-            https://support.microsoft.com/en-au/help/4464619
+            https://docs.stealthpuppy.com/latestupdate
 
         .PARAMETER WindowsVersion
             Specifiy the Windows version to search for updates. Valid values are Windows10, Windows8, Windows7 (applies to desktop and server editions).
@@ -70,7 +70,7 @@ Function Get-LatestUpdate {
         [String] $WindowsVersion = "Windows10",
 
         [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Provide a Windows 10 build number")]
-        [ValidateSet('17763', '17134', '16299', '15063', '14393', '10586', '10240', '^(?!.*Preview)(?=.*Monthly).*')]
+        [ValidateSet('17763', '17134', '16299', '15063', '14393', '10240', '^(?!.*Preview)(?=.*Monthly).*')]
         [String] $Build = "17763"
     )
     Begin {

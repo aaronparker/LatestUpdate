@@ -16,6 +16,7 @@ Function Get-LatestServicingStack {
             Twitter: @stealthpuppy
 
         .LINK
+            https://docs.stealthpuppy.com/latestupdate
 
         .PARAMETER Version
             Windows 10 version to return the Servicing Stack Update for. Use the Year Month notation for Windows 10 versions. Supports 1607+.
@@ -49,25 +50,28 @@ Function Get-LatestServicingStack {
 
     Process {
         # Step through the servicing stack feed to find the latest KB article for each Windows 10 version
-        ForEach ($vItem in $Version) {
+        ForEach ($ver in $Version) {
 
             # Find the most current date for each entry for each Windows 10 version
-            $date = $servicingStacks | Where-Object { $_.title -match $vItem } | Select-Object -ExpandProperty updated | `
+            $date = $servicingStacks | Where-Object { $_.title -match $ver } | Select-Object -ExpandProperty updated | `
                 ForEach-Object { ([regex]::match($_, $rxM).Groups[1].Value) } | Sort-Object | Select-Object -Last 1
 
             # Return the KB published for that most current date
-            $kbID = $servicingStacks | Where-Object { ($_.title -match $vItem) -and ($_.updated -match $date) } | Select-Object -ExpandProperty id `
-                | ForEach-Object { $_.split(':') | Select-Object -Last 1 }
+            If ($Null -ne $date) {
+                $kbID = $servicingStacks | Where-Object { ($_.title -match $ver) -and ($_.updated -match $date) } | Select-Object -ExpandProperty id `
+                    | ForEach-Object { $_.split(':') | Select-Object -Last 1 }
+            }
 
             # Multiple KBs could be returned, step through each
             ForEach ($id in $kbID) {
 
                 # Read the for updates for that KB from the Microsoft Update Catalog
+                Write-Verbose -Message "Getting update catalog links for KB :$id"
                 $kbObj = Get-UpdateCatalogLink -KB $id
                 If ($Null -ne $kbObj) {
 
                     # Contruct a table with KB, Id and Update description
-                    $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB $kbID
+                    $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB $id
 
                     # Step through the ids for each update
                     ForEach ($idItem in $idTable) {
@@ -96,7 +100,7 @@ Function Get-LatestServicingStack {
                                 $newItem | Add-Member -type NoteProperty -Name 'KB' -Value $idItem.KB
                                 $newItem | Add-Member -type NoteProperty -Name 'Arch' `
                                     -Value (Get-RxString -String $idItem.Note -RegEx "\s+([a-zA-Z0-9]+)-based")
-                                $newItem | Add-Member -type NoteProperty -Name 'Version' -Value $vItem
+                                $newItem | Add-Member -type NoteProperty -Name 'Version' -Value $ver
                                 $newItem | Add-Member -type NoteProperty -Name 'Note' -Value $idItem.Note
                                 $newItem | Add-Member -type NoteProperty -Name 'URL' -Value $url
                                 $output += $newItem

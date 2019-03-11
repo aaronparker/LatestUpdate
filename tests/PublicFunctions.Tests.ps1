@@ -68,14 +68,6 @@ Describe 'Get-LatestUpdate' {
                 $Update.Version -match "1607" | Should -Not -BeNullOrEmpty
             }
         }
-        It "Given '10586' returns updates for build 1511" {
-            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build '10586'
-            ForEach ($Update in $Updates) {
-                $Update.Note -match "Cumulative.*1511" | Should -Not -BeNullOrEmpty
-                $Update.Arch -match "x86|x64|ARM64" | Should -Not -BeNullOrEmpty
-                $Update.Version -match "1511" | Should -Not -BeNullOrEmpty
-            }
-        }
         It "Given '10240' returns updates for build 1507" {
             $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build '10240'
             ForEach ($Update in $Updates) {

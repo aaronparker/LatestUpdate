@@ -12,7 +12,7 @@
 RootModule = 'LatestUpdate.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.3.1.81'
+ModuleVersion = '2.4.0.81'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -103,7 +103,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'Windows10','WindowsServer2019','WindowsServer2016','CumulativeUpdate','AdobeFlash','LatestUpdate','MDT','MicrosoftDeploymentToolkit','MonthlyUpdate','ServicingStack'
+        Tags = 'Windows10','WindowsServer2019','WindowsServer2016','CumulativeUpdate','AdobeFlash','Adobe','Flash','LatestUpdate','MDT','MicrosoftDeploymentToolkit','MonthlyUpdate','ServicingStack'
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/aaronparker/LatestUpdate/blob/master/LICENSE'

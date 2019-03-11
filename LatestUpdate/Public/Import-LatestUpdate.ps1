@@ -11,7 +11,7 @@ Function Import-LatestUpdate {
         Twitter: @stealthpuppy
 
     .LINK
-        http://stealthpuppy.com
+        https://docs.stealthpuppy.com/latestupdate
 
     .PARAMETER UpdatePath
         The folder containing the updates to import into the MDT deployment share.
@@ -94,16 +94,9 @@ Function Import-LatestUpdate {
         }
         Write-Verbose "Destination is $($dest)"
 
-        # If -Clean is specified, enumerate existing packages from the target destination and remove before importing
+        # If -Clean is specified, remove packages from the destination folder
         If ($Clean) {
-            Push-Location $dest
-            Get-ChildItem | Where-Object { $_.Name -like "Package*" } | ForEach-Object { 
-                If ( $pscmdlet.ShouldProcess($_.Name, "Remove package") ) {
-                    # Remove, but don't force in case the update exists in another folder
-                    Remove-Item $_.Name
-                }
-            }
-            Pop-Location
+            Remove-MdtPackage -Path $dest
         }
 
         # Validate the provided local path and import the update package
