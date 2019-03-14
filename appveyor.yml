@@ -33,7 +33,7 @@ skip_commits:
     - img/*
     - scripts/*
     - TestsResults.xml
-  message: /updated readme.*|update readme.*s|update docs.*|Docs update.*|update version.*|update appveyor.*|Merge branch 'master' of.*/
+  message: /updated readme.*|update docs.*|update version.*|maintenance.*|update appveyor.*|Merge branch 'master' of.*/
 
 only_commits:
   files:
