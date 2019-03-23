@@ -17,11 +17,10 @@ Function Get-UpdateDownloadArray {
         [PSCustomObject] $IdTable
     )
 
-    # Strings
+    # Search strings
     [string] $win10 = "Windows 10.*"
     [string] $rxArch = "\s+([a-zA-Z0-9]+)-based"
     [regex] $rx10 = "([1-2][0-9][0-1][0-9])\s"
-    # [regex] $rx2012 = "Windows Server 2012(?!\sR2)"
     $editions = @{
         "Windows Server 2019"         = "1809"
         "Windows Server 2016"         = "1607"
@@ -44,7 +43,6 @@ Function Get-UpdateDownloadArray {
         "Windows 7"                   = "x86"
         "Windows Embedded Standard 7" = "x86"
     }
-        # 
 
     $output = @()
     ForEach ($idItem in $IdTable) {
@@ -54,9 +52,9 @@ Function Get-UpdateDownloadArray {
             $postBody = @{ updateIDs = "[$post]" }
             $url = Invoke-WebRequest -Uri 'http://www.catalog.update.microsoft.com/DownloadDialog.aspx' `
                 -Method Post -Body $postBody -UseBasicParsing -ErrorAction SilentlyContinue | `
-            Select-Object -ExpandProperty Content | `
-            Select-String -AllMatches -Pattern "(http[s]?\://download\.windowsupdate\.com\/[^\'\""]*)" | `
-            ForEach-Object { $_.matches.value }
+                Select-Object -ExpandProperty Content | `
+                Select-String -AllMatches -Pattern "(http[s]?\://download\.windowsupdate\.com\/[^\'\""]*)" | `
+                ForEach-Object { $_.matches.value }
         }
         catch {
             Throw "Failed to parse Microsoft Update Catalog for Id: $($idItem.id)."

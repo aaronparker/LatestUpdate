@@ -104,7 +104,7 @@ Function Get-LatestUpdate {
                     [regex] $rxB = "$Build.(\d+)"
                     $buildMatches = $xml.feed.entry | Where-Object -Property title -match $Build
                     Write-Verbose -Message "Found $($buildMatches.Count) items matching build $Build."
-                    $latestVersion = $buildMatches | ForEach-Object { ($rxB.match($_.title)).value.split('.') | Select-Object -Last 1} `
+                    $latestVersion = $buildMatches | ForEach-Object { ($rxB.match($_.title)).value.split('.') | Select-Object -Last 1 } `
                         | ForEach-Object { [convert]::ToInt32($_, 10) } | Sort-Object -Descending | Select-Object -First 1
 
                     # Re-match feed for major.minor number and return the KB number from the Id field
