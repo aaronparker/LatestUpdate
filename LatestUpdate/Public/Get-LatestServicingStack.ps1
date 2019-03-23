@@ -14,6 +14,7 @@ Function Get-LatestServicingStack {
         .NOTES
             Author: Aaron Parker
             Twitter: @stealthpuppy
+            Latest Servicing Stack Updates: https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/ADV990001
 
         .LINK
             https://docs.stealthpuppy.com/latestupdate
@@ -31,6 +32,7 @@ Function Get-LatestServicingStack {
     Param(
         [Parameter(Mandatory = $False, Position = 0, HelpMessage = "Windows 10 version to search")]
         [ValidateSet('1607', '1703', '1709', '1803', '1809')]
+        [ValidateNotNullOrEmpty()]
         [String[]] $Version = @('1607', '1703', '1709', '1803', '1809')
     )
 
@@ -53,13 +55,14 @@ Function Get-LatestServicingStack {
         ForEach ($ver in $Version) {
 
             # Find the most current date for each entry for each Windows 10 version
-            $date = $servicingStacks | Where-Object { $_.title -match $ver } | Select-Object -ExpandProperty updated | `
-                ForEach-Object { ([regex]::match($_, $rxM).Groups[1].Value) } | Sort-Object | Select-Object -Last 1
+            $date = $servicingStacks | Where-Object { $_.title -match $ver } | Sort-Object -Property id | `
+                Select-Object -ExpandProperty updated | `
+                ForEach-Object { ([regex]::match($_, $rxM).Groups[1].Value) } | Select-Object -Last 1
 
             # Return the KB published for that most current date
             If ($Null -ne $date) {
-                $kbID = $servicingStacks | Where-Object { ($_.title -match $ver) -and ($_.updated -match $date) } | Select-Object -ExpandProperty id `
-                    | ForEach-Object { $_.split(':') | Select-Object -Last 1 }
+                $kbID = $servicingStacks | Where-Object { ($_.title -match $ver) -and ($_.updated -match $date) } | `
+                    Select-Object -ExpandProperty id | ForEach-Object { $_.split(':') | Select-Object -Last 1 }
             }
 
             # Multiple KBs could be returned, step through each

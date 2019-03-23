@@ -67,10 +67,12 @@ Function Get-LatestUpdate {
     Param(
         [Parameter(Mandatory = $False, Position = 0, HelpMessage = "Select the OS to search for updates")]
         [ValidateSet('Windows10', 'Windows8', 'Windows7')]
+        [ValidateNotNullOrEmpty()]
         [String] $WindowsVersion = "Windows10",
 
         [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Provide a Windows 10 build number")]
         [ValidateSet('17763', '17134', '16299', '15063', '14393', '10240', '^(?!.*Preview)(?=.*Monthly).*')]
+        [ValidateNotNullOrEmpty()]
         [String] $Build = "17763"
     )
     Begin {
@@ -102,7 +104,7 @@ Function Get-LatestUpdate {
                     [regex] $rxB = "$Build.(\d+)"
                     $buildMatches = $xml.feed.entry | Where-Object -Property title -match $Build
                     Write-Verbose -Message "Found $($buildMatches.Count) items matching build $Build."
-                    $latestVersion = $buildMatches | ForEach-Object { ($rxB.match($_.title)).value.split('.') | Select-Object -Last 1} `
+                    $latestVersion = $buildMatches | ForEach-Object { ($rxB.match($_.title)).value.split('.') | Select-Object -Last 1 } `
                         | ForEach-Object { [convert]::ToInt32($_, 10) } | Sort-Object -Descending | Select-Object -First 1
 
                     # Re-match feed for major.minor number and return the KB number from the Id field

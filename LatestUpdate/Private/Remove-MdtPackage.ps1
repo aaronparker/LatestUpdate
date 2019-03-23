@@ -13,6 +13,7 @@ Function Remove-MdtPackage {
     [CmdletBinding(SupportsShouldProcess = $True)]
     Param (
         [Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $True)]
+        [ValidateNotNullOrEmpty()]
         [String] $Path
     )
 

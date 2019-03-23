@@ -13,9 +13,11 @@ Function Get-KbUpdateArray {
     [CmdletBinding()]
     Param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
+        [ValidateNotNullOrEmpty()]
         [PSCustomObject] $Links,
 
         [Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $True)]
+        [ValidateNotNullOrEmpty()]
         [String] $KB
     )
 

@@ -13,6 +13,7 @@ Function Get-UpdateFeed {
     [CmdletBinding()]
     Param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
+        [ValidateNotNullOrEmpty()]
         [String] $UpdateFeed
     )
     

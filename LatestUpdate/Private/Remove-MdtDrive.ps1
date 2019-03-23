@@ -13,6 +13,7 @@ Function Remove-MdtDrive {
     [CmdletBinding(SupportsShouldProcess = $True)]
     Param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
+        [ValidateNotNullOrEmpty()]
         [String] $Drive
     )
     If ($pscmdlet.ShouldProcess("MDT drive: $($Drive)", "Removing")) {
