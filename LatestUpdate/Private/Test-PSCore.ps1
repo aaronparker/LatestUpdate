@@ -14,6 +14,7 @@ Function Test-PSCore {
     [OutputType([Boolean])]
     Param (
         [Parameter(ValueFromPipeline)]
+        [ValidateNotNullOrEmpty()]
         [String] $Version = '6.0.0'
     )
 

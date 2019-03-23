@@ -22,6 +22,7 @@ Function Select-LatestUpdate {
     [OutputType([String])]
     Param(
         [parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
+        [ValidateNotNullOrEmpty()]
         [Array] $Updates
     )
     Begin {

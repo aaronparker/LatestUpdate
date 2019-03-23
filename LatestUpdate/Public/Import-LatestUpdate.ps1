@@ -43,13 +43,16 @@ Function Import-LatestUpdate {
         [Parameter(Mandatory = $False, ValueFromPipeline = $True, `
                 HelpMessage = "Specify the folder containing the MSU update/s to import.")]
         [ValidateScript( { If (Test-Path $_ -PathType 'Container') { $True } Else { Throw "Cannot find path $_" } })]
+        [ValidateNotNullOrEmpty()]
         [String] $UpdatePath = $PWD,
 
         [Parameter(Mandatory = $True, HelpMessage = "Specify an MDT deployment share to apply the update to.")]
         [ValidateScript( { If (Test-Path $_ -PathType 'Container') { $True } Else { Throw "Cannot find path $_" } })]
+        [ValidateNotNullOrEmpty()]
         [String] $DeployRoot,
 
         [Parameter(Mandatory = $False, HelpMessage = "A sub-folder in the MDT Packages folder.")]
+        [ValidateNotNullOrEmpty()]
         [String] $PackagePath,
 
         [Parameter(Mandatory = $False, `

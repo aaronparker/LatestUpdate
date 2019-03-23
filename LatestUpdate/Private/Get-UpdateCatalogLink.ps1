@@ -13,6 +13,7 @@ Function Get-UpdateCatalogLink {
     [CmdLetBinding()]
     Param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
+        [ValidateNotNullOrEmpty()]
         [String] $KB
     )
 

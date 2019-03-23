@@ -17,9 +17,11 @@ Function New-MdtDrive {
     [OutputType([String])]
     Param (
         [Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $True)]
+        [ValidateNotNullOrEmpty()]
         [String]$Path,
 
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline = $True)]
+        [ValidateNotNullOrEmpty()]
         [String]$Drive = "DS009"
     )
     $description = "MDT drive created by $($MyInvocation.MyCommand)"

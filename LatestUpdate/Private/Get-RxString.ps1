@@ -17,10 +17,11 @@ Function Get-RxString {
     [OutputType([String])]
     Param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
-        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [string] $String,
 
         [Parameter(Mandatory = $True, Position = 1)]
+        [ValidateNotNullOrEmpty()]
         [RegEx] $RegEx
     )
 

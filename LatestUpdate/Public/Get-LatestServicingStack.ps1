@@ -31,6 +31,7 @@ Function Get-LatestServicingStack {
     Param(
         [Parameter(Mandatory = $False, Position = 0, HelpMessage = "Windows 10 version to search")]
         [ValidateSet('1607', '1703', '1709', '1803', '1809')]
+        [ValidateNotNullOrEmpty()]
         [String[]] $Version = @('1607', '1703', '1709', '1803', '1809')
     )
 

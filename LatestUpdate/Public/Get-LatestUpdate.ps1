@@ -67,10 +67,12 @@ Function Get-LatestUpdate {
     Param(
         [Parameter(Mandatory = $False, Position = 0, HelpMessage = "Select the OS to search for updates")]
         [ValidateSet('Windows10', 'Windows8', 'Windows7')]
+        [ValidateNotNullOrEmpty()]
         [String] $WindowsVersion = "Windows10",
 
         [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Provide a Windows 10 build number")]
         [ValidateSet('17763', '17134', '16299', '15063', '14393', '10240', '^(?!.*Preview)(?=.*Monthly).*')]
+        [ValidateNotNullOrEmpty()]
         [String] $Build = "17763"
     )
     Begin {
