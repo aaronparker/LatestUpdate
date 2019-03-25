@@ -1,5 +1,19 @@
 # Change Log
 
+## v2.4.1.97
+
+### Public Functions
+
+* Update Microsoft update feed issue handling. The Microsoft Atom/RSS feeds [https://support.microsoft.com/en-au/help/4089498](https://support.microsoft.com/en-au/help/4089498) used by this module do not consistently include the required information to find the update list. `Get-LatestUpdate`, `Get-LatestFlash` and `Get-LatestServicingStack` now exit more gracefully if the required content cannot be found and write a warning to alert of the issue.
+
+### Private Functions
+
+* Add `PSPath` alias to `Get-ValidPath`
+
+### Tests
+
+* A check is performed before running `Save-LatestUpdate` to avoid download if the tests are not running in AppVeyor. This avoids having to wait for downloads on my slow home internet when running tests.
+
 ## v2.4.0.89
 
 ### Public Functions
