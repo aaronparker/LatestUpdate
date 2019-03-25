@@ -93,11 +93,17 @@ Function Get-LatestUpdate {
         }
         Write-Verbose -Message "Checking updates for $WindowsVersion $Build."
     }
+
     Process {
-        # Find the KB Article Number
-        $xml = Get-UpdateFeed -UpdateFeed $Feed
-        
         try {
+            # Return the update feed
+            $xml = Get-UpdateFeed -UpdateFeed $Feed
+        }
+        catch {
+            Throw "Failed to return the update feed. Confirm feed is OK: $Feed"
+            Break
+        }
+        
             Switch ($WindowsVersion) {
                 "Windows10" { 
                     # Sort feed for titles that match Build number; Find the largest minor build number
@@ -117,27 +123,31 @@ Function Get-LatestUpdate {
                     $kbID = $buildMatches | Select-Object -ExpandProperty ID | ForEach-Object { $_.split(':') | Select-Object -Last 1 } `
                         | Sort-Object -Descending | Select-Object -First 1   
                 }
+            } 
+
+            If (($Null -eq $buildMatches) -or ($Null -eq $latestVersion) -or ($Null -eq $kbID)) {
+                Write-Warning -Message "Failed to return usable Windows update content from the Microsoft feed."
+                Write-Warning -Message "Microsoft appears to be returning different content for each request."
+                Write-Warning -Message "Please check the feed content and try again later."
+                Write-Warning -Message "Feed URI: $Feed"
+                Break
             }
-        }
-        catch {   
-            If ($Null -eq $kbID) { Write-Warning -Message "kbID is Null. Unable to read from the KB from the JSON." }
-            Break
-        }
-        #endregion
+            Else {
+                # Get the download link from Windows Update
+                $kbObj = Get-UpdateCatalogLink -KB $kbID
+                If ($Null -ne $kbObj) {
+                    # Contruct a table with KB, Id and Update description
+                    $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB $kbID
 
-        # Get the download link from Windows Update
-        $kbObj = Get-UpdateCatalogLink -KB $kbID
-        If ($Null -ne $kbObj) {
-
-            # Contruct a table with KB, Id and Update description
-            $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB $kbID
-
-            # Process the IdTable to get a new array with KB, Architecture, Note and URL for each download
-            $downloadArray = Get-UpdateDownloadArray -IdTable $idTable
-        }
+                    # Process the IdTable to get a new array with KB, Architecture, Note and URL for each download
+                    $downloadArray = Get-UpdateDownloadArray -IdTable $idTable
+                }
+            }
     }
     End {
-        # Write the URLs list to the pipeline
-        Write-Output ($downloadArray | Sort-Object -Property Version -Descending)
+        # Write the list of updates to the pipeline
+        If ($Null -ne $downloadArray) {
+            Write-Output ($downloadArray | Sort-Object -Property Version -Descending)
+        }
     }
 }

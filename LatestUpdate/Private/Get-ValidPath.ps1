@@ -15,7 +15,7 @@ Function Get-ValidPath {
     Param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
         [ValidateNotNullOrEmpty()]
-        [Alias(PSPath)]
+        [Alias("PSPath")]
         [string] $Path
     )
     $output = ((Get-Item $Path).FullName).TrimEnd("\")

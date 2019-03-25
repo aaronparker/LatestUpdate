@@ -6,7 +6,7 @@ Else {
     # Local Testing 
     $ProjectRoot = "$(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)\..\"
 }
-Import-Module (Join-Path $ProjectRoot "LatestUpdate")
+Import-Module (Join-Path $ProjectRoot "LatestUpdate") -Force
 
 Describe 'Get-LatestUpdate' {
     Context "Returns a valid list of Cumulative updates" {
@@ -188,40 +188,44 @@ Describe 'Get-LatestServicingStack' {
     }
 }
 
-Describe 'Save-LatestUpdate' {
-    Context "Download the latest Windows 10 Cumulative updates" {
-        $Updates = Get-LatestUpdate
-        $Target = $env:TEMP
-        Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest -Verbose
-        It "Given updates returned from Get-LatestUpdate, it successfully downloads the update" {
-            ForEach ($Update in $Updates) {
-                $Filename = Split-Path $Update.Url -Leaf
-                Write-Host "Check for $(Join-Path $Target $Filename)."
-                (Join-Path $Target $Filename) | Should -Exist
+If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
+    # Skip download tests unless running in AppVeyor.
+    
+    Describe 'Save-LatestUpdate' {
+        Context "Download the latest Windows 10 Cumulative updates" {
+            $Updates = Get-LatestUpdate
+            $Target = $env:TEMP
+            Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest -Verbose
+            It "Given updates returned from Get-LatestUpdate, it successfully downloads the update" {
+                ForEach ($Update in $Updates) {
+                    $Filename = Split-Path $Update.Url -Leaf
+                    Write-Host "Check for $(Join-Path $Target $Filename)."
+                    (Join-Path $Target $Filename) | Should -Exist
+                }
             }
         }
-    }
-    Context "Download the latest Adobe Flash Player updates" {
-        $Updates = Get-LatestFlash
-        $Target = $env:TEMP
-        Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest -Verbose
-        It "Given updates returned from Get-LatestFlash, it successfully downloads the update" {
-            ForEach ($Update in $Updates) {
-                $Filename = Split-Path $Update.URL -Leaf
-                Write-Host "Check for $(Join-Path $Target $Filename)."
-                (Join-Path $Target $Filename) | Should -Exist
+        Context "Download the latest Adobe Flash Player updates" {
+            $Updates = Get-LatestFlash
+            $Target = $env:TEMP
+            Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest -Verbose
+            It "Given updates returned from Get-LatestFlash, it successfully downloads the update" {
+                ForEach ($Update in $Updates) {
+                    $Filename = Split-Path $Update.URL -Leaf
+                    Write-Host "Check for $(Join-Path $Target $Filename)."
+                    (Join-Path $Target $Filename) | Should -Exist
+                }
             }
         }
-    }
-    Context "Download the latest Servicing Stack updates" {
-        $Updates = Get-LatestServicingStack
-        $Target = $env:TEMP
-        Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest -Verbose
-        It "Given updates returned from Get-LatestServicingStack, it successfully downloads the update" {
-            ForEach ($Update in $Updates) {
-                $Filename = Split-Path $Update.URL -Leaf
-                Write-Host "Check for $(Join-Path $Target $Filename)."
-                (Join-Path $Target $Filename) | Should -Exist
+        Context "Download the latest Servicing Stack updates" {
+            $Updates = Get-LatestServicingStack
+            $Target = $env:TEMP
+            Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest -Verbose
+            It "Given updates returned from Get-LatestServicingStack, it successfully downloads the update" {
+                ForEach ($Update in $Updates) {
+                    $Filename = Split-Path $Update.URL -Leaf
+                    Write-Host "Check for $(Join-Path $Target $Filename)."
+                    (Join-Path $Target $Filename) | Should -Exist
+                }
             }
         }
     }
