@@ -42,12 +42,19 @@ Function Get-LatestServicingStack {
         [regex] $searchString = "Servicing stack update.*"
 
         # Return the XML from the feed and filter for the Servicing Stack Updates
-        $xml = Get-UpdateFeed -UpdateFeed $Feed
+        try {
+            # Return the update feed
+            $xml = Get-UpdateFeed -UpdateFeed $Feed
+        }
+        catch {
+            Throw "Failed to return the update feed. Confirm feed is OK: $Feed"
+            Break
+        }
         $servicingStacks = $xml.feed.entry | Where-Object { $_.title -match $searchString } | Select-Object title, id, updated
 
         # RegEx for month; Output array
         [regex] $rxM = "(\d{4}-\d{2}-\d{2})"
-        $output = @()
+        $downloadArray = @()
     }
 
     Process {
@@ -79,7 +86,6 @@ Function Get-LatestServicingStack {
                     # Step through the ids for each update
                     ForEach ($idItem in $idTable) {
                         try {
-
                             # Grab the URL for each update
                             Write-Verbose -Message "Checking Microsoft Update Catalog for Id: $($idItem.id)."
                             $post = @{ size = 0; updateID = $idItem.id; uidInfo = $idItem.id } | ConvertTo-Json -Compress
@@ -91,8 +97,7 @@ Function Get-LatestServicingStack {
                                 ForEach-Object { $_.matches.value }
                         }
                         catch {
-                            Throw $_
-                            Write-Warning "Failed to parse Microsoft Update Catalog for Id: $($idItem.id)."
+                            Throw "Failed to parse Microsoft Update Catalog for Id: $($idItem.id)."
                             Break
                         }
                         finally {
@@ -106,18 +111,24 @@ Function Get-LatestServicingStack {
                                 $newItem | Add-Member -type NoteProperty -Name 'Version' -Value $ver
                                 $newItem | Add-Member -type NoteProperty -Name 'Note' -Value $idItem.Note
                                 $newItem | Add-Member -type NoteProperty -Name 'URL' -Value $url
-                                $output += $newItem
+                                $downloadArray += $newItem
                             }
                         }
                     }
+                }
+                Else {
+                    Write-Warning -Message "Failed to return usable content from the Microsoft update feed."
+                    Write-Warning -Message "Microsoft occasionally does not include the required updates in the feed."
+                    Write-Warning -Message "Please check the feed content at: $Feed"
                 }
             }
         }
     }
 
     End {
-
         # Return the array of Servicing Stack Updates to the pipeline
-        Write-Output ($output | Sort-Object -Property Version -Descending)
+        If ($Null -ne $downloadArray) {
+            Write-Output ($downloadArray | Sort-Object -Property Version -Descending)
+        }
     }
 }

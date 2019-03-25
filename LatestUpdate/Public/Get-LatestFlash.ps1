@@ -27,37 +27,47 @@ Function Get-LatestFlash {
     }
 
     Process {
-        # Return the XML from the feed and filter for the Flash updates
-        $xml = Get-UpdateFeed -UpdateFeed $Feed
-        
         try {
-            # Find the most current date for the update
-            [regex] $rxM = "(\d{4}-\d{2}-\d{2})"
-            $date = $xml.feed.entry | Where-Object { $_.title -match $Flash } | Select-Object -ExpandProperty updated | `
-                ForEach-Object { Get-RxString -String $_ -RegEx $rxM } | Sort-Object | Select-Object -Last 1
-
-            # Return the KB published for that most current date
-            $kbID = $xml.feed.entry | Where-Object { ($_.title -match $Flash) -and ($_.updated -match $date) } | Select-Object -ExpandProperty id `
-                | ForEach-Object { $_.split(':') | Select-Object -Last 1 }
+            # Return the update feed
+            $xml = Get-UpdateFeed -UpdateFeed $Feed
         }
-        catch {   
-            If ($Null -eq $kbID) { Write-Warning -Message "kbID is Null. Unable to read from the KB from the JSON." }
+        catch {
+            Throw "Failed to return the update feed. Confirm feed is OK: $Feed"
             Break
         }
+        
+        # Find the most current date for the update
+        [regex] $rxM = "(\d{4}-\d{2}-\d{2})"
+        $date = $xml.feed.entry | Where-Object { $_.title -match $Flash } | Select-Object -ExpandProperty updated | `
+            ForEach-Object { Get-RxString -String $_ -RegEx $rxM } | Sort-Object | Select-Object -Last 1
 
-        # Get the download link from Windows Update
-        $kbObj = Get-UpdateCatalogLink -KB $kbID
-        If ($Null -ne $kbObj) {
+        # Return the KB published for that most current date
+        $kbID = $xml.feed.entry | Where-Object { ($_.title -match $Flash) -and ($_.updated -match $date) } | Select-Object -ExpandProperty id `
+            | ForEach-Object { $_.split(':') | Select-Object -Last 1 }
 
-            # Contruct a table with KB, Id and Update description
-            $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB $kbID
+        If (($Null -eq $date) -or ($Null -eq $kbID)) {
+            Write-Warning -Message "Failed to return usable content from the Microsoft update feed."
+            Write-Warning -Message "Microsoft occasionally does not include the required updates in the feed."
+            Write-Warning -Message "Please check the feed content at: $Feed"
+            Break
+        }
+        Else {
+            # Get the download link from Windows Update
+            $kbObj = Get-UpdateCatalogLink -KB $kbID
+            If ($Null -ne $kbObj) {
+                # Contruct a table with KB, Id and Update description
+                $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB $kbID
 
-            # Process the IdTable to get a new array with KB, Architecture, Note and URL for each download
-            $downloadArray = Get-UpdateDownloadArray -IdTable $idTable
+                # Process the IdTable to get a new array with KB, Architecture, Note and URL for each download
+                $downloadArray = Get-UpdateDownloadArray -IdTable $idTable
+            }
         }
     }
+
     End {
-        # Write the URLs list to the pipeline
-        Write-Output ($downloadArray | Sort-Object -Property Version -Descending)
+        # Write the list of updates to the pipeline
+        If ($Null -ne $downloadArray) {
+            Write-Output ($downloadArray | Sort-Object -Property Version -Descending)
+        }
     }
 }
