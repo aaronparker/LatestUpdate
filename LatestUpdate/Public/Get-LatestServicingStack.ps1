@@ -117,9 +117,10 @@ Function Get-LatestServicingStack {
                     }
                 }
                 Else {
-                    Write-Warning -Message "Failed to return usable content from the Microsoft update feed."
-                    Write-Warning -Message "Microsoft occasionally does not include the required updates in the feed."
-                    Write-Warning -Message "Please check the feed content at: $Feed"
+                    Write-Warning -Message "Failed to return usable Windows update content from the Microsoft feed."
+                    Write-Warning -Message "Microsoft appears to be returning different content for each request."
+                    Write-Warning -Message "Please check the feed content and try again later."
+                    Write-Warning -Message "Feed URI: $Feed"
                 }
             }
         }

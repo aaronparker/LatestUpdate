@@ -6,7 +6,7 @@ Else {
     # Local Testing 
     $ProjectRoot = "$(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)\..\"
 }
-Import-Module $ProjectRoot\LatestUpdate -Force
+Import-Module (Join-Path $ProjectRoot "LatestUpdate") -Force
 
 InModuleScope LatestUpdate {
     Describe 'Import-MdtModule' {

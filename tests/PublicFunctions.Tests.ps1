@@ -6,7 +6,7 @@ Else {
     # Local Testing 
     $ProjectRoot = "$(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)\..\"
 }
-Import-Module (Join-Path $ProjectRoot "LatestUpdate")
+Import-Module (Join-Path $ProjectRoot "LatestUpdate") -Force
 
 Describe 'Get-LatestUpdate' {
     Context "Returns a valid list of Cumulative updates" {
