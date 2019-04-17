@@ -1,5 +1,18 @@
 # Change Log
 
+## v2.5.0.0
+
+### Public Functions
+
+* Added Get-LatestNETFramework function to find the latest cumulative update for the .NET Framework.
+* The Get-LatestFlash now support OS filtering.
+* The Save-LatestUpdate function now supports the -Force parameter to force the download of updates, overwriting them when they already exist.
+* The Save-LatestUpdate function now supports proxy usage with authentication credentials option when needed.
+
+### Private Functions
+
+*  Added Searchstring parameter to Get-UpdateCatalogLink which allows the function to be used for other searches in the catalog besides only KB article numbers
+
 ## v2.4.1.97
 
 ### Public Functions
