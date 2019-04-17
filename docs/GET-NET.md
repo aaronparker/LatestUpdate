@@ -1,6 +1,6 @@
-# Get the Latest Adobe Flash Player Update
+# Get the Latest .NET Framework cumulative Update
 
-`Get-LatestFlash` retrieves the latest Adobe Flash Player updates for Windows 10, Windows 8.1 and Windows Server from the Microsoft Update Catalog. Run `Get-LatestFlash` to return Adobe Flash Player updates for all supported platforms.
+`Get-LatestNetFramework` retrieves the latest cumulative .NET Framework updates for the given OS from the Microsoft Update Catalog. Run `Get-LatestNetFramework -OS "Windows Server 2019"` to return the latest update.
 
 ```powershell
 PS C:\> Get-LatestNetFramework -OS "Windows Server 2019"
