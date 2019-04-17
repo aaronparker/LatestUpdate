@@ -59,13 +59,13 @@ Function Get-LatestFlash {
         }
         Else {
             # Get the download link from Windows Update
-            [String] $SearchString = $kbID
+            [String] $SearchString = "KB" + $kbID
 
             if ($OS) {
                $SearchString = $SearchString + " $OS"
             }
 
-            $kbObj = Get-UpdateCatalogLink -KB $SearchString
+            $kbObj = Get-UpdateCatalogLink -SearchString $SearchString
             If ($Null -ne $kbObj) {
                 # Contruct a table with KB, Id and Update description
                 $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB $kbID
