@@ -19,7 +19,7 @@ Function Get-UpdateCatalogLink {
 
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline = $True, ParameterSetName = "SearchString")]
         [ValidateNotNullOrEmpty()]
-        [String] $SearchString = "KB$KB"
+        [String] $SearchString = "KB" + $KB
     )
 
     try {
