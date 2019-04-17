@@ -7,6 +7,7 @@
     * [Get Cumulative updates](GET-LATEST.md)
     * [Get Servicing Stack updates](GET-STACK.md)
     * [Get Flash updates](GET-FLASH.md)
+    * [Get .NET Framework update](GET-NET.md)
     * [Downloading the updates](DOWNLOAD.md)
     * [Importing updates into MDT](IMPORT.md)
 * [Change log](CHANGELOG.md)
