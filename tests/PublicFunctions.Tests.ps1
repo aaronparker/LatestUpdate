@@ -194,12 +194,10 @@ Describe 'Get-LatestNETFramework' {
         It "Given an OS as argument, returns an array of updates" {
             $Updates | Should -BeOfType System.Management.Automation.PSCustomObject
         }
-        It "Given an OS as argument, returns an array" {
-            $Updates.Count | Should -BeGreaterThan 0
-        }
         It "Given no arguments, returns a valid array with expected properties" {
             ForEach ($Update in $Updates) {
                 $Update.KB.Length | Should -BeGreaterThan 0
+                $Update.Arch.Length | Should -BeGreaterThan 0
                 $Update.Version.Length | Should -BeGreaterThan 0
                 $Update.Note.Length | Should -BeGreaterThan 0
                 $Update.URL.Length | Should -BeGreaterThan 0
