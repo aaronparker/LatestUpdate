@@ -21,7 +21,7 @@ Function Get-LatestServicingStack {
 
         .PARAMETER Version
             Windows 10 version to return the Servicing Stack Update for. Use the Year Month notation for Windows 10 versions. Supports 1607+.
-            
+
         .EXAMPLE
             Get-LatestServicingStack
 
@@ -31,9 +31,9 @@ Function Get-LatestServicingStack {
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param(
         [Parameter(Mandatory = $False, Position = 0, HelpMessage = "Windows 10 version to search")]
-        [ValidateSet('1607', '1703', '1709', '1803', '1809')]
+        [ValidateSet('1607', '1703', '1709', '1803', '1809', '1903')]
         [ValidateNotNullOrEmpty()]
-        [String[]] $Version = @('1607', '1703', '1709', '1803', '1809')
+        [String[]] $Version = @('1607', '1703', '1709', '1803', '1809', '1903')
     )
 
     Begin {
@@ -93,7 +93,7 @@ Function Get-LatestServicingStack {
                             $url = Invoke-WebRequest -Uri 'http://www.catalog.update.microsoft.com/DownloadDialog.aspx' `
                                 -Method Post -Body $postBody -UseBasicParsing -ErrorAction SilentlyContinue |
                                 Select-Object -ExpandProperty Content |
-                                Select-String -AllMatches -Pattern "(http[s]?\://download\.windowsupdate\.com\/[^\'\""]*)" | 
+                                Select-String -AllMatches -Pattern "(http[s]?\://download\.windowsupdate\.com\/[^\'\""]*)" |
                                 ForEach-Object { $_.matches.value }
                         }
                         catch {

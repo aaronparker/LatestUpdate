@@ -41,25 +41,25 @@ Function Get-LatestUpdate {
 
         .EXAMPLE
             Get-LatestUpdate -WindowsVersion Windows10 -Build 14393
-        
+
             Description:
             Enumerate the latest Cumulative Update for Windows 10 1607 and Windows Server 2016.
 
         .EXAMPLE
             Get-LatestUpdate -WindowsVersion Windows10 -Build 15063
-        
+
             Description:
             Enumerate the latest Cumulative Update for Windows 10 1703.
 
         .EXAMPLE
             Get-LatestUpdate -WindowsVersion Windows8
-        
+
             Description:
             Enumerate the latest Monthly Update for Windows Server 2012 R2 / Windows 8.1.
 
         .EXAMPLE
             Get-LatestUpdate -WindowsVersion Windows7
-        
+
             Description:
             Enumerate the latest Monthly Update for Windows 7 (and Windows 7 Embedded).
     #>
@@ -71,9 +71,9 @@ Function Get-LatestUpdate {
         [String] $WindowsVersion = "Windows10",
 
         [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Provide a Windows 10 build number")]
-        [ValidateSet('17763', '17134', '16299', '15063', '14393', '10240', '^(?!.*Preview)(?=.*Monthly).*')]
+        [ValidateSet('18362', '17763', '17134', '16299', '15063', '14393', '10240', '^(?!.*Preview)(?=.*Monthly).*')]
         [ValidateNotNullOrEmpty()]
-        [String] $Build = "17763"
+        [String] $Build = "18362"
     )
     Begin {
         # Set values for -Build as required for each platform
@@ -103,9 +103,9 @@ Function Get-LatestUpdate {
             Throw "Failed to return the update feed. Confirm feed is OK: $Feed"
             Break
         }
-        
+
             Switch ($WindowsVersion) {
-                "Windows10" { 
+                "Windows10" {
                     # Sort feed for titles that match Build number; Find the largest minor build number
                     [regex] $rxB = "$Build.(\d+)"
                     $buildMatches = $xml.feed.entry | Where-Object -Property title -match $Build
@@ -121,9 +121,9 @@ Function Get-LatestUpdate {
                 default {
                     $buildMatches = $xml.feed.entry | Where-Object -Property title -match $Build
                     $kbID = $buildMatches | Select-Object -ExpandProperty ID | ForEach-Object { $_.split(':') | Select-Object -Last 1 } `
-                        | Sort-Object -Descending | Select-Object -First 1   
+                        | Sort-Object -Descending | Select-Object -First 1
                 }
-            } 
+            }
 
             If (($Null -eq $buildMatches) -or ($Null -eq $latestVersion) -or ($Null -eq $kbID)) {
                 Write-Warning -Message "Failed to return usable Windows update content from the Microsoft feed."
