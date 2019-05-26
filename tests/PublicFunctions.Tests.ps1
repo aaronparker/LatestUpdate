@@ -3,7 +3,7 @@ If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
     $ProjectRoot = $env:APPVEYOR_BUILD_FOLDER
 }
 Else {
-    # Local Testing 
+    # Local Testing
     $ProjectRoot = "$(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)\..\"
 }
 Import-Module (Join-Path $ProjectRoot "LatestUpdate") -Force
@@ -28,8 +28,15 @@ Describe 'Get-LatestUpdate' {
         }
     }
     Context "Windows 10: Returns expected results with -Build" {
-        It "Given '17763' returns updates for build 1809" {
-            $Updates = Get-LatestUpdate
+        It "Given '18362' returns updates for build 1903" {
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build '18362'
+            ForEach ($Update in $Updates) {
+                $Update.Note -match "Cumulative.*1809" | Should -Not -BeNullOrEmpty
+                $Update.Arch -match "x86|x64|ARM64" | Should -Not -BeNullOrEmpty
+                $Update.Version -match "18362" | Should -Not -BeNullOrEmpty
+            }
+        }It "Given '17763' returns updates for build 1809" {
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build '17763'
             ForEach ($Update in $Updates) {
                 $Update.Note -match "Cumulative.*1809" | Should -Not -BeNullOrEmpty
                 $Update.Arch -match "x86|x64|ARM64" | Should -Not -BeNullOrEmpty
@@ -182,7 +189,7 @@ Describe 'Get-LatestServicingStack' {
             ForEach ($Update in $Updates) {
                 $Update.Note -match "Servicing stack update.*" | Should -Not -BeNullOrEmpty
                 $Update.Arch -match "x86|x64|ARM64" | Should -Not -BeNullOrEmpty
-                $Update.Version -match "1607|1703|1709|1803|1809" | Should -Not -BeNullOrEmpty
+                $Update.Version -match "1607|1703|1709|1803|1809|1903" | Should -Not -BeNullOrEmpty
             }
         }
     }
@@ -190,7 +197,7 @@ Describe 'Get-LatestServicingStack' {
 
 If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
     # Skip download tests unless running in AppVeyor.
-    
+
     Describe 'Save-LatestUpdate' {
         Context "Download the latest Windows 10 Cumulative updates" {
             $Updates = Get-LatestUpdate
