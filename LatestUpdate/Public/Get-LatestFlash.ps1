@@ -19,7 +19,11 @@ Function Get-LatestFlash {
             Enumerate the latest Adobe Flash Player update for the support versions of Windows.
     #>
     [CmdletBinding(SupportsShouldProcess = $False)]
-    Param()
+    Param(
+        [Parameter(Mandatory = $False, Position = 0, HelpMessage = "Windows OS to search")]
+        [ValidateNotNullOrEmpty()]
+        [String] $OS
+    )
 
     Begin {
         [String] $Feed = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom'
@@ -27,6 +31,7 @@ Function Get-LatestFlash {
     }
 
     Process {
+
         try {
             # Return the update feed
             $xml = Get-UpdateFeed -UpdateFeed $Feed
@@ -54,7 +59,13 @@ Function Get-LatestFlash {
         }
         Else {
             # Get the download link from Windows Update
-            $kbObj = Get-UpdateCatalogLink -KB $kbID
+            [String] $SearchString = "KB" + $kbID
+
+            if ($OS) {
+               $SearchString = $SearchString + " $OS"
+            }
+
+            $kbObj = Get-UpdateCatalogLink -SearchString $SearchString
             If ($Null -ne $kbObj) {
                 # Contruct a table with KB, Id and Update description
                 $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB $kbID

@@ -188,6 +188,31 @@ Describe 'Get-LatestServicingStack' {
     }
 }
 
+Describe 'Get-LatestNETFramework' {
+    $Updates = Get-LatestNETFramework -OS "Windows Server 2019"
+    Context "Returns a valid cumulative .NET Framework update" {
+        It "Given an OS as argument, returns an array of updates" {
+            $Updates | Should -BeOfType System.Management.Automation.PSCustomObject
+        }
+        It "Given no arguments, returns a valid array with expected properties" {
+            ForEach ($Update in $Updates) {
+                $Update.KB.Length | Should -BeGreaterThan 0
+                $Update.Arch.Length | Should -BeGreaterThan 0
+                $Update.Version.Length | Should -BeGreaterThan 0
+                $Update.Note.Length | Should -BeGreaterThan 0
+                $Update.URL.Length | Should -BeGreaterThan 0
+            }
+        }
+    }
+    Context "Returns expected results with Flash updates array" {
+        It "Given an OS as argument, returns an cumulative update for .NET Framework" {
+            ForEach ($Update in $Updates) {
+                $Update.Note -match ".*Cumulative Update for .NET Framework.*" | Should -Not -BeNullOrEmpty
+            }
+        }
+    }
+}
+
 If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
     # Skip download tests unless running in AppVeyor.
     

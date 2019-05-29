@@ -10,15 +10,20 @@ Function Get-UpdateCatalogLink {
         .PARAMETER KB
             Knowledgebase article string to search the catalog for.
     #>
+    [CmdletBinding(DefaultParameterSetName="KB")]
     [CmdLetBinding()]
     Param (
-        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
+        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, ParameterSetName = "KB")]
         [ValidateNotNullOrEmpty()]
-        [String] $KB
+        [String] $KB,
+
+        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline = $True, ParameterSetName = "SearchString")]
+        [ValidateNotNullOrEmpty()]
+        [String] $SearchString = "KB" + $KB
     )
 
     try {
-        $uri = "http://www.catalog.update.microsoft.com/Search.aspx?q=KB$($KB)"
+        $uri = "http://www.catalog.update.microsoft.com/Search.aspx?q=$SearchString"
         Write-Verbose -Message "Searching $uri."
         $kbPage = Invoke-WebRequest -Uri $uri -UseBasicParsing -ErrorAction SilentlyContinue
     }

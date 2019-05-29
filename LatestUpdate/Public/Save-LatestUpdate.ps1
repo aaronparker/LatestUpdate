@@ -70,12 +70,23 @@ Function Save-LatestUpdate {
         [String] $Path = $PWD,
 
         [Parameter(Mandatory = $False)]
-        [switch] $ForceWebRequest
+        [String] $ProxyURL,
+
+        [Parameter(Mandatory = $False)]
+        [pscredential] $ProxyCredentials,
+
+        [Parameter(Mandatory = $False)]
+        [switch] $ForceWebRequest,
+
+        [Parameter(Mandatory = $False)]
+        [switch] $Force
     )
+
     Begin {
         $Path = Get-ValidPath $Path
         $output = @()
     } 
+
     Process {
 
         # Step through each update in $Updates
@@ -88,13 +99,28 @@ Function Save-LatestUpdate {
             Write-Verbose "Download target will be $target"
             
             # If the update is not already downloaded, download it.
-            If (!(Test-Path -Path $target)) {
+            If (!(Test-Path -Path $target) -or $Force.IsPresent) {
                 If ($ForceWebRequest -or (Test-PSCore)) {
 
                     # Running on PowerShell Core or ForceWebRequest
                     If ($pscmdlet.ShouldProcess($update.URL, "WebDownload")) {
                         try {
-                            Invoke-WebRequest -Uri $update.URL -OutFile $target -UseBasicParsing -ErrorAction SilentlyContinue
+                            $WebRequestParams = @{
+                                Uri = $update.URL
+                                OutFile = $target
+                                UseBasicParsing = $true
+                                ErrorAction = "Stop"
+                            }
+
+                            if ($ProxyUrl) {
+                                $WebRequestParams.Proxy = $ProxyUrl
+                            }
+
+                            if ($ProxyCredentials) {
+                                $WebRequestParams.ProxyCredentials = $ProxyCredentials
+                            }
+
+                            Invoke-WebRequest @WebRequestParams
                         }
                         catch {
                             Throw $_
@@ -106,9 +132,27 @@ Function Save-LatestUpdate {
                     # Running on Windows PowerShell
                     If ($pscmdlet.ShouldProcess($(Split-Path $update.URL -Leaf), "BitsDownload")) {
                         try {
-                            Start-BitsTransfer -Source $update.URL -Destination $target `
-                                -Priority High -ErrorAction SilentlyContinue -ErrorVariable $ErrorBits `
-                                -DisplayName $update.Note -Description "Downloading $($update.URL)"
+                            $BitsParams = @{
+                                Source = $update.URL
+                                Destination = $target 
+                                Priority = "High"
+                                DisplayName = $update.Note
+                                Description = "Downloading $($update.URL)"
+                                ErrorAction = "Stop"
+                            }
+
+                            if ($ProxyURL) {
+                                # Set priority to Foreground because the proxy will remove the Range protocol header
+                                $BitsParams.Priority = "Foreground"
+                                $BitsParams.ProxyUsage = "Override"
+                                $BitsParams.ProxyList = $ProxyURL
+                            }
+
+                            if ($ProxyCredentials) {
+                                $BitsParams.ProxyCredential = $ProxyCredentials
+                            }
+
+                            Start-BitsTransfer @BitsParams
                         }
                         catch {
                             Throw $_
