@@ -1,4 +1,4 @@
-Function Get-LatestNETFramework {
+Function Get-LatestNetFramework {
     <#
         .SYNOPSIS
             Get the latest .NET Framework Cumulative update for Windows.
@@ -9,7 +9,7 @@ Function Get-LatestNETFramework {
             Author: Gianni Fontanini
 
         .LINK
-            https://docs.stealthpuppy.com/latestupdate
+            https://docs.stealthpuppy.com/docs/latestupdate
 
         .EXAMPLE
             Get-LatestNETFramework -OS "Windows Server 2019"
@@ -19,15 +19,16 @@ Function Get-LatestNETFramework {
     #>
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param(
-        [Parameter(Mandatory = $True, Position = 0, HelpMessage = "Windows OS to search")]
+        [Parameter(Mandatory = $False, Position = 0, HelpMessage = "Windows OS to search")]
         [ValidateNotNullOrEmpty()]
-        [String] $OS
+        [string] $OS = "Windows 10"
     )
 
     Process {
         [regex] $rx = "<a[^>]*>([^<]+)<\/a>"
 
-        $kbObj = Get-UpdateCatalogLink -SearchString "Cumulative .NET FrameWork $OS"
+        # $kbObj = Get-UpdateCatalogLink -SearchString "Cumulative Update for .NET Framework $OS"
+        $kbObj = Get-UpdateCatalogLink -SearchString "Cumulative Update for .NET Framework"
 
         # Find the latest KB ID
         $LastObject = ((($kbObj.Links | Where-Object ID -match '_link').outerHTML -replace $rx, '$1').TrimStart()).TrimEnd() `

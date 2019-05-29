@@ -14,7 +14,6 @@ Else {
 # Line break for readability in AppVeyor console
 Write-Host -Object ''
 Write-Host "PowerShell Version:" $PSVersionTable.PSVersion.tostring()
-Write-Host "projectRoot is: $projectRoot."
 
 # Install packages
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
@@ -22,14 +21,18 @@ Install-Module -Name Pester -SkipPublisherCheck -Force
 Install-Module -Name PSScriptAnalyzer -SkipPublisherCheck -Force
 Install-Module -Name posh-git -Force
 
-# Variables
+# Set variables
 $module = $env:Module
 $tests = Join-Path $projectRoot "tests"
 $output = Join-Path $projectRoot "TestsResults.xml"
 
-# Import module
-Import-Module (Join-Path $projectRoot $module) -Verbose -Force
-
-# Echo paths
-Write-Host "Tests path: $tests."
+# Echo variables
+Write-Host -Object ''
+Write-Host "ProjectRoot: $projectRoot."
+Write-Host "Module name: $module."
+Write-Host "Tests path:  $tests."
 Write-Host "Output path: $output."
+
+# Import module
+Write-Host -Object ''
+Import-Module (Join-Path $projectRoot $module) -Verbose -Force

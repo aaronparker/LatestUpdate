@@ -36,8 +36,8 @@ Else {
             # Update the manifest with the new version value and fix the weird string replace bug
             $functionList = ((Get-ChildItem -Path (Join-Path $modulePath "Public")).BaseName)
             Update-ModuleManifest -Path $manifestPath -ModuleVersion $newVersion -FunctionsToExport $functionList
-            (Get-Content -Path $manifestPath) -replace 'PSGet_$module', '$module' | Set-Content -Path $manifestPath
-            (Get-Content -Path $manifestPath) -replace 'NewManifest', '$module' | Set-Content -Path $manifestPath
+            (Get-Content -Path $manifestPath) -replace 'PSGet_$module', $module | Set-Content -Path $manifestPath
+            (Get-Content -Path $manifestPath) -replace 'NewManifest', $module | Set-Content -Path $manifestPath
             (Get-Content -Path $manifestPath) -replace 'FunctionsToExport = ', 'FunctionsToExport = @(' | Set-Content -Path $manifestPath -Force
             (Get-Content -Path $manifestPath) -replace "$($functionList[-1])'", "$($functionList[-1])')" | Set-Content -Path $manifestPath -Force
         }

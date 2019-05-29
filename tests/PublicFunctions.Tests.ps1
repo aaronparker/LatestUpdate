@@ -1,12 +1,5 @@
 # Pester tests
-If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
-    $ProjectRoot = $env:APPVEYOR_BUILD_FOLDER
-}
-Else {
-    # Local Testing 
-    $ProjectRoot = "$(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)\..\"
-}
-Import-Module (Join-Path $ProjectRoot "LatestUpdate") -Force
+Import-Module (Join-Path $projectRoot $module) -Force
 
 Describe 'Get-LatestUpdate' {
     Context "Returns a valid list of Cumulative updates" {
