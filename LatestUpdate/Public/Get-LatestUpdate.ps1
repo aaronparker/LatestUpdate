@@ -71,16 +71,16 @@ Function Get-LatestUpdate {
         [String] $WindowsVersion = "Windows10",
 
         [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Provide a Windows 10 build number")]
-        [ValidateSet('17763', '17134', '16299', '15063', '14393', '10240', '^(?!.*Preview)(?=.*Monthly).*')]
+        [ValidateSet('18362', '17763', '17134', '16299', '15063', '14393', '10240', '^(?!.*Preview)(?=.*Monthly).*')]
         [ValidateNotNullOrEmpty()]
-        [String] $Build = "17763"
+        [String] $Build = "18362"
     )
     Begin {
         # Set values for -Build as required for each platform
         Switch ($WindowsVersion) {
             "Windows10" {
                 [String] $Feed = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom'
-                If ($Build -eq "^(?!.*Preview)(?=.*Monthly).*") { $Build = "17763" }
+                If ($Build -eq "^(?!.*Preview)(?=.*Monthly).*") { $Build = "18362" }
             }
             "Windows8" {
                 [String] $Feed = 'https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/b905caa1-d413-c90c-bed3-20aead901092/atom'

@@ -10,7 +10,8 @@ Function Import-MdtModule {
 
     # Find the location to the MDT PowerShell module
     $InstallDir = Get-ValidPath -Path $((Get-ItemProperty "HKLM:SOFTWARE\Microsoft\Deployment 4" -ErrorAction SilentlyContinue).Install_Dir)
-    $MdtModule = "$($installDir)\bin\MicrosoftDeploymentToolkit.psd1"
+    $MdtPath = Join-Path $installDir "bin"
+    $MdtModule = Resolve-Path -Path (Join-Path $MdtPath "MicrosoftDeploymentToolkit.psd1")
 
     Try {            
         Import-Module -Name $MdtModule -ErrorAction SilentlyContinue

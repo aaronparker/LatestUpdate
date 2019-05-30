@@ -73,7 +73,7 @@ PowerShellVersion = '5.0'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Get-LatestFlash', 'Get-LatestNETFramework', 
+FunctionsToExport = @('Get-LatestFlash', 'Get-LatestNetFramework', 
                'Get-LatestServicingStack', 'Get-LatestUpdate', 'Import-LatestUpdate', 
                'Save-LatestUpdate')
 
@@ -116,7 +116,7 @@ PrivateData = @{
         IconUri = 'https://raw.githubusercontent.com/aaronparker/LatestUpdate/master/img/download.png'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'https://docs.stealthpuppy.com/latestupdate/change-log'
+        ReleaseNotes = 'https://docs.stealthpuppy.com/docs/latestupdate/change-log'
 
         # Prerelease string of this module
         # Prerelease = ''

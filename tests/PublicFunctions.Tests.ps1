@@ -21,8 +21,16 @@ Describe 'Get-LatestUpdate' {
         }
     }
     Context "Windows 10: Returns expected results with -Build" {
-        It "Given '17763' returns updates for build 1809" {
+        It "Given '18362' returns updates for build 1903" {
             $Updates = Get-LatestUpdate
+            ForEach ($Update in $Updates) {
+                $Update.Note -match "Cumulative.*1903" | Should -Not -BeNullOrEmpty
+                $Update.Arch -match "x86|x64|ARM64" | Should -Not -BeNullOrEmpty
+                $Update.Version -match "1903" | Should -Not -BeNullOrEmpty
+            }
+        }
+        It "Given '17763' returns updates for build 1809" {
+            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build '17763'
             ForEach ($Update in $Updates) {
                 $Update.Note -match "Cumulative.*1809" | Should -Not -BeNullOrEmpty
                 $Update.Arch -match "x86|x64|ARM64" | Should -Not -BeNullOrEmpty
@@ -175,14 +183,14 @@ Describe 'Get-LatestServicingStack' {
             ForEach ($Update in $Updates) {
                 $Update.Note -match "Servicing stack update.*" | Should -Not -BeNullOrEmpty
                 $Update.Arch -match "x86|x64|ARM64" | Should -Not -BeNullOrEmpty
-                $Update.Version -match "1607|1703|1709|1803|1809" | Should -Not -BeNullOrEmpty
+                $Update.Version -match "1607|1703|1709|1803|1809|1903" | Should -Not -BeNullOrEmpty
             }
         }
     }
 }
 
-Describe 'Get-LatestNETFramework' {
-    $Updates = Get-LatestNETFramework -OS "Windows Server 2019"
+Describe 'Get-LatestNetFramework' {
+    $Updates = Get-LatestNetFramework -OS "Windows Server 2019"
     Context "Returns a valid cumulative .NET Framework update" {
         It "Given an OS as argument, returns an array of updates" {
             $Updates | Should -BeOfType System.Management.Automation.PSCustomObject
