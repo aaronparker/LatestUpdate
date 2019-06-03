@@ -1,14 +1,26 @@
 # Pester tests
+# Set variables
+If ($Null -eq $projectRoot) {
+    $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
+    $module = "LatestUpdate"
+}
 Import-Module (Join-Path $projectRoot $module) -Force
+If (Get-Variable -Name APPVEYOR_BUILD_FOLDER -ErrorAction SilentlyContinue) {
+    $moduleParent = Join-Path $env:APPVEYOR_BUILD_FOLDER $module
+    $manifestPath = Join-Path $moduleParent "$module.psd1"
+    $modulePath = Join-Path $moduleParent "$module.psm1"
+}
 
 InModuleScope LatestUpdate {
     Describe 'Import-MdtModule' {
         Context "Importing the MDT PowerShell module" {
             Function Get-ValidPath {}
-            Mock -CommandName Get-ValidPath -MockWith { $ProjectRoot }
-            Mock Import-Module { $True }
+            Function Join-Path {}
+            Mock -CommandName Get-ValidPath -MockWith { $projectRoot }
+            Mock -CommandName Join-Path -MockWith { "C:\Program Files\Microsoft Deployment Toolkit\bin" }
+            Mock -CommandName Import-Module -MockWith { $True }
             It "Imports the MDT PowerShell module and returns True" {
-                Import-MdtModule | Should Be @($True, $True)
+                Import-MdtModule | Should -Be @($True, $True)
             }
         }
     }
@@ -54,7 +66,7 @@ InModuleScope LatestUpdate {
         Context "Packages folder exists" {
             Mock Test-Path { $True }
             It "Returns True if the Packages folder exists" {
-                New-MdtPackagesFolder -Drive "DS001" -Path "Windows 10" | Should Be $True
+                New-MdtPackagesFolder -Drive "DS001" -Path "Windows 10" | Should -Be $True
             }
         }
         Context "Creates a new Packages folder" {
@@ -62,7 +74,7 @@ InModuleScope LatestUpdate {
             Mock Test-Path { $False }
             Mock New-Item { $obj = [PSCustomObject]@{Name = "Windows 10"} }
             It "Successfully creates a Packages folder" {
-                New-MdtPackagesFolder -Drive "DS001" -Path "Windows 10" | Should Be $True
+                New-MdtPackagesFolder -Drive "DS001" -Path "Windows 10" | Should -Be $True
             }
         }
     }
@@ -130,14 +142,14 @@ InModuleScope LatestUpdate {
         Context "Tests whether we are running on PowerShell Core" {
             It "Imports the MDT PowerShell module and returns True" {
                 If (($PSVersionTable.PSVersion -ge [version]::Parse($Version)) -and ($PSVersionTable.PSEdition -eq "Core")) {
-                    Test-PSCore | Should Be $True
+                    Test-PSCore | Should -Be $True
                 }
             }
         }
         Context "Tests whether we are running on Windows PowerShell" {
             It "Returns False if running Windows PowerShell" {
                 If (($PSVersionTable.PSVersion -lt [version]::Parse($Version)) -and ($PSVersionTable.PSEdition -eq "Desktop")) {
-                    Test-PSCore | Should Be $False
+                    Test-PSCore | Should -Be $False
                 }
             }
         }
@@ -185,7 +197,7 @@ InModuleScope LatestUpdate {
         $idTable = Get-KbUpdateArray -Links $kbObj.Links -KB "4483235"
         $Updates = Get-UpdateDownloadArray -IdTable $idTable
         Context "Returns a valid list of Cumulative updates" {
-            It "Updates array returned should be of valid type" {
+            It "Updates array returned Should -Be of valid type" {
                 $Updates | Should -BeOfType System.Management.Automation.PSCustomObject
             }
             It "Updtes array returned should have a count greater than 0" {

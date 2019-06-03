@@ -1,57 +1,58 @@
 Function Get-UpdateFeed {
-    <#
-        .SYNOPSIS
-            Gets the Microsoft update RSS feed and returns the XML
-
-        .NOTES
-            Author: Aaron Parker
-            Twitter: @stealthpuppy
-
-        .PARAMETER UpdateFeed
-            URI to the feed.
-    #>
-    [CmdletBinding()]
+    [OutputType([System.Xml.XmlNode])]
+    [CmdletBinding(SupportsShouldProcess = $False)]
     Param (
-        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
-        [ValidateNotNullOrEmpty()]
-        [String] $UpdateFeed
+        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline)]
+        [ValidateNotNull()]
+        [System.String] $Uri
     )
     
-    #region Find the KB Article Number
-    #! Fix for Invoke-WebRequest creating BOM in XML files; Handle Temp locations on Windows, macOS / Linux
-    try {
-        If (Test-Path env:Temp) {
-            $tempDir = $env:Temp
-        }
-        ElseIf (Test-Path env:TMPDIR) {
-            $tempDir = $env:TMPDIR
-        }
-        $tempFile = Join-Path -Path $tempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
-        Write-Verbose -Message "Downloading feed of updates $UpdateFeed."
-        Invoke-WebRequest -Uri $UpdateFeed -ContentType 'application/atom+xml; charset=utf-8' `
-            -UseBasicParsing -OutFile $tempFile -ErrorAction SilentlyContinue
+    # Fix for Invoke-WebRequest creating BOM in XML files; Handle Temp locations on Windows, macOS / Linux
+    If (Test-Path -Path env:Temp) {
+        $tempDir = $env:Temp
     }
-    catch {
-        Throw $_
+    ElseIf (Test-Path -Path env:TMPDIR) {
+        $tempDir = $env:TMPDIR
     }
-        
-    # Import the XML from the feed into a variable and delete the temp file
-    try {
-        Write-Verbose -Message "Reading RSS XML from $tempFile."
-        $feedXML = [xml] (Get-Content -Path $tempFile -ErrorAction SilentlyContinue)
-    }
-    catch {
-        Write-Error "Failed to read XML from $tempFile."
-    }
-    try {
-        Write-Verbose -Message "Deleting $tempFile."
-        Remove-Item -Path $tempFile -ErrorAction SilentlyContinue
-    }
-    catch {
-        Write-Warning -Message "Failed to remove file $tempFile."
-    }
-    #! End fix
+    $tempFile = Join-Path -Path $tempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
 
-    # Return the XML to the pipeline
-    Write-Output $feedXML
+    try {
+        $params = @{
+            Uri             = $Uri
+            ContentType     = 'application/atom+xml; charset=utf-8'
+            UserAgent       = [Microsoft.PowerShell.Commands.PSUserAgent]::Chrome
+            UseBasicParsing = $True
+            OutFile         = $tempFile
+            ErrorAction     = "SilentlyContinue"
+        }
+        Invoke-WebRequest @params
+    }
+    catch [System.Net.WebException] {
+        Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
+    }
+    catch [System.Exception] {
+        Write-Warning -Message "Failed to retreive the update feed: $Uri."
+        Throw $_.Exception.Message
+    }
+    
+    # Import the XML from the feed into a variable and delete the temp file
+    If (Test-Path -Path $tempFile) {
+        try {
+            [xml] $xml = Get-Content -Path $tempFile -Raw -ErrorAction SilentlyContinue
+        }
+        catch [System.Exception] {
+            Write-Warning -Message "Failed to read XML from file: $tempFile."
+            Throw $_.Exception.Message
+        }
+        try {
+            Remove-Item -Path $tempFile -Force -ErrorAction SilentlyContinue
+        }
+        catch [System.Exception] {
+            Write-Warning -Message "Failed to remove file: $tempFile."
+        }
+    }
+
+    If ($Null -ne $xml) {
+        Write-Output -InputObject $xml
+    }
 }

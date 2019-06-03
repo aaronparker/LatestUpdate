@@ -1,3 +1,17 @@
+# Set variables
+If ($Null -eq $projectRoot) {
+    $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
+    $module = "LatestUpdate"
+    $moduleParent = Join-Path $projectRoot $module
+    $manifestPath = Join-Path $moduleParent "$module.psd1"
+    $modulePath = Join-Path $moduleParent "$module.psm1"
+}
+Import-Module (Join-Path $projectRoot $module) -Force
+If (Get-Variable -Name APPVEYOR_BUILD_FOLDER -ErrorAction SilentlyContinue) {
+    $moduleParent = Join-Path $env:APPVEYOR_BUILD_FOLDER $module
+    $manifestPath = Join-Path $moduleParent "$module.psd1"
+    $modulePath = Join-Path $moduleParent "$module.psm1"
+}
 
 Describe "General project validation" {
     $scripts = Get-ChildItem (Join-Path $projectRoot $module) -Recurse -Include *.ps1, *.psm1
@@ -51,11 +65,8 @@ Describe "Function validation" {
     }
 }
 
-# Test module and manifest
-$moduleParent = Join-Path $env:APPVEYOR_BUILD_FOLDER "LatestUpdate"
-$manifestPath = Join-Path $moduleParent "$module.psd1"
-$modulePath = Join-Path $moduleParent "$module..psm1"
 
+# Test module and manifest
 Describe 'Module Metadata Validation' {      
     It 'Script fileinfo should be OK' {
         { Test-ModuleManifest $manifestPath -ErrorAction Stop } | Should Not Throw

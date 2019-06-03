@@ -1,5 +1,15 @@
 # Pester tests
+# Set variables
+If ($Null -eq $projectRoot) {
+    $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
+    $module = "LatestUpdate"
+}
 Import-Module (Join-Path $projectRoot $module) -Force
+If (Get-Variable -Name APPVEYOR_BUILD_FOLDER -ErrorAction SilentlyContinue) {
+    $moduleParent = Join-Path $env:APPVEYOR_BUILD_FOLDER $module
+    $manifestPath = Join-Path $moduleParent "$module.psd1"
+    $modulePath = Join-Path $moduleParent "$module.psm1"
+}
 
 Describe 'Get-LatestUpdate' {
     Context "Returns a valid list of Cumulative updates" {
@@ -214,7 +224,7 @@ Describe 'Get-LatestNetFramework' {
     }
 }
 
-If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
+If (Test-Path -Path 'env:APPVEYOR_BUILD_FOLDER') {
     # Skip download tests unless running in AppVeyor.
     
     Describe 'Save-LatestUpdate' {
