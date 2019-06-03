@@ -3,7 +3,7 @@
     "ServicingStack" : "^Servicing stack update.*",
     "CumulativeUpdate" : ".*Cumulative Update.*",
     "AdobeFlash" : ".*Update for Adobe Flash Player.*",
-    "NetFramework" : ".*Cumulative Update for .NET Framework.*",
+    "NetFramework" : "Cumulative Update for .NET Framework.*",
     "MonthlyRollup" : "(?!Preview of Monthly Rollup)(\\(Monthly Rollup.*\\))"
   },
   "Matches" : {
@@ -17,7 +17,8 @@
   "UpdateFeeds" : {
     "Windows10" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom",
     "Windows8" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/b905caa1-d413-c90c-bed3-20aead901092/atom",
-    "Windows7" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/f825ca23-c7d1-aab8-4513-64980e1c3007/atom"
+    "Windows7" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/f825ca23-c7d1-aab8-4513-64980e1c3007/atom",
+    "NetFramework" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/df2c02f6-9610-d46d-2d76-fa570bd8c86a/atom"
   },
   "VersionTable" : {
     "Windows10" : {

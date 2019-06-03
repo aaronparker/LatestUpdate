@@ -1,4 +1,4 @@
-Function Invoke-UpdateCatalogIdSearch {
+Function Invoke-UpdateCatalogSearch {
     [OutputType([Microsoft.PowerShell.Commands.WebResponseObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param(

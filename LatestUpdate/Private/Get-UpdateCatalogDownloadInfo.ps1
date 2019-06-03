@@ -19,7 +19,7 @@ Function Get-UpdateCatalogDownloadInfo {
     $strings = Get-ModuleStrings
 
     # Search the Update Catalog for the specific update KB
-    $searchResult = Invoke-UpdateCatalogIdSearch -UpdateId $UpdateId
+    $searchResult = Invoke-UpdateCatalogSearch -UpdateId $UpdateId
 
     If ($Null -ne $searchResult) {
         # Determine link id's and update description
