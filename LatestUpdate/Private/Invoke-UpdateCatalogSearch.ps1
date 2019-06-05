@@ -8,7 +8,7 @@ Function Invoke-UpdateCatalogSearch {
     )
 
     # Get module strings from the JSON
-    $strings = Get-ModuleStrings
+    $strings = Get-ModuleString
 
     If ($Null -ne $strings) {
         try {
@@ -25,7 +25,7 @@ Function Invoke-UpdateCatalogSearch {
             Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
         }
         catch [System.Exception] {
-            Write-Warning -Message "Failed to search the catalog: $Uri."
+            Write-Warning -Message "$($MyInvocation.MyCommand): failed to search the catalog: $Uri."
             Throw $_.Exception.Message
         }
 

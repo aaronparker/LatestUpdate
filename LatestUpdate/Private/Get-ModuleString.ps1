@@ -1,4 +1,4 @@
-Function Get-ModuleStrings {
+Function Get-ModuleString {
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param (
@@ -12,20 +12,20 @@ Function Get-ModuleStrings {
         $content = Get-Content -Path $Path -Raw -ErrorAction SilentlyContinue
     }
     catch [System.Exception] {
-        Write-Warning -Message "Failed to read module strings from $Path."
+        Write-Warning -Message "$($MyInvocation.MyCommand): Failed to read module strings from $Path."
         Throw $_.Exception.Message
     }
 
     try {
-        $object = $content | ConvertFrom-Json -AsHashtable -ErrorAction SilentlyContinue
+        $stringsTable = $content | ConvertFrom-Json -AsHashtable -ErrorAction SilentlyContinue
     }
     catch [System.Exception] {
-        Write-Warning -Message "Failed to convert strings to required object."
+        Write-Warning -Message "$($MyInvocation.MyCommand): Failed to convert strings to required object."
         Throw $_.Exception.Message
     }
     finally {
-        If ($Null -ne $object) {
-            Write-Output -InputObject $object
+        If ($Null -ne $stringsTable) {
+            Write-Output -InputObject $stringsTable
         }
     }
 }

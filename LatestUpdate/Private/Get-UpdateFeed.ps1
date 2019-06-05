@@ -41,14 +41,14 @@ Function Get-UpdateFeed {
             [xml] $xml = Get-Content -Path $tempFile -Raw -ErrorAction SilentlyContinue
         }
         catch [System.Exception] {
-            Write-Warning -Message "Failed to read XML from file: $tempFile."
+            Write-Warning -Message "$($MyInvocation.MyCommand): failed to read XML from file: $tempFile."
             Throw $_.Exception.Message
         }
         try {
             Remove-Item -Path $tempFile -Force -ErrorAction SilentlyContinue
         }
         catch [System.Exception] {
-            Write-Warning -Message "Failed to remove file: $tempFile."
+            Write-Warning -Message "$($MyInvocation.MyCommand): failed to remove file: $tempFile."
         }
     }
 

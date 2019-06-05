@@ -9,15 +9,17 @@ Function Get-LatestNetFrameworkUpdate {
     )
     
     # Get module strings from the JSON
-    $strings = Get-ModuleStrings
+    $strings = Get-ModuleString
 
     If ($Null -ne $strings) {
         $updateFeed = Get-UpdateFeed -Uri $strings.UpdateFeeds.NetFramework
         $updateList = Get-NetFrameworkUpdate -UpdateFeed $updateFeed
         Write-Host $updateList
         If ($Null -ne $updateList) {
-            $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $Version
-            Write-Output -InputObject $downloadInfo
+            ForEach ($update in $updateList) {
+                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $update.ID -OS $Version
+                Write-Output -InputObject $downloadInfo
+            }
         }
     }
 }

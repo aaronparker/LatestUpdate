@@ -12,7 +12,7 @@ Function Get-Windows10AdobeFlashUpdate {
     )
 
     # Get module strings from the JSON
-    $strings = Get-ModuleStrings
+    $strings = Get-ModuleString
 
     # Filter object matching desired update type
     $updateList = New-Object -TypeName System.Collections.ArrayList

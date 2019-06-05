@@ -16,7 +16,7 @@ Function Get-UpdateCatalogDownloadInfo {
     )
 
     # Get module strings from the JSON
-    $strings = Get-ModuleStrings
+    $strings = Get-ModuleString
 
     # Search the Update Catalog for the specific update KB
     $searchResult = Invoke-UpdateCatalogSearch -UpdateId $UpdateId
@@ -63,6 +63,6 @@ Function Get-UpdateCatalogDownloadInfo {
             Description = $CurrentUpdateDescription
             URL         = $updateDownloadURL
         }
-        Write-Output $UpdateCatalogDownloadItem
+        Write-Output -InputObject $UpdateCatalogDownloadItem
     }
 }

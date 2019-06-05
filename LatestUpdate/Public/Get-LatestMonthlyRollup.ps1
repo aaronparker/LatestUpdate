@@ -9,7 +9,7 @@ Function Get-LatestMonthlyRollup {
     )
     
     # Get module strings from the JSON
-    $strings = Get-ModuleStrings
+    $strings = Get-ModuleString
 
     If ($Null -ne $strings) {
         Switch ($Version) {
