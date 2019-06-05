@@ -35,8 +35,9 @@ Function Get-UpdateNetFramework {
             }
             $sortedUpdateList.Add($PSObject) | Out-Null
         }
-        $latestUpdate = $sortedUpdateList | Sort-Object -Property Updated -Descending | Select-Object -First 1
-        Write-Verbose -Message "$($MyInvocation.MyCommand): selected item [$($latestUpdate.title)]"
+        $latestUpdate = $sortedUpdateList | Sort-Object -Property Updated -Descending
+        # $latestUpdate = $sortedUpdateList | Sort-Object -Property Updated -Descending | Select-Object -First 1
+        # Write-Verbose -Message "$($MyInvocation.MyCommand): selected item [$($latestUpdate.title)]"
     }
 
     # Return object to the pipeline

@@ -7,7 +7,7 @@ Function Get-UpdateCatalogDownloadInfo {
         [System.String] $UpdateId,
 
         [Parameter(Mandatory = $False)]
-        [ValidateNotNullOrEmpty()]
+        # [ValidateNotNullOrEmpty()]
         [System.String] $Architecture = 'x64|x86|ARM64',
 
         [Parameter(Mandatory = $False)]

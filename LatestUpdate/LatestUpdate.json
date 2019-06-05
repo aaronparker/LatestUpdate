@@ -3,8 +3,11 @@
     "ServicingStack" : "^Servicing stack update.*",
     "CumulativeUpdate" : ".*Cumulative Update.*",
     "AdobeFlash" : ".*Update for Adobe Flash Player.*",
-    "NetFramework" : "Cumulative Update.*|Security and Quality Rollup.*",
-    "MonthlyRollup" : "(?!Preview of Monthly Rollup)(\\(Monthly Rollup.*\\))"
+    "MonthlyRollup" : "(?!Preview of Monthly Rollup)(\\(Monthly Rollup.*\\))",
+    "NetFramework" : "Cumulative Update for \\.NET Framework",
+    "NetFrameworkWindows10" : "Windows 10|Windows Server 2016|Windows Server 2019|Windows Server",
+    "NetFrameworkWindows8" : "Windows 8.1|Server 2012 R2",
+    "NetFrameworkWindows7" : "Windows 7|Server 2008 R2"
   },
   "Matches" : {
     "DownloadUrl" : "(http[s]?\\://download\\.windowsupdate\\.com\\/[^\\'\\\"\"]*)",
