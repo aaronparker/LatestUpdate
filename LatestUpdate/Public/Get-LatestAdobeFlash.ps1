@@ -15,7 +15,7 @@ Function Get-LatestAdobeFlash {
     If ($Null -ne $resourceStrings) {
         ForEach ($ver in $Version) {
             $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows10
-            $updateList = Get-Windows10AdobeFlashUpdate -UpdateFeed $updateFeed
+            $updateList = Get-UpdateAdobeFlash -UpdateFeed $updateFeed
             If ($Null -ne $updateList) {
                 $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID
                 Write-Output -InputObject $downloadInfo

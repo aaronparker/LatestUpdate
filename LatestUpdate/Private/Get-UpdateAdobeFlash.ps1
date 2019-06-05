@@ -1,27 +1,23 @@
-Function Get-Windows10CumulativeUpdate {
+Function Get-UpdateAdobeFlash {
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
-        [System.String] $Build,
-
-        [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline)]
-        [ValidateNotNullOrEmpty()]
         [System.Xml.XmlNode] $UpdateFeed
     )
 
+    # Get module strings from the JSON
+    $resourceStrings = Get-ModuleResource
+
     # Filter object matching desired update type
-    [regex] $rxB = "$Build.(\d+)"
     $updateList = New-Object -TypeName System.Collections.ArrayList
     ForEach ($item in $UpdateFeed.feed.entry) {
-        If ($item.title -match $rxB) {
+        If ($item.title -match $resourceStrings.SearchStrings.AdobeFlash) {
             Write-Verbose -Message "$($MyInvocation.MyCommand): matched item [$($item.title)]"
-            $BuildVersion = [regex]::Match($item.title, $rxB).Value
             $PSObject = [PSCustomObject] @{
                 Title   = $item.title
                 ID      = $item.id
-                Build   = $BuildVersion
                 Updated = $item.updated
             }
             $updateList.Add($PSObject) | Out-Null
@@ -33,15 +29,13 @@ Function Get-Windows10CumulativeUpdate {
         $sortedUpdateList = New-Object -TypeName System.Collections.ArrayList
         ForEach ($update in $updateList) {
             $PSObject = [PSCustomObject] @{
-                Title    = $update.title
-                ID       = "KB{0}" -f ($update.id).Split(":")[2]
-                Build    = $update.Build.Split(".")[0]
-                Revision = [int]($update.Build.Split(".")[1])
-                Updated  = ([DateTime]::Parse($update.updated))
+                Title   = $update.title
+                ID      = "KB{0}" -f ($update.id).Split(":")[2]
+                Updated = ([DateTime]::Parse($update.updated))
             }
             $sortedUpdateList.Add($PSObject) | Out-Null
         }
-        $latestUpdate = $sortedUpdateList | Sort-Object -Property Revision -Descending | Select-Object -First 1
+        $latestUpdate = $sortedUpdateList | Sort-Object -Property Updated -Descending | Select-Object -First 1
         Write-Verbose -Message "$($MyInvocation.MyCommand): selected item [$($latestUpdate.title)]"
     }
 

@@ -3,7 +3,7 @@ Function Get-UpdateFeed {
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline)]
-        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [System.String] $Uri
     )
 

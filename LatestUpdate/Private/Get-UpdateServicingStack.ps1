@@ -1,14 +1,14 @@
-Function Get-Windows10ServicingStackUpdate {
+Function Get-UpdateServicingStack {
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
-        [System.String] $Version,
+        [System.Xml.XmlNode] $UpdateFeed,
 
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
-        [System.Xml.XmlNode] $UpdateFeed
+        [System.String] $Version
     )
 
     # Get module strings from the JSON
@@ -36,7 +36,7 @@ Function Get-Windows10ServicingStackUpdate {
             $PSObject = [PSCustomObject] @{
                 Title   = $update.title
                 ID      = "KB{0}" -f ($update.id).Split(":")[2]
-                Version = $Version
+                # Version = $Version
                 Updated = ([DateTime]::Parse($update.updated))
             }
             $sortedUpdateList.Add($PSObject) | Out-Null

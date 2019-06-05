@@ -3,7 +3,7 @@
     "ServicingStack" : "^Servicing stack update.*",
     "CumulativeUpdate" : ".*Cumulative Update.*",
     "AdobeFlash" : ".*Update for Adobe Flash Player.*",
-    "NetFramework" : "Cumulative Update for .NET Framework.*",
+    "NetFramework" : "Cumulative Update.*|Security and Quality Rollup.*",
     "MonthlyRollup" : "(?!Preview of Monthly Rollup)(\\(Monthly Rollup.*\\))"
   },
   "Matches" : {

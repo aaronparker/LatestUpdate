@@ -1,8 +1,8 @@
-Function Get-NetFrameworkUpdate {
+Function Get-UpdateMonthly {
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param (
-        [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline)]
+        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
         [System.Xml.XmlNode] $UpdateFeed
     )
@@ -13,7 +13,8 @@ Function Get-NetFrameworkUpdate {
     # Filter object matching desired update type
     $updateList = New-Object -TypeName System.Collections.ArrayList
     ForEach ($item in $UpdateFeed.feed.entry) {
-        If ($item.title -match $resourceStrings.SearchStrings.NetFramework) {
+        If ($item.title -match $resourceStrings.SearchStrings.MonthlyRollup) {
+            Write-Verbose -Message "$($MyInvocation.MyCommand): matched item [$($item.title)]"
             $PSObject = [PSCustomObject] @{
                 Title   = $item.title
                 ID      = $item.id
@@ -35,6 +36,7 @@ Function Get-NetFrameworkUpdate {
             $sortedUpdateList.Add($PSObject) | Out-Null
         }
         $latestUpdate = $sortedUpdateList | Sort-Object -Property Updated -Descending | Select-Object -First 1
+        Write-Verbose -Message "$($MyInvocation.MyCommand): selected item [$($latestUpdate.title)]"
     }
 
     # Return object to the pipeline

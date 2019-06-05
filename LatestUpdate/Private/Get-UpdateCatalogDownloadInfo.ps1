@@ -25,7 +25,6 @@ Function Get-UpdateCatalogDownloadInfo {
         # Determine link id's and update description
         $UpdateCatalogItems = ($searchResult.Links | Where-Object { $_.Id -match "_link" })
         ForEach ($UpdateCatalogItem in $UpdateCatalogItems) {
-            # $resourceStrings.Architecture[$Architecture]
             If (($UpdateCatalogItem.outerHTML -match $Architecture) -and ($UpdateCatalogItem.outerHTML -match $OS)) {
                 $CurrentUpdateDescription = ($UpdateCatalogItem.outerHTML -replace $resourceStrings.Matches.DownloadDescription, '$1').TrimStart().TrimEnd()
                 $CurrentUpdateLinkID = $UpdateCatalogItem.id.Replace("_link", "")
