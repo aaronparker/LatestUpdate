@@ -37,5 +37,12 @@
     "x64" : "x64-based",
     "x86" : "x86-based",
     "ARM" : "ARM64-based"
+  },
+  "Preferences" : {
+    "ErrorAction" : "SilentlyContinue"
+  },
+  "ContentType" : {
+    "html" : "text/html; charset=utf-8",
+    "atom" : "application/atom+xml; charset=utf-8"
   }
 }

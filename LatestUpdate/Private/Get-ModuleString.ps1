@@ -12,7 +12,7 @@ Function Get-ModuleString {
         $content = Get-Content -Path $Path -Raw -ErrorAction SilentlyContinue
     }
     catch [System.Exception] {
-        Write-Warning -Message "$($MyInvocation.MyCommand): Failed to read module strings from $Path."
+        Write-Warning -Message "$($MyInvocation.MyCommand): Failed to read module strings from: $Path."
         Throw $_.Exception.Message
     }
 

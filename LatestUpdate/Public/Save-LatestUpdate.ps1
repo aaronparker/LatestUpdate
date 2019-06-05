@@ -41,6 +41,9 @@ Function Save-LatestUpdate {
         [System.Switch] $ForceWebRequest
     )
 
+    # Get module strings from the JSON
+    $strings = Get-ModuleString
+
     # Output object
     $updateList = New-Object -TypeName System.Collections.ArrayList
 
@@ -64,7 +67,7 @@ Function Save-LatestUpdate {
                             Uri             = $update.URL
                             OutFile         = $target
                             UseBasicParsing = $True
-                            ErrorAction     = "Stop"
+                            ErrorAction     = $strings.Preferences.ErrorAction
                         }
                         If ($PSBoundParameters.ContainsKey($Proxy)) {
                             $params.Proxy = $Proxy
@@ -78,7 +81,7 @@ Function Save-LatestUpdate {
                         Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
                     }
                     catch [System.Exception] {
-                        Write-Warning -Message "Failed to download: $($update.URL)."
+                        Write-Warning -Message "$($MyInvocation.MyCommand): failed to download: $($update.URL)."
                         Throw $_.Exception.Message
                     }
                 }
@@ -93,7 +96,7 @@ Function Save-LatestUpdate {
                             Priority    = "High"
                             DisplayName = $update.Note
                             Description = "Downloading $($update.URL)"
-                            ErrorAction = "Stop"
+                            ErrorAction = $strings.Preferences.ErrorAction
                         }
                         If ($PSBoundParameters.ContainsKey($Proxy)) {
                             # Set priority to Foreground because the proxy will remove the Range protocol header
@@ -110,7 +113,7 @@ Function Save-LatestUpdate {
                         Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
                     }
                     catch [System.Exception] {
-                        Write-Warning -Message "Failed to download: $($update.URL)."
+                        Write-Warning -Message "$($MyInvocation.MyCommand): failed to download: $($update.URL)."
                         Throw $_.Exception.Message
                     }
                 }

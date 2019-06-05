@@ -14,14 +14,15 @@ Function Invoke-UpdateCatalogSearch {
         try {
             $params = @{
                 Uri             = "$($strings.CatalogUris.Search)$($UpdateId)"
-                ContentType     = 'text/html; charset=utf-8'
+                ContentType     = $strings.ContentType.html
                 UserAgent       = [Microsoft.PowerShell.Commands.PSUserAgent]::Chrome
                 UseBasicParsing = $True
-                ErrorAction     = "SilentlyContinue"
+                ErrorAction     = $strings.Preferences.ErrorAction
             }
             $searchResult = Invoke-WebRequest @params
         }
         catch [System.Net.WebException] {
+            Write-Warning -Message ($($MyInvocation.MyCommand))
             Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
         }
         catch [System.Exception] {
