@@ -9,23 +9,24 @@ Function Get-ModuleResource {
     )
     
     try {
+        Write-Verbose -Message "$($MyInvocation.MyCommand): read module resource strings from [$Path]"
         $content = Get-Content -Path $Path -Raw -ErrorAction SilentlyContinue
     }
     catch [System.Exception] {
-        Write-Warning -Message "$($MyInvocation.MyCommand): Failed to read module strings from: $Path."
+        Write-Warning -Message "$($MyInvocation.MyCommand): failed to read from: $Path."
         Throw $_.Exception.Message
     }
 
     try {
-        $stringsTable = $content | ConvertFrom-Json -AsHashtable -ErrorAction SilentlyContinue
+        $resourceStringsTable = $content | ConvertFrom-Json -AsHashtable -ErrorAction SilentlyContinue
     }
     catch [System.Exception] {
-        Write-Warning -Message "$($MyInvocation.MyCommand): Failed to convert strings to required object."
+        Write-Warning -Message "$($MyInvocation.MyCommand): failed to convert strings to required object."
         Throw $_.Exception.Message
     }
     finally {
-        If ($Null -ne $stringsTable) {
-            Write-Output -InputObject $stringsTable
+        If ($Null -ne $resourceStringsTable) {
+            Write-Output -InputObject $resourceStringsTable
         }
     }
 }

@@ -8,12 +8,12 @@ Function Get-NetFrameworkUpdate {
     )
 
     # Get module strings from the JSON
-    $strings = Get-ModuleResource
+    $resourceStrings = Get-ModuleResource
 
     # Filter object matching desired update type
     $updateList = New-Object -TypeName System.Collections.ArrayList
     ForEach ($item in $UpdateFeed.feed.entry) {
-        If ($item.title -match $strings.SearchStrings.NetFramework) {
+        If ($item.title -match $resourceStrings.SearchStrings.NetFramework) {
             $PSObject = [PSCustomObject] @{
                 Title   = $item.title
                 ID      = $item.id

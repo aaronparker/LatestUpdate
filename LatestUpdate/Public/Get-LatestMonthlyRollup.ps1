@@ -9,23 +9,24 @@ Function Get-LatestMonthlyRollup {
     )
     
     # Get module strings from the JSON
-    $strings = Get-ModuleResource
+    $resourceStrings = Get-ModuleResource
 
-    If ($Null -ne $strings) {
+    If ($Null -ne $resourceStrings) {
         Switch ($Version) {
             "Windows 8" {
-                $updateFeed = Get-UpdateFeed -Uri $strings.UpdateFeeds.Windows8
-                $osName = "Windows 8.1"
+                $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows8
+                $osName = "Windows 8.1|Windows Server"
             }
             "Windows 7" {
-                $updateFeed = Get-UpdateFeed -Uri $strings.UpdateFeeds.Windows7
-                $osName = "Windows 7"
+                $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows7
+                $osName = "Windows 7|Windows Server"
             }
         }
         $updateList = Get-WindowsMonthlyUpdate -UpdateFeed $updateFeed
         If ($Null -ne $updateList) {
-            $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $osName
-            Write-Output -InputObject $downloadInfo
+            $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $osName -Architecture 'x86|x64'
+            $filteredDownloadInfo = $downloadInfo | Sort-Object -Unique -Property Description
+            Write-Output -InputObject $filteredDownloadInfo
         }
     }
 }

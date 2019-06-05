@@ -9,11 +9,11 @@ Function Get-LatestServicingStack {
     )
     
     # Get module strings from the JSON
-    $strings = Get-ModuleResource
+    $resourceStrings = Get-ModuleResource
 
-    If ($Null -ne $strings) {
+    If ($Null -ne $resourceStrings) {
         ForEach ($ver in $Version) {
-            $updateFeed = Get-UpdateFeed -Uri $strings.UpdateFeeds.Windows10
+            $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows10
             $updateList = Get-Windows10ServicingStackUpdate -Version $ver -UpdateFeed $updateFeed
             If ($Null -ne $updateList) {
                 $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID

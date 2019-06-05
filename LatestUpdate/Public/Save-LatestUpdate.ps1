@@ -42,7 +42,7 @@ Function Save-LatestUpdate {
     )
 
     # Get module strings from the JSON
-    $strings = Get-ModuleResource
+    $resourceStrings = Get-ModuleResource
 
     # Output object
     $updateList = New-Object -TypeName System.Collections.ArrayList
@@ -67,7 +67,7 @@ Function Save-LatestUpdate {
                             Uri             = $update.URL
                             OutFile         = $target
                             UseBasicParsing = $True
-                            ErrorAction     = $strings.Preferences.ErrorAction
+                            ErrorAction     = $resourceStrings.Preferences.ErrorAction
                         }
                         If ($PSBoundParameters.ContainsKey($Proxy)) {
                             $params.Proxy = $Proxy
@@ -96,7 +96,7 @@ Function Save-LatestUpdate {
                             Priority    = "High"
                             DisplayName = $update.Note
                             Description = "Downloading $($update.URL)"
-                            ErrorAction = $strings.Preferences.ErrorAction
+                            ErrorAction = $resourceStrings.Preferences.ErrorAction
                         }
                         If ($PSBoundParameters.ContainsKey($Proxy)) {
                             # Set priority to Foreground because the proxy will remove the Range protocol header

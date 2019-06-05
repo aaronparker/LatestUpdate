@@ -35,8 +35,8 @@ InModuleScope LatestUpdate {
     Describe 'Get-UpdateFeed' {
         . (Join-Path $modulePrivate "Get-ModuleResource.ps1")
         . (Join-Path $modulePrivate "Get-UpdateFeed.ps1")
-        $strings = Get-ModuleResource
-        $updateFeed = Get-UpdateFeed -Uri $strings.UpdateFeeds.Windows10
+        $resourceStrings = Get-ModuleResource
+        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows10
         Context "Tests that Get-UpdateFeed returns valid XML" {
             It "Returns valid XML" {
                 $updateFeed | Should -BeOfType System.Xml.XmlNode

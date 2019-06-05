@@ -16,6 +16,7 @@ Function Get-Windows10CumulativeUpdate {
     $updateList = New-Object -TypeName System.Collections.ArrayList
     ForEach ($item in $UpdateFeed.feed.entry) {
         If ($item.title -match $rxB) {
+            Write-Verbose -Message "$($MyInvocation.MyCommand): matched item [$($item.title)]"
             $BuildVersion = [regex]::Match($item.title, $rxB).Value
             $PSObject = [PSCustomObject] @{
                 Title   = $item.title
@@ -41,6 +42,7 @@ Function Get-Windows10CumulativeUpdate {
             $sortedUpdateList.Add($PSObject) | Out-Null
         }
         $latestUpdate = $sortedUpdateList | Sort-Object -Property Revision -Descending | Select-Object -First 1
+        Write-Verbose -Message "$($MyInvocation.MyCommand): selected item [$($latestUpdate.title)]"
     }
 
     # Return object to the pipeline

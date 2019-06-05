@@ -36,7 +36,8 @@
   "Architecture" : {
     "x64" : "x64-based",
     "x86" : "x86-based",
-    "ARM" : "ARM64-based"
+    "ARM" : "ARM64-based",
+    "All" : "x86|x64|ARM64"
   },
   "Preferences" : {
     "ErrorAction" : "SilentlyContinue"
