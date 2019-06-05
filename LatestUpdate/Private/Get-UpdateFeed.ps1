@@ -8,7 +8,7 @@ Function Get-UpdateFeed {
     )
 
     # Get module strings from the JSON
-    $strings = Get-ModuleString
+    $strings = Get-ModuleResource
     
     # Fix for Invoke-WebRequest creating BOM in XML files; Handle Temp locations on Windows, macOS / Linux
     If (Test-Path -Path env:Temp) {

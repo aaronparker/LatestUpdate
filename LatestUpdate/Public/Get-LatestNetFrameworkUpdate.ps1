@@ -9,7 +9,7 @@ Function Get-LatestNetFrameworkUpdate {
     )
     
     # Get module strings from the JSON
-    $strings = Get-ModuleString
+    $strings = Get-ModuleResource
 
     If ($Null -ne $strings) {
         $updateFeed = Get-UpdateFeed -Uri $strings.UpdateFeeds.NetFramework

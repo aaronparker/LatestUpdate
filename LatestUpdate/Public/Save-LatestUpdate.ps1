@@ -42,7 +42,7 @@ Function Save-LatestUpdate {
     )
 
     # Get module strings from the JSON
-    $strings = Get-ModuleString
+    $strings = Get-ModuleResource
 
     # Output object
     $updateList = New-Object -TypeName System.Collections.ArrayList

@@ -1,4 +1,4 @@
-Function Get-ModuleString {
+Function Get-ModuleResource {
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param (

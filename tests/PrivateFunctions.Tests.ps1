@@ -33,9 +33,9 @@ InModuleScope LatestUpdate {
     }
 
     Describe 'Get-UpdateFeed' {
-        . (Join-Path $modulePrivate "Get-ModuleString.ps1")
+        . (Join-Path $modulePrivate "Get-ModuleResource.ps1")
         . (Join-Path $modulePrivate "Get-UpdateFeed.ps1")
-        $strings = Get-ModuleString
+        $strings = Get-ModuleResource
         $updateFeed = Get-UpdateFeed -Uri $strings.UpdateFeeds.Windows10
         Context "Tests that Get-UpdateFeed returns valid XML" {
             It "Returns valid XML" {

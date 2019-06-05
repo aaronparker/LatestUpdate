@@ -10,7 +10,7 @@ Function Get-LatestCumulativeUpdate {
     )
     
     # Get module strings from the JSON
-    $strings = Get-ModuleString
+    $strings = Get-ModuleResource
 
     If ($Null -ne $strings) {
         ForEach ($ver in $Version) {

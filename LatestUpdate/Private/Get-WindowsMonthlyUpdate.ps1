@@ -8,7 +8,7 @@ Function Get-WindowsMonthlyUpdate {
     )
 
     # Get module strings from the JSON
-    $strings = Get-ModuleString
+    $strings = Get-ModuleResource
 
     # Filter object matching desired update type
     $updateList = New-Object -TypeName System.Collections.ArrayList
