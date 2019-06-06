@@ -1,0 +1,54 @@
+{
+  "SearchStrings" : {
+    "ServicingStack" : "^Servicing stack update.*",
+    "CumulativeUpdate" : ".*Cumulative Update.*",
+    "AdobeFlash" : ".*Update for Adobe Flash Player.*",
+    "MonthlyRollup" : "(?!Preview of Monthly Rollup)(\\(Monthly Rollup.*\\))",
+    "NetFramework" : "Cumulative Update for \\.NET Framework",
+    "NetFrameworkWindows10" : "Windows 10|Windows Server 2016|Windows Server 2019|Windows Server",
+    "NetFrameworkWindows8" : "Windows 8.1|Server 2012 R2",
+    "NetFrameworkWindows7" : "Windows 7|Server 2008 R2"
+  },
+  "Matches" : {
+    "DownloadUrl" : "(http[s]?\\://download\\.windowsupdate\\.com\\/[^\\'\\\"\"]*)",
+    "DownloadDescription" : "<a[^>]*>([^<]+)<\\/a>",
+    "Windows10Version" : "([12][056789][01][379])",
+    "Architecture" : "(x86|x64|ARM64)"
+  },
+  "CatalogUris" : {
+    "Search" : "https://www.catalog.update.microsoft.com/Search.aspx?q=",
+    "Download" : "https://www.catalog.update.microsoft.com/DownloadDialog.aspx"
+  },
+  "UpdateFeeds" : {
+    "Windows10" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom",
+    "Windows8" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/b905caa1-d413-c90c-bed3-20aead901092/atom",
+    "Windows7" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/f825ca23-c7d1-aab8-4513-64980e1c3007/atom",
+    "NetFramework" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/df2c02f6-9610-d46d-2d76-fa570bd8c86a/atom"
+  },
+  "VersionTable" : {
+    "Windows10" : {
+      "1803" : "17134",
+      "1809" : "17763",
+      "1703" : "15063",
+      "1709" : "16299",
+      "1607" : "14393",
+      "1903" : "18362"
+    }
+  },
+  "Languages" : {
+    "Default" : "en-US"
+  },
+  "Architecture" : {
+    "x64" : "x64-based",
+    "x86" : "x86-based",
+    "ARM" : "ARM64-based",
+    "All" : "x86|x64|ARM64"
+  },
+  "Preferences" : {
+    "ErrorAction" : "SilentlyContinue"
+  },
+  "ContentType" : {
+    "html" : "text/html; charset=utf-8",
+    "atom" : "application/atom+xml; charset=utf-8"
+  }
+}

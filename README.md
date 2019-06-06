@@ -8,7 +8,7 @@
 
 ## About
 
-This repository hosts a module for retrieving the latest Cumulative Update, Monthly Rollups, Servicing Stack and Adobe Flash Player updates for various Windows builds from the Microsoft Update Catalog. In addition, it provides functions for downloading the update files and importing them into a Microsoft Deployment Toolkit deployment share for speeding the creation of reference images or Windows deployments.
+This repository hosts a module for retrieving and downloading the latest Windows 10 Cumulative Update, Servicing Stack and Adobe Flash Player updates and Windows 8.1 / 7 Monthly Rollups from the Microsoft Update Catalog. The updates can then be imported into a Microsoft Deployment Toolkit deployment share for speeding the creation of reference images or Windows deployments.
 
 Importing a cumulative update into [the Packages nodes in an MDT share](https://docs.microsoft.com/en-us/sccm/mdt/use-the-mdt#ConfiguringPackagesintheDeploymentWorkbench) enables updates during the offline phase of Windows setup, speeding up an installation of Windows. Updates could also be [applied directly to a WIM](https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/dism-operating-system-package-servicing-command-line-options).
 
@@ -22,7 +22,14 @@ LatestUpdate supports PowerShell 5.0 and above and is tested on macOS, Windows 1
 
 ### PowerShell Core
 
-`Get-LatestUpdate`, `Get-LatestFlash`, `Get-LatestServicingStack`, `Get-LatestNetFramework` and `Save-LatestUpdate` support PowerShell Core; however, because `Import-LatestUpdate` requires the MDT Workbench, `Import-LatestUpdate` only runs under Windows PowerShell.
+Verison 3 of `LatestUpdate` has been re-written and includes full support for PowerShell Core.
+
+## Acknowledgements
+
+This module uses code and inspiration from these sources:
+
+* [Keith Garner](https://twitter.com/keithga1) - [gist](https://gist.github.com/keithga/1ad0abd1f7ba6e2f8aff63d94ab03048)
+* [Nickolaj Andersen](https://twitter.com/NickolajA) - [script](https://github.com/SCConfigMgr/ConfigMgr/blob/master/Software%20Updates/Invoke-MSLatestUpdateDownload.ps1)
 
 [appveyor-badge]: https://ci.appveyor.com/api/projects/status/s4g24puifpegq7kf/branch/master?svg=true&logo=PowerShell&style=flat-square
 [appveyor-build]: https://ci.appveyor.com/project/aaronparker/latestupdate/

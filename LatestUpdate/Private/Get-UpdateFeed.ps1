@@ -1,57 +1,66 @@
 Function Get-UpdateFeed {
     <#
         .SYNOPSIS
-            Gets the Microsoft update RSS feed and returns the XML
-
-        .NOTES
-            Author: Aaron Parker
-            Twitter: @stealthpuppy
-
-        .PARAMETER UpdateFeed
-            URI to the feed.
+            Returns an XML object from the specified update feed
     #>
-    [CmdletBinding()]
+    [OutputType([System.Xml.XmlNode])]
+    [CmdletBinding(SupportsShouldProcess = $False)]
     Param (
-        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
+        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
-        [String] $UpdateFeed
+        [System.String] $Uri
     )
-    
-    #region Find the KB Article Number
-    #! Fix for Invoke-WebRequest creating BOM in XML files; Handle Temp locations on Windows, macOS / Linux
-    try {
-        If (Test-Path env:Temp) {
-            $tempDir = $env:Temp
-        }
-        ElseIf (Test-Path env:TMPDIR) {
-            $tempDir = $env:TMPDIR
-        }
-        $tempFile = Join-Path -Path $tempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
-        Write-Verbose -Message "Downloading feed of updates $UpdateFeed."
-        Invoke-WebRequest -Uri $UpdateFeed -ContentType 'application/atom+xml; charset=utf-8' `
-            -UseBasicParsing -OutFile $tempFile -ErrorAction SilentlyContinue
-    }
-    catch {
-        Throw $_
-    }
-        
-    # Import the XML from the feed into a variable and delete the temp file
-    try {
-        Write-Verbose -Message "Reading RSS XML from $tempFile."
-        $feedXML = [xml] (Get-Content -Path $tempFile -ErrorAction SilentlyContinue)
-    }
-    catch {
-        Write-Error "Failed to read XML from $tempFile."
-    }
-    try {
-        Write-Verbose -Message "Deleting $tempFile."
-        Remove-Item -Path $tempFile -ErrorAction SilentlyContinue
-    }
-    catch {
-        Write-Warning -Message "Failed to remove file $tempFile."
-    }
-    #! End fix
 
-    # Return the XML to the pipeline
-    Write-Output $feedXML
+    # Get module strings from the JSON
+    $resourceStrings = Get-ModuleResource
+    
+    # Fix for Invoke-WebRequest creating BOM in XML files; Handle Temp locations on Windows, macOS / Linux
+    If (Test-Path -Path env:Temp) {
+        $tempDir = $env:Temp
+    }
+    ElseIf (Test-Path -Path env:TMPDIR) {
+        $tempDir = $env:TMPDIR
+    }
+    $tempFile = Join-Path -Path $tempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
+
+    try {
+        $params = @{
+            Uri             = $Uri
+            OutFile         = $tempFile
+            ContentType     = $resourceStrings.ContentType.atom
+            UserAgent       = [Microsoft.PowerShell.Commands.PSUserAgent]::Chrome
+            UseBasicParsing = $True
+            ErrorAction     = $resourceStrings.Preferences.ErrorAction
+        }
+        Invoke-WebRequest @params
+    }
+    catch [System.Net.WebException] {
+        Write-Warning -Message ($($MyInvocation.MyCommand))
+        Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
+    }
+    catch [System.Exception] {
+        Write-Warning -Message "$($MyInvocation.MyCommand): failed to retreive the update feed: $Uri."
+        Throw $_.Exception.Message
+    }
+    
+    # Import the XML from the feed into a variable and delete the temp file
+    If (Test-Path -Path $tempFile) {
+        try {
+            [xml] $xml = Get-Content -Path $tempFile -Raw -ErrorAction $resourceStrings.Preferences.ErrorAction
+        }
+        catch [System.Exception] {
+            Write-Warning -Message "$($MyInvocation.MyCommand): failed to read XML from file: $tempFile."
+            Throw $_.Exception.Message
+        }
+        try {
+            Remove-Item -Path $tempFile -Force -ErrorAction $resourceStrings.Preferences.ErrorAction
+        }
+        catch [System.Exception] {
+            Write-Warning -Message "$($MyInvocation.MyCommand): failed to remove file: $tempFile."
+        }
+    }
+
+    If ($Null -ne $xml) {
+        Write-Output -InputObject $xml
+    }
 }

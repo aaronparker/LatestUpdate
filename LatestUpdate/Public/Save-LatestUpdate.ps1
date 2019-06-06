@@ -1,171 +1,143 @@
 Function Save-LatestUpdate {
     <#
         .SYNOPSIS
-            Downloads the latest cumulative update passed from Get-LatestUpdate.
+            Downloads the latest Windows 10 Cumulative, Servicing Stack and Adobe Flash Player updates.
 
         .DESCRIPTION
-            Downloads the latest cumulative update passed from Get-LatestUpdate to a local folder.
+            Downloads the latest Windows 10 Cumulative, Servicing Stack and Adobe Flash Player updates to a local folder.
 
             Then do one or more of the following:
             - Import the update into an MDT share with Import-LatestUpdate to speed up deployment of Windows (reference images etc.)
             - Apply the update to an offline WIM using DISM
             - Deploy the update with ConfigMgr (if not using WSUS)
 
-        .NOTES
-            Author: Aaron Parker
-            Twitter: @stealthpuppy
-
-        .LINK
-            https://docs.stealthpuppy.com/latestupdate
-
-        .PARAMETER Updates
-            The array of latest cumulative updates retreived by Get-LatestUpdate.
-
-        .PARAMETER Path
-            A destination path for downloading the cumulative updates to. This path must exist. Uses the current diretory by default.
-
-        .PARAMETER ForceWebRequest
-            Forces the use of Invoke-WebRequest over Start-BitsTransfer on Windows PowerShell.
-
         .EXAMPLE
-            Get-LatestUpdate | Save-LatestUpdate
 
-            Description:
-            Retreives the latest Windows 10 Cumulative Update with Get-LatestUpdate and passes the array of updates to Save-LatestUpdate on the pipeline.
-            Save-LatestUpdate then downloads the latest updates to the current directory.
+        PS C:\> Get-LatestServicingStackUpdate | Save-LatestUpdate
 
-        .EXAMPLE
-            $Updates = Get-LatestUpdate -WindowsVersion Windows10 -Build 14393
-            Save-LatestUpdate -Updates $Updates -Path C:\Temp\Update
-
-            Description:
-            Retreives the latest Windows 10 build 14393 (1607) Cumulative Update with Get-LatestUpdate, saved to the variable $Updates.
-            Save-LatestUpdate then downloads the latest updates to C:\Temp\Update.
-
-        .EXAMPLE
-            $Updates = Get-LatestUpdate
-            Save-LatestUpdate -Updates $Updates -Path C:\Temp\Update -ForceWebRequest
-
-            Description:
-            Retreives the latest Windows 10 build Cumulative Update with Get-LatestUpdate, saved to the variable $Updates.
-            Save-LatestUpdate then downloads the latest updates to C:\Temp\Update using Invoke-WebRequest instead of Start-BitsTransfer.
+        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Servicing Stack Updates. The output is then passed to Save-LatestUpdate and each update is downloaded locally.
     #>
-    [CmdletBinding(SupportsShouldProcess = $True)]
-    [OutputType([Array])]
+    [OutputType([System.Management.Automation.PSObject])]
+    [CmdletBinding(SupportsShouldProcess = $True, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/download")]
     Param(
-        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True, `
-                HelpMessage = "The array of updates from Get-LatestUpdate.")]
+        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
-        [Array] $Updates,
-    
-        [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline = $False, `
-                HelpMessage = "Specify a target path to download the update(s) to.")]
+        [System.Management.Automation.PSObject] $Updates,
+
+        [Parameter(Mandatory = $False, Position = 1)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                If (!(Test-Path -Path $_ -PathType 'Container')) {
-                    Throw "Cannot find path $_"
-                }
-                Return $True
-            })]
-        [String] $Path = $PWD,
-
-        [Parameter(Mandatory = $False)]
-        [String] $ProxyURL,
-
-        [Parameter(Mandatory = $False)]
-        [pscredential] $ProxyCredentials,
-
-        [Parameter(Mandatory = $False)]
-        [switch] $ForceWebRequest,
-
-        [Parameter(Mandatory = $False)]
-        [switch] $Force
-    )
-
-    Begin {
-        $Path = Get-ValidPath $Path
-        $output = @()
-    } 
-
-    Process {
-
-        # Step through each update in $Updates
-        ForEach ($update in $Updates) {
-
-            # Create the target file path where the update will be saved
-            $filename = Split-Path $update.URL -Leaf
-            $target = Join-Path $Path $filename
-            $output += $target
-            Write-Verbose "Download target will be $target"
-            
-            # If the update is not already downloaded, download it.
-            If (!(Test-Path -Path $target) -or $Force.IsPresent) {
-                If ($ForceWebRequest -or (Test-PSCore)) {
-
-                    # Running on PowerShell Core or ForceWebRequest
-                    If ($pscmdlet.ShouldProcess($update.URL, "WebDownload")) {
-                        try {
-                            $WebRequestParams = @{
-                                Uri = $update.URL
-                                OutFile = $target
-                                UseBasicParsing = $true
-                                ErrorAction = "Stop"
-                            }
-
-                            if ($ProxyUrl) {
-                                $WebRequestParams.Proxy = $ProxyUrl
-                            }
-
-                            if ($ProxyCredentials) {
-                                $WebRequestParams.ProxyCredentials = $ProxyCredentials
-                            }
-
-                            Invoke-WebRequest @WebRequestParams
-                        }
-                        catch {
-                            Throw $_
-                        }
-                    }
+                If (Test-Path -Path $_ -PathType 'Container') {
+                    Return $True
                 }
                 Else {
+                    Throw "Cannot find path $_"
+                }
+            })]
+        [System.String] $Path = $PWD,
 
-                    # Running on Windows PowerShell
-                    If ($pscmdlet.ShouldProcess($(Split-Path $update.URL -Leaf), "BitsDownload")) {
-                        try {
-                            $BitsParams = @{
-                                Source = $update.URL
-                                Destination = $target 
-                                Priority = "High"
-                                DisplayName = $update.Note
-                                Description = "Downloading $($update.URL)"
-                                ErrorAction = "Stop"
-                            }
+        [Parameter(Mandatory = $False)]
+        [System.String] $Proxy,
 
-                            if ($ProxyURL) {
-                                # Set priority to Foreground because the proxy will remove the Range protocol header
-                                $BitsParams.Priority = "Foreground"
-                                $BitsParams.ProxyUsage = "Override"
-                                $BitsParams.ProxyList = $ProxyURL
-                            }
+        [Parameter(Mandatory = $False)]
+        [System.Management.Automation.PSCredential]
+        $Credential = [System.Management.Automation.PSCredential]::Empty,
 
-                            if ($ProxyCredentials) {
-                                $BitsParams.ProxyCredential = $ProxyCredentials
-                            }
+        [Parameter(Mandatory = $False)]
+        [System.Switch] $ForceWebRequest
+    )
 
-                            Start-BitsTransfer @BitsParams
+    # Get module strings from the JSON
+    $resourceStrings = Get-ModuleResource
+
+    # Output object
+    $updateList = New-Object -TypeName System.Collections.ArrayList
+
+    # Step through each update in $Updates
+    ForEach ($update in $Updates) {
+
+        # Create the target file path where the update will be saved
+        $filename = Split-Path -Path $update.URL -Leaf
+        $target = Join-Path -Path $Path -ChildPath $filename
+            
+        # If the update is not already downloaded, download it.
+        If (Test-Path -Path $target) {
+            Write-Verbose -Message "File exists: $target. Skipping download."
+        }
+        Else {
+            If ($ForceWebRequest -or (Test-PSCore)) {
+                If ($pscmdlet.ShouldProcess($update.URL, "WebDownload")) {
+                    #Running on PowerShell Core or ForceWebRequest
+                    try {
+                        $params = @{
+                            Uri             = $update.URL
+                            OutFile         = $target
+                            UseBasicParsing = $True
+                            ErrorAction     = $resourceStrings.Preferences.ErrorAction
                         }
-                        catch {
-                            Throw $_
+                        If ($PSBoundParameters.ContainsKey($Proxy)) {
+                            $params.Proxy = $Proxy
                         }
+                        If ($PSBoundParameters.ContainsKey($Credential)) {
+                            $params.ProxyCredentials = $Credential
+                        }
+                        $result = Invoke-WebRequest @params
+                    }
+                    catch [System.Net.WebException] {
+                        Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
+                    }
+                    catch [System.Exception] {
+                        Write-Warning -Message "$($MyInvocation.MyCommand): failed to download: $($update.URL)."
+                        Throw $_.Exception.Message
                     }
                 }
             }
             Else {
-                Write-Verbose "File exists: $target. Skipping download."
+                If ($pscmdlet.ShouldProcess($(Split-Path $update.URL -Leaf), "BitsDownload")) {
+                    #Running on Windows PowerShell
+                    try {
+                        $params = @{
+                            Source      = $update.URL
+                            Destination = $target 
+                            Priority    = "High"
+                            DisplayName = $update.Note
+                            Description = "Downloading $($update.URL)"
+                            ErrorAction = $resourceStrings.Preferences.ErrorAction
+                        }
+                        If ($PSBoundParameters.ContainsKey($Proxy)) {
+                            # Set priority to Foreground because the proxy will remove the Range protocol header
+                            $params.Priority = "Foreground"
+                            $params.ProxyUsage = "Override"
+                            $params.ProxyList = $Proxy
+                        }
+                        If ($PSBoundParameters.ContainsKey($Credential)) {
+                            $params.ProxyCredential = $ProxyCredentials
+                        }
+                        $result = Start-BitsTransfer @params
+                    }
+                    catch [System.Net.WebException] {
+                        Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
+                    }
+                    catch [System.Exception] {
+                        Write-Warning -Message "$($MyInvocation.MyCommand): failed to download: $($update.URL)."
+                        Throw $_.Exception.Message
+                    }
+                }
+            }
+            If ($result.StatusCode -eq "200") {
+                $PSObject = [PSCustomObject] @{
+                    Note   = $update.Note
+                    ID     = $update.KB
+                    Target = $target
+                }
+                $updateList.Add($PSObject) | Out-Null
+            }
+            Else {
+                Write-Warning -Message "$($MyInvocation.MyCommand): no valid response."
             }
         }
     }
-    End {
-        Write-Output $output
-    }
+
+    # Output results to the pipeline
+    Write-Output -InputObject $updateList
 }
