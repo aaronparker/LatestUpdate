@@ -14,10 +14,16 @@ Function Get-LatestServicingStack {
     If ($Null -ne $resourceStrings) {
         ForEach ($ver in $Version) {
             $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows10
-            $updateList = Get-UpdateServicingStack -UpdateFeed $updateFeed -Version $ver
-            If ($Null -ne $updateList) {
-                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID
-                Write-Output -InputObject $downloadInfo
+            If ($Null -ne $updateFeed) {
+                $updateList = Get-UpdateServicingStack -UpdateFeed $updateFeed -Version $ver
+                If ($Null -ne $updateList) {
+                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID
+                    $updateListWithVersion = Add-Property -InputObject $downloadInfo -Property "Description" -NewPropertyName "Version" `
+                        -MatchPattern $resourceStrings.Matches.Windows10Version
+                    $updateListWithArch = Add-Property -InputObject $updateListWithVersion -Property "Description" -NewPropertyName "Architecture" `
+                        -MatchPattern $resourceStrings.Matches.Architecture
+                    Write-Output -InputObject $updateListWithArch
+                }
             }
         }
     }

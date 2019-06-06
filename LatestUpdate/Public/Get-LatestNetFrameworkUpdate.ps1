@@ -13,12 +13,26 @@ Function Get-LatestNetFrameworkUpdate {
 
     If ($Null -ne $resourceStrings) {
         $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.NetFramework
-        $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed
-        If ($Null -ne $updateList) {
-            ForEach ($update in $updateList) {
-                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $update.ID -OS $resourceStrings.SearchStrings.NetFrameworkWindows10 -Architecture ""
-                $filteredDownloadInfo = $downloadInfo | Sort-Object -Unique -Property Description
-                Write-Output -InputObject $filteredDownloadInfo
+        If ($Null -ne $updateFeed) {
+            $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed
+            If ($Null -ne $updateList) {
+                ForEach ($update in $updateList) {
+                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $update.ID -OS $resourceStrings.SearchStrings.NetFrameworkWindows10 -Architecture ""
+                    $filteredDownloadInfo = $downloadInfo | Sort-Object -Unique -Property Description
+                    $updateListWithVersion = Add-Property -InputObject $filteredDownloadInfo -Property "Description" -NewPropertyName "Version" `
+                        -MatchPattern $resourceStrings.Matches.Windows10Version
+                    $updateListWithArch = Add-Property -InputObject $updateListWithVersion -Property "Description" -NewPropertyName "Architecture" `
+                        -MatchPattern $resourceStrings.Matches.Architecture
+                    
+                    $i = 0
+                    ForEach ($update in $updateListWithArch) {
+                        If ($update.Architecture.Length -eq 0) {
+                            $updateListWithArch[$i].Architecture = "x86"
+                        }
+                        $i++
+                    }
+                    Write-Output -InputObject $updateListWithArch
+                }
             }
         }
     }

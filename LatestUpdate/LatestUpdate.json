@@ -11,7 +11,9 @@
   },
   "Matches" : {
     "DownloadUrl" : "(http[s]?\\://download\\.windowsupdate\\.com\\/[^\\'\\\"\"]*)",
-    "DownloadDescription" : "<a[^>]*>([^<]+)<\\/a>"
+    "DownloadDescription" : "<a[^>]*>([^<]+)<\\/a>",
+    "Windows10Version" : "([12][056789][01][379])",
+    "Architecture" : "(x86|x64|ARM64)"
   },
   "CatalogUris" : {
     "Search" : "https://www.catalog.update.microsoft.com/Search.aspx?q=",

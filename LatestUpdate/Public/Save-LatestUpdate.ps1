@@ -16,7 +16,7 @@ Function Save-LatestUpdate {
     Param(
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
-        [System.Management.Automation.PSObject] $Update,
+        [System.Management.Automation.PSObject] $Updates,
 
         [Parameter(Mandatory = $False, Position = 1)]
         [ValidateNotNullOrEmpty()]

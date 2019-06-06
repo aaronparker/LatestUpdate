@@ -22,11 +22,17 @@ Function Get-LatestMonthlyRollup {
                 $osName = "Windows 7|Windows Server"
             }
         }
-        $updateList = Get-UpdateMonthly -UpdateFeed $updateFeed
-        If ($Null -ne $updateList) {
-            $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $osName -Architecture 'x86|x64'
-            $filteredDownloadInfo = $downloadInfo | Sort-Object -Unique -Property Description
-            Write-Output -InputObject $filteredDownloadInfo
+        If ($Null -ne $updateFeed) {
+            $updateList = Get-UpdateMonthly -UpdateFeed $updateFeed
+            If ($Null -ne $updateList) {
+                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $osName -Architecture 'x86|x64'
+                $filteredDownloadInfo = $downloadInfo | Sort-Object -Unique -Property Description
+                $updateListWithVersion = Add-Property -InputObject $filteredDownloadInfo -Property "Description" -NewPropertyName "Version" `
+                    -MatchPattern $resourceStrings.Matches.Windows10Version
+                $updateListWithArch = Add-Property -InputObject $updateListWithVersion -Property "Description" -NewPropertyName "Architecture" `
+                    -MatchPattern $resourceStrings.Matches.Architecture
+                Write-Output -InputObject $updateListWithArch
+            }
         }
     }
 }
