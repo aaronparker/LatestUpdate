@@ -1,4 +1,19 @@
 Function Get-LatestCumulativeUpdate {
+    <#
+        .SYNOPSIS
+            Retrieves the latest Windows 10 Cumulative Update.
+
+        .DESCRIPTION
+            Retrieves the latest Windows 10 Cumulative Update from the Windows 10 update history feed.
+
+            More information on Windows 10 Cumulative Updates can be found here: https://docs.microsoft.com/en-us/windows/deployment/update/
+
+        .EXAMPLE
+
+        PS C:\> Get-LatestCumulativeUpdate
+
+        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Cumulative Update.
+    #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-latest")]
     [Alias("Get-LatestUpdate")]

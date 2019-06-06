@@ -1,4 +1,17 @@
 Function Get-LatestNetFrameworkUpdate {
+    <#
+        .SYNOPSIS
+            Retrieves the latest Windows 10 .NET Framework Cumulative Update.
+
+        .DESCRIPTION
+            Retrieves the latest Windows 10 .NET Framework Cumulative Update from the Windows 10 update history feed.
+
+        .EXAMPLE
+
+        PS C:\> Get-LatestNetFrameworkUpdate
+
+        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 .NET Framework Cumulative Update.
+    #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-latest")]
     Param (

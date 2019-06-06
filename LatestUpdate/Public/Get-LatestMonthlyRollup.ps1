@@ -1,4 +1,17 @@
 Function Get-LatestMonthlyRollup {
+    <#
+        .SYNOPSIS
+            Retrieves the latest Windows 8.1 and 7 Monthly Rollup Update.
+
+        .DESCRIPTION
+            Retrieves the latest Windows 8.1 and 7 Monthly Rollup Update from the Windows 8.1/7 update history feed.
+
+        .EXAMPLE
+
+        PS C:\> Get-LatestMonthlyRollup
+
+        This commands reads the the Windows 8.1 update history feed and returns an object that lists the most recent Windows 8.1 Monthly Rollup Update.
+    #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-latest")]
     Param (

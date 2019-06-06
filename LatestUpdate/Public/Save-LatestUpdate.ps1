@@ -10,6 +10,12 @@ Function Save-LatestUpdate {
             - Import the update into an MDT share with Import-LatestUpdate to speed up deployment of Windows (reference images etc.)
             - Apply the update to an offline WIM using DISM
             - Deploy the update with ConfigMgr (if not using WSUS)
+
+        .EXAMPLE
+
+        PS C:\> Get-LatestServicingStackUpdate | Save-LatestUpdate
+
+        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Servicing Stack Updates. The output is then passed to Save-LatestUpdate and each update is downloaded locally.
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $True, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/download")]

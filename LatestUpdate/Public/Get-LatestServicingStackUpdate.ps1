@@ -1,4 +1,19 @@
 Function Get-LatestServicingStackUpdate {
+    <#
+        .SYNOPSIS
+            Retrieves the latest Windows 10 Servicing Stack Update.
+
+        .DESCRIPTION
+            Retrieves the latest Windows 10 Servicing Stack Update from the Windows 10 update history feed.
+
+            More information on Windows 10 Servicing Stack Updates can be found here: https://docs.microsoft.com/en-us/windows/deployment/update/servicing-stack-updates
+
+        .EXAMPLE
+
+        PS C:\> Get-LatestServicingStackUpdate
+
+        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Servicing Stack Update.
+    #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-stack")]
     [Alias("Get-LatestServicingStack")]
