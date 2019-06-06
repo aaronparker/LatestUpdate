@@ -1,4 +1,8 @@
 Function Add-Property {
+    <#
+        .SYNOPSIS
+            Adds a property to a PSObject by querying another property
+    #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param (

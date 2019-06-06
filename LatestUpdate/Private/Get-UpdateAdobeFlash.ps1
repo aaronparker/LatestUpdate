@@ -1,4 +1,8 @@
 Function Get-UpdateAdobeFlash {
+    <#
+        .SYNOPSIS
+            Builds an object with the Adobe Flash Player Update.
+    #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param (

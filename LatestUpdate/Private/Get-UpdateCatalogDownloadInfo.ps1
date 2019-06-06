@@ -1,4 +1,8 @@
 Function Get-UpdateCatalogDownloadInfo {
+    <#
+        .SYNOPSIS
+            Builds an object with the update notes and download details.
+    #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param(

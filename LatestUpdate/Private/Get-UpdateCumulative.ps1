@@ -1,4 +1,8 @@
 Function Get-UpdateCumulative {
+    <#
+        .SYNOPSIS
+            Builds an object with the Cumulative Update.
+    #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param (

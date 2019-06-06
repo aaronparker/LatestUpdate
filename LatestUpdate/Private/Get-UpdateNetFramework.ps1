@@ -1,4 +1,8 @@
 Function Get-UpdateNetFramework {
+    <#
+        .SYNOPSIS
+            Builds an object with the .NET Framework Cumulative Update.
+    #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param (

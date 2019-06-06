@@ -1,4 +1,8 @@
 Function Invoke-UpdateCatalogDownloadDialog {
+    <#
+        .SYNOPSIS
+            Searches the Microsoft Update Catalog for the specific update ID to retrieve the notes and download details.
+    #>
     [OutputType([Microsoft.PowerShell.Commands.WebResponseObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param(

@@ -1,4 +1,8 @@
 Function Invoke-UpdateCatalogSearch {
+    <#
+        .SYNOPSIS
+            Searches the Microsoft Update Catalog for the specific KB number.
+    #>
     [OutputType([Microsoft.PowerShell.Commands.WebResponseObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param(

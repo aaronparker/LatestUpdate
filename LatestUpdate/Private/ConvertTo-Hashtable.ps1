@@ -1,5 +1,8 @@
 Function ConvertTo-Hashtable {
     <#
+        .SYNOPSIS
+            Converts a PSCustomObject into a hashtable for Windows PowerShell
+
         .NOTES
             Author: Adam Bertram
             Link: https://4sysops.com/archives/convert-json-to-a-powershell-hash-table

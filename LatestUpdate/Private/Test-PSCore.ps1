@@ -1,7 +1,7 @@
 Function Test-PSCore {
     <#
-    .SYNOPSIS
-        Returns True if running on PowerShell Core.
+        .SYNOPSIS
+            Returns True if running on PowerShell Core.
     #>
     [CmdletBinding(SupportsShouldProcess = $False)]
     [OutputType([Boolean])]

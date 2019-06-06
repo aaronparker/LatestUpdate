@@ -1,4 +1,8 @@
 Function Get-ModuleResource {
+    <#
+        .SYNOPSIS
+            Reads the module strings from the JSON file and returns a hashtable.
+    #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param (

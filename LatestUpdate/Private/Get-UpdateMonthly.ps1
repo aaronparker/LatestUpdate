@@ -1,4 +1,8 @@
 Function Get-UpdateMonthly {
+    <#
+        .SYNOPSIS
+            Builds an object with the Windows 8.1/7 Monthly Update.
+    #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param (

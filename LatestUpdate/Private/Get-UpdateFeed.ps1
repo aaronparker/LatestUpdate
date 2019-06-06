@@ -1,4 +1,8 @@
 Function Get-UpdateFeed {
+    <#
+        .SYNOPSIS
+            Returns an XML object from the specified update feed
+    #>
     [OutputType([System.Xml.XmlNode])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param (

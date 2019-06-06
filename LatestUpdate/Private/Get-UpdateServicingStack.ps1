@@ -1,4 +1,8 @@
 Function Get-UpdateServicingStack {
+    <#
+        .SYNOPSIS
+            Builds an object with the Servicing Stack Update.
+    #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False)]
     Param (
