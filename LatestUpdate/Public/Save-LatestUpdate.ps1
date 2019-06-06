@@ -44,7 +44,7 @@ Function Save-LatestUpdate {
         $Credential = [System.Management.Automation.PSCredential]::Empty,
 
         [Parameter(Mandatory = $False)]
-        [System.Switch] $ForceWebRequest
+        [System.Management.Automation.SwitchParameter] $ForceWebRequest
     )
 
     # Get module strings from the JSON
@@ -81,7 +81,7 @@ Function Save-LatestUpdate {
                         If ($PSBoundParameters.ContainsKey($Credential)) {
                             $params.ProxyCredentials = $Credential
                         }
-                        $result = Invoke-WebRequest @params
+                        Invoke-WebRequest @params
                     }
                     catch [System.Net.WebException] {
                         Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
@@ -113,7 +113,7 @@ Function Save-LatestUpdate {
                         If ($PSBoundParameters.ContainsKey($Credential)) {
                             $params.ProxyCredential = $ProxyCredentials
                         }
-                        $result = Start-BitsTransfer @params
+                        Start-BitsTransfer @params
                     }
                     catch [System.Net.WebException] {
                         Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
@@ -124,7 +124,7 @@ Function Save-LatestUpdate {
                     }
                 }
             }
-            If ($result.StatusCode -eq "200") {
+            If (Test-Path -Path $target) {
                 $PSObject = [PSCustomObject] @{
                     Note   = $update.Note
                     ID     = $update.KB
@@ -133,7 +133,7 @@ Function Save-LatestUpdate {
                 $updateList.Add($PSObject) | Out-Null
             }
             Else {
-                Write-Warning -Message "$($MyInvocation.MyCommand): no valid response."
+                Write-Warning -Message "$($MyInvocation.MyCommand): failed to download [$target]."
             }
         }
     }
