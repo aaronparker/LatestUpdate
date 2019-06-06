@@ -8,9 +8,9 @@
 
 ## About
 
-This repository hosts a module for retrieving and downloading the latest Windows 10 Cumulative Update, Servicing Stack and Adobe Flash Player updates and Windows 8.1 / 7 Monthly Rollups from the Microsoft Update Catalog. The updates can then be imported into a Microsoft Deployment Toolkit deployment share for speeding the creation of reference images or Windows deployments.
+A module for retrieving the latest Windows 10 / Windows Server 2016, 2019, Semi Annual Channel Cumulative Updates, Servicing Stack Updates, .NET Framework Cumulative Updates, the Monthly Rollups for 8.1 / 7 (and Windows Server 2012 R2, 2008 R2) and the latest Adobe Flash Player updates from the Microsoft Update History page. In addition, the module provides a function for downloading the update files locally.
 
-Importing a cumulative update into [the Packages nodes in an MDT share](https://docs.microsoft.com/en-us/sccm/mdt/use-the-mdt#ConfiguringPackagesintheDeploymentWorkbench) enables updates during the offline phase of Windows setup, speeding up an installation of Windows. Updates could also be [applied directly to a WIM](https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/dism-operating-system-package-servicing-command-line-options).
+Importing a cumulative update into [the Packages nodes in an MDT share](https://docs.microsoft.com/en-us/sccm/mdt/use-the-mdt#ConfiguringPackagesintheDeploymentWorkbench) enables updates during the offline phase of Windows setup, speeding up an installation of Windows. Updates can also be [applied directly to a WIM](https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/dism-operating-system-package-servicing-command-line-options).
 
 ## Documentation
 
