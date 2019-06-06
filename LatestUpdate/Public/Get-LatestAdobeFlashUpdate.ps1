@@ -1,4 +1,4 @@
-Function Get-LatestAdobeFlash {
+Function Get-LatestAdobeFlashUpdate {
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-flash")]
     [Alias("Get-LatestFlash")]

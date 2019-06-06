@@ -6,7 +6,6 @@ If ($Null -eq $projectRoot) {
 }
 Import-Module (Join-Path $projectRoot $module) -Force
 If (Get-Variable -Name APPVEYOR_BUILD_FOLDER -ErrorAction SilentlyContinue) {
-    $moduleParent = Join-Path $env:APPVEYOR_BUILD_FOLDER $module
     $manifestPath = Join-Path $moduleParent "$module.psd1"
     $modulePath = Join-Path $moduleParent "$module.psm1"
     $modulePrivate = Join-Path $moduleParent "Private"

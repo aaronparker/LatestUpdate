@@ -73,7 +73,7 @@ Get-LatestUpdate, Get-LatestServicingStack, Get-LatestFlash and Save-LatestUpdat
     # NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @('Get-LatestCumulativeUpdate', 'Get-LatestServicingStack', 'Get-LatestAdobeFlash', 'Save-LatestUpdate', 'Get-LatestMonthlyRollup', 'Get-LatestNetFrameworkUpdate')
+    FunctionsToExport = @('Get-LatestCumulativeUpdate', 'Get-LatestServicingStackUpdate', 'Get-LatestAdobeFlashUpdate', 'Save-LatestUpdate', 'Get-LatestMonthlyRollup', 'Get-LatestNetFrameworkUpdate')
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport   = @()

@@ -23,7 +23,7 @@ Describe 'Get-LatestCumulativeUpdate' {
         It "Given no arguments, returns a valid array with expected properties" {
             ForEach ($Update in $Updates) {
                 $Update.KB.Length | Should -BeGreaterThan 0
-                $Update.Architectureitecture.Length | Should -BeGreaterThan 0
+                $Update.Architecture.Length | Should -BeGreaterThan 0
                 $Update.Version.Length | Should -BeGreaterThan 0
                 $Update.Note.Length | Should -BeGreaterThan 0
                 $Update.URL.Length | Should -BeGreaterThan 0
@@ -83,8 +83,8 @@ Describe 'Get-LatestCumulativeUpdate' {
 
 }
 
-Describe 'Get-LatestAdobeFlash' {
-    $Updates = Get-LatestAdobeFlash
+Describe 'Get-LatestAdobeFlashUpdate' {
+    $Updates = Get-LatestAdobeFlashUpdate
     Context "Returns a valid list of Adobe Flash Player updates" {
         It "Given no arguments, returns an array of updates" {
             $Updates | Should -BeOfType System.Management.Automation.PSObject

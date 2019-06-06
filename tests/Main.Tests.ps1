@@ -1,17 +1,16 @@
 # Set variables
-If ($Null -eq $projectRoot) {
+If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
+    $projectRoot = Resolve-Path -Path $env:APPVEYOR_BUILD_FOLDER
+}
+Else {
+    # Local Testing 
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-    $module = "LatestUpdate"
-    $moduleParent = Join-Path $projectRoot $module
-    $manifestPath = Join-Path $moduleParent "$module.psd1"
-    $modulePath = Join-Path $moduleParent "$module.psm1"
 }
+If ($Null -eq $module ) { $module = "LatestUpdate" }
+$moduleParent = Join-Path $projectRoot $module
+$manifestPath = Join-Path $moduleParent "$module.psd1"
+$modulePath = Join-Path $moduleParent "$module.psm1"
 Import-Module (Join-Path $projectRoot $module) -Force
-If (Get-Variable -Name APPVEYOR_BUILD_FOLDER -ErrorAction SilentlyContinue) {
-    $moduleParent = Join-Path $env:APPVEYOR_BUILD_FOLDER $module
-    $manifestPath = Join-Path $moduleParent "$module.psd1"
-    $modulePath = Join-Path $moduleParent "$module.psm1"
-}
 
 Describe "General project validation" {
     $scripts = Get-ChildItem (Join-Path $projectRoot $module) -Recurse -Include *.ps1, *.psm1
@@ -33,8 +32,8 @@ Describe "General project validation" {
         param($file)
         $analysis = Invoke-ScriptAnalyzer -Path  $file.fullname -ExcludeRule @('PSAvoidGlobalVars', 'PSAvoidUsingConvertToSecureStringWithPlainText', 'PSAvoidUsingWMICmdlet') -Severity @('Warning', 'Error')   
         
-        forEach ($rule in $scriptAnalyzerRules) {        
-            if ($analysis.RuleName -contains $rule) {
+        ForEach ($rule in $scriptAnalyzerRules) {        
+            If ($analysis.RuleName -contains $rule) {
                 $analysis |
                 Where-Object RuleName -EQ $rule -outvariable failures |
                 Out-Default
@@ -65,11 +64,10 @@ Describe "Function validation" {
     }
 }
 
-
 # Test module and manifest
 Describe 'Module Metadata Validation' {      
     It 'Script fileinfo should be OK' {
-        { Test-ModuleManifest $manifestPath -ErrorAction Stop } | Should Not Throw
+        { Test-ModuleManifest -Path $manifestPath -ErrorAction Stop } | Should Not Throw
     }   
     It 'Import module should be OK' {
         { Import-Module $modulePath -Force -ErrorAction Stop } | Should Not Throw

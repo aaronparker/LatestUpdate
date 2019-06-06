@@ -18,7 +18,12 @@ Function Get-ModuleResource {
     }
 
     try {
-        $resourceStringsTable = $content | ConvertFrom-Json -AsHashtable -ErrorAction SilentlyContinue
+        If (Test-PSCore) {
+            $resourceStringsTable = $content | ConvertFrom-Json -AsHashtable -ErrorAction SilentlyContinue
+        }
+        Else {
+            $resourceStringsTable = $content | ConvertFrom-Json -ErrorAction SilentlyContinue | ConvertTo-HashtableFromPSCustomObject
+        }
     }
     catch [System.Exception] {
         Write-Warning -Message "$($MyInvocation.MyCommand): failed to convert strings to required object."
