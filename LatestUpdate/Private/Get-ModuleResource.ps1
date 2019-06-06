@@ -22,7 +22,7 @@ Function Get-ModuleResource {
             $resourceStringsTable = $content | ConvertFrom-Json -AsHashtable -ErrorAction SilentlyContinue
         }
         Else {
-            $resourceStringsTable = $content | ConvertFrom-Json -ErrorAction SilentlyContinue | ConvertTo-HashtableFromPSCustomObject
+            $resourceStringsTable = $content | ConvertFrom-Json -ErrorAction SilentlyContinue | ConvertTo-Hashtable
         }
     }
     catch [System.Exception] {
