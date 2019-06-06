@@ -10,6 +10,8 @@ If ($Null -eq $module ) { $module = "LatestUpdate" }
 $moduleParent = Join-Path $projectRoot $module
 $manifestPath = Join-Path $moduleParent "$module.psd1"
 $modulePath = Join-Path $moduleParent "$module.psm1"
+$modulePrivate = Join-Path $moduleParent "Private"
+$modulePublic = Join-Path $moduleParent "Public"
 Import-Module (Join-Path $projectRoot $module) -Force
 
 Describe "General project validation" {

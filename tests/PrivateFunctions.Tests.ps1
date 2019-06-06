@@ -1,16 +1,19 @@
 # Pester tests
 # Set variables
-If ($Null -eq $projectRoot) {
+If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
+    $projectRoot = Resolve-Path -Path $env:APPVEYOR_BUILD_FOLDER
+}
+Else {
+    # Local Testing 
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-    $module = "LatestUpdate"
 }
+If ($Null -eq $module ) { $module = "LatestUpdate" }
+$moduleParent = Join-Path $projectRoot $module
+$manifestPath = Join-Path $moduleParent "$module.psd1"
+$modulePath = Join-Path $moduleParent "$module.psm1"
+$modulePrivate = Join-Path $moduleParent "Private"
+$modulePublic = Join-Path $moduleParent "Public"
 Import-Module (Join-Path $projectRoot $module) -Force
-If (Get-Variable -Name APPVEYOR_BUILD_FOLDER -ErrorAction SilentlyContinue) {
-    $manifestPath = Join-Path $moduleParent "$module.psd1"
-    $modulePath = Join-Path $moduleParent "$module.psm1"
-    $modulePrivate = Join-Path $moduleParent "Private"
-    $modulePublic = Join-Path $moduleParent "Public"
-}
 
 InModuleScope LatestUpdate {
     Describe 'Test-PSCore' {
