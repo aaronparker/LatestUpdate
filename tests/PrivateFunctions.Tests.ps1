@@ -33,18 +33,4 @@ InModuleScope LatestUpdate {
             }
         }
     }
-
-    Describe 'Get-UpdateFeed' {
-        . (Join-Path $modulePrivate "Get-ModuleResource.ps1")
-        . (Join-Path $modulePrivate "Get-UpdateFeed.ps1")
-        $Path = Join-Path $moduleParent "LatestUpdate.json"
-        Write-Host "JSON path: $Path."
-        $resourceStrings = Get-ModuleResource -Path $Path
-        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows10
-        Context "Tests that Get-UpdateFeed returns valid XML" {
-            It "Returns valid XML" {
-                $updateFeed | Should -BeOfType System.Xml.XmlNode
-            }
-        }
-    }
 }
