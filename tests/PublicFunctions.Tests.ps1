@@ -1,7 +1,7 @@
 # Pester tests
 # Set variables
-If (Test-Path 'env:APPVEYOR_version_FOLDER') {
-    $projectRoot = Resolve-Path -Path $env:APPVEYOR_version_FOLDER
+If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
+    $projectRoot = Resolve-Path -Path $env:APPVEYOR_BUILD_FOLDER
 }
 Else {
     # Local Testing 
@@ -196,7 +196,7 @@ Describe 'Get-LatestMonthlyRollup' {
     }
 }
 
-If (Test-Path -Path 'env:APPVEYOR_version_FOLDER') {
+If (Test-Path -Path 'env:APPVEYOR_BUILD_FOLDER') {
     # Skip download tests unless running in AppVeyor.
     
     Describe 'Save-LatestUpdate' {
