@@ -30,11 +30,11 @@
     Copyright         = '(c) 2019 stealthpuppy. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description       = 'A module for retrieving the latest Windows 10 / Windows Server 2016, 2019, Semi Annual Channel Cumulative Updates and Servicing Stack Update, the Monthly Rollups for 8.1 / 7 (and Windows Server 2012 R2, 2008 R2) and the latest Adobe Flash Player updates from the Microsoft Update History page. In addition, the module provides functions for downloading the update file/s locally and importing into a Microsoft Deployment Toolkit deployment share.
+    Description       = 'A module for retrieving the latest Windows 10 / Windows Server 2016, 2019, Semi Annual Channel Cumulative Updates, Servicing Stack Updates, .NET Framework Cumulative Updates, the Monthly Rollups for 8.1 / 7 (and Windows Server 2012 R2, 2008 R2) and the latest Adobe Flash Player updates from the Microsoft Update History page. In addition, the module provides a function for downloading the update files locally.
 
-This module assists IT Pros in speeding Windows operating system deployments with offline patching in MDT for reference images or PC deployments, or direct application of updates to a WIM.
+This module assists IT Pros in speeding Windows operating system deployments with tracking of Windows updates, offline patching in MDT for reference images or PC deployments, or direct application of updates to a WIM.
 
-Get-LatestUpdate, Get-LatestServicingStack, Get-LatestFlash and Save-LatestUpdate support PowerShell Core; however, Import-LatestUpdate requires the Microsoft Deployment Toolkit, so requires Windows PowerShell until Microsoft updates the MDT PowerShell module to support PowerShell Core.'
+PowerShell Core is full suppported.'
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '5.0'
