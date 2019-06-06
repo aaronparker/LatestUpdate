@@ -44,7 +44,10 @@ Function Save-LatestUpdate {
         $Credential = [System.Management.Automation.PSCredential]::Empty,
 
         [Parameter(Mandatory = $False)]
-        [System.Switch] $ForceWebRequest
+        [System.Management.Automation.SwitchParameter] $ForceWebRequest,
+        
+        [Parameter(Mandatory = $False)]
+        [System.Management.Automation.SwitchParameter] $Force
     )
 
     # Get module strings from the JSON
@@ -61,7 +64,7 @@ Function Save-LatestUpdate {
         $target = Join-Path -Path $Path -ChildPath $filename
             
         # If the update is not already downloaded, download it.
-        If (Test-Path -Path $target) {
+        If ((Test-Path -Path $target) -and (-not $Force.IsPresent)) {
             Write-Verbose -Message "File exists: $target. Skipping download."
         }
         Else {
