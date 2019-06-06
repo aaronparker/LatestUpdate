@@ -36,7 +36,6 @@ Function Get-UpdateServicingStack {
             $PSObject = [PSCustomObject] @{
                 Title   = $update.title
                 ID      = "KB{0}" -f ($update.id).Split(":")[2]
-                # Version = $Version
                 Updated = ([DateTime]::Parse($update.updated))
             }
             $sortedUpdateList.Add($PSObject) | Out-Null

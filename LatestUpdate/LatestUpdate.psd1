@@ -82,7 +82,7 @@ Get-LatestUpdate, Get-LatestServicingStack, Get-LatestFlash and Save-LatestUpdat
     # VariablesToExport = @()
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport   = 'Get-LatestUpdate', 'Get-LatestFlash'
+    AliasesToExport   = 'Get-LatestUpdate', 'Get-LatestFlash', 'Get-LatestServicingStack'
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()

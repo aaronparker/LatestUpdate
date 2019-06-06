@@ -11,6 +11,7 @@ Function Get-LatestMonthlyRollup {
     # Get module strings from the JSON
     $resourceStrings = Get-ModuleResource
 
+    # If resource strings are returned we can continue
     If ($Null -ne $resourceStrings) {
         Switch ($Version) {
             "Windows 8" {
@@ -23,14 +24,22 @@ Function Get-LatestMonthlyRollup {
             }
         }
         If ($Null -ne $updateFeed) {
+
+            # Filter the feed for monthly rollup updates and continue if we get updates
             $updateList = Get-UpdateMonthly -UpdateFeed $updateFeed
             If ($Null -ne $updateList) {
+
+                # Get download info for each update from the catalog
                 $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $osName -Architecture 'x86|x64'
-                $filteredDownloadInfo = $downloadInfo | Sort-Object -Unique -Property Description
-                $updateListWithVersion = Add-Property -InputObject $filteredDownloadInfo -Property "Description" -NewPropertyName "Version" `
+                $filteredDownloadInfo = $downloadInfo | Sort-Object -Unique -Property Note
+
+                # Add the Version and Architecture properties to the list
+                $updateListWithVersion = Add-Property -InputObject $filteredDownloadInfo -Property "Note" -NewPropertyName "Version" `
                     -MatchPattern $resourceStrings.Matches.Windows10Version
-                $updateListWithArch = Add-Property -InputObject $updateListWithVersion -Property "Description" -NewPropertyName "Architecture" `
+                $updateListWithArch = Add-Property -InputObject $updateListWithVersion -Property "Note" -NewPropertyName "Architecture" `
                     -MatchPattern $resourceStrings.Matches.Architecture
+
+                # Return object to the pipeline
                 Write-Output -InputObject $updateListWithArch
             }
         }

@@ -62,9 +62,9 @@ Function Get-UpdateCatalogDownloadInfo {
                 Write-Verbose -Message "$($MyInvocation.MyCommand): extract URL [$updateDownloadURL]"
             
                 $UpdateCatalogDownloadItem = [PSCustomObject] @{
-                    KB          = $UpdateCatalogData.KB
-                    Description = $CurrentUpdateDescription
-                    URL         = $updateDownloadURL
+                    KB   = $UpdateCatalogData.KB
+                    Note = $CurrentUpdateDescription
+                    URL  = $updateDownloadURL
                 }
 
                 Write-Output -InputObject $UpdateCatalogDownloadItem
