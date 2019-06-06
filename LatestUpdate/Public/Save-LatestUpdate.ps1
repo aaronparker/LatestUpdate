@@ -59,84 +59,86 @@ Function Save-LatestUpdate {
     # Step through each update in $Updates
     ForEach ($update in $Updates) {
 
-        # Create the target file path where the update will be saved
-        $filename = Split-Path -Path $update.URL -Leaf
-        $target = Join-Path -Path $Path -ChildPath $filename
-            
-        # If the update is not already downloaded, download it.
-        If ((Test-Path -Path $target) -and (-not $Force.IsPresent)) {
-            Write-Verbose -Message "File exists: $target. Skipping download."
-        }
-        Else {
-            If ($ForceWebRequest -or (Test-PSCore)) {
-                If ($pscmdlet.ShouldProcess($update.URL, "WebDownload")) {
-                    #Running on PowerShell Core or ForceWebRequest
-                    try {
-                        $params = @{
-                            Uri             = $update.URL
-                            OutFile         = $target
-                            UseBasicParsing = $True
-                            ErrorAction     = $resourceStrings.Preferences.ErrorAction
-                        }
-                        If ($PSBoundParameters.ContainsKey($Proxy)) {
-                            $params.Proxy = $Proxy
-                        }
-                        If ($PSBoundParameters.ContainsKey($Credential)) {
-                            $params.ProxyCredentials = $Credential
-                        }
-                        $result = Invoke-WebRequest @params
-                    }
-                    catch [System.Net.WebException] {
-                        Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
-                    }
-                    catch [System.Exception] {
-                        Write-Warning -Message "$($MyInvocation.MyCommand): failed to download: $($update.URL)."
-                        Throw $_.Exception.Message
-                    }
-                }
+        ForEach ($URL in $update.URL) {
+            # Create the target file path where the update will be saved
+            $filename = Split-Path -Path $URL -Leaf
+            $target = Join-Path -Path $Path -ChildPath $filename
+                
+            # If the update is not already downloaded, download it.
+            If ((Test-Path -Path $target) -and (-not $Force.IsPresent)) {
+                Write-Verbose -Message "File exists: $target. Skipping download."
             }
             Else {
-                If ($pscmdlet.ShouldProcess($(Split-Path $update.URL -Leaf), "BitsDownload")) {
-                    #Running on Windows PowerShell
-                    try {
-                        $params = @{
-                            Source      = $update.URL
-                            Destination = $target 
-                            Priority    = "High"
-                            DisplayName = $update.Note
-                            Description = "Downloading $($update.URL)"
-                            ErrorAction = $resourceStrings.Preferences.ErrorAction
+                If ($ForceWebRequest -or (Test-PSCore)) {
+                    If ($pscmdlet.ShouldProcess($URL, "WebDownload")) {
+                        #Running on PowerShell Core or ForceWebRequest
+                        try {
+                            $params = @{
+                                Uri             = $URL
+                                OutFile         = $target
+                                UseBasicParsing = $True
+                                ErrorAction     = $resourceStrings.Preferences.ErrorAction
+                            }
+                            If ($PSBoundParameters.ContainsKey($Proxy)) {
+                                $params.Proxy = $Proxy
+                            }
+                            If ($PSBoundParameters.ContainsKey($Credential)) {
+                                $params.ProxyCredentials = $Credential
+                            }
+                            $result = Invoke-WebRequest @params
                         }
-                        If ($PSBoundParameters.ContainsKey($Proxy)) {
-                            # Set priority to Foreground because the proxy will remove the Range protocol header
-                            $params.Priority = "Foreground"
-                            $params.ProxyUsage = "Override"
-                            $params.ProxyList = $Proxy
+                        catch [System.Net.WebException] {
+                            Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
                         }
-                        If ($PSBoundParameters.ContainsKey($Credential)) {
-                            $params.ProxyCredential = $ProxyCredentials
+                        catch [System.Exception] {
+                            Write-Warning -Message "$($MyInvocation.MyCommand): failed to download: $URL."
+                            Throw $_.Exception.Message
                         }
-                        $result = Start-BitsTransfer @params
-                    }
-                    catch [System.Net.WebException] {
-                        Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
-                    }
-                    catch [System.Exception] {
-                        Write-Warning -Message "$($MyInvocation.MyCommand): failed to download: $($update.URL)."
-                        Throw $_.Exception.Message
                     }
                 }
-            }
-            If ($result.StatusCode -eq "200") {
-                $PSObject = [PSCustomObject] @{
-                    Note   = $update.Note
-                    ID     = $update.KB
-                    Target = $target
+                Else {
+                    If ($pscmdlet.ShouldProcess($(Split-Path $URL -Leaf), "BitsDownload")) {
+                        #Running on Windows PowerShell
+                        try {
+                            $params = @{
+                                Source      = $URL
+                                Destination = $target 
+                                Priority    = "High"
+                                DisplayName = "test"
+                                Description = "Downloading $URL"
+                                ErrorAction = $resourceStrings.Preferences.ErrorAction
+                            }
+                            If ($PSBoundParameters.ContainsKey($Proxy)) {
+                                # Set priority to Foreground because the proxy will remove the Range protocol header
+                                $params.Priority = "Foreground"
+                                $params.ProxyUsage = "Override"
+                                $params.ProxyList = $Proxy
+                            }
+                            If ($PSBoundParameters.ContainsKey($Credential)) {
+                                $params.ProxyCredential = $ProxyCredentials
+                            }
+                            $result = Start-BitsTransfer @params
+                        }
+                        catch [System.Net.WebException] {
+                            Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
+                        }
+                        catch [System.Exception] {
+                            Write-Warning -Message "$($MyInvocation.MyCommand): failed to download: $URL."
+                            Throw $_.Exception.Message
+                        }
+                    }
                 }
-                $updateList.Add($PSObject) | Out-Null
-            }
-            Else {
-                Write-Warning -Message "$($MyInvocation.MyCommand): no valid response."
+                If ($result.StatusCode -eq "200") {
+                    $PSObject = [PSCustomObject] @{
+                        Note   = $update.Note
+                        ID     = $update.KB
+                        Target = $target
+                    }
+                    $updateList.Add($PSObject) | Out-Null
+                }
+                Else {
+                    Write-Warning -Message "$($MyInvocation.MyCommand): no valid response."
+                }
             }
         }
     }
