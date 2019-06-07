@@ -54,28 +54,30 @@ Function Save-LatestUpdate {
     $resourceStrings = Get-ModuleResource
 
     # Output object
-    $updateList = New-Object -TypeName System.Collections.ArrayList
+    $downloadedUpdates = New-Object -TypeName System.Collections.ArrayList
 
     # Step through each update in $Updates
     ForEach ($update in $Updates) {
 
-        ForEach ($URL in $update.URL) {
+        # Manage updates with multiple URLs
+        ForEach ($url in $update.URL) {
+
             # Create the target file path where the update will be saved
-            $filename = Split-Path -Path $URL -Leaf
-            $target = Join-Path -Path $Path -ChildPath $filename
+            $updateFilename = Split-Path -Path $url -Leaf
+            $updateDownloadTarget = Join-Path -Path $Path -ChildPath $updateFilename
                 
             # If the update is not already downloaded, download it.
-            If ((Test-Path -Path $target) -and (-not $Force.IsPresent)) {
-                Write-Verbose -Message "File exists: $target. Skipping download."
+            If ((Test-Path -Path $updateDownloadTarget) -and (-not $Force.IsPresent)) {
+                Write-Verbose -Message "File exists: $updateDownloadTarget. Skipping download."
             }
             Else {
                 If ($ForceWebRequest -or (Test-PSCore)) {
-                    If ($pscmdlet.ShouldProcess($URL, "WebDownload")) {
+                    If ($pscmdlet.ShouldProcess($url, "WebDownload")) {
                         #Running on PowerShell Core or ForceWebRequest
                         try {
                             $params = @{
-                                Uri             = $URL
-                                OutFile         = $target
+                                Uri             = $url
+                                OutFile         = $updateDownloadTarget
                                 UseBasicParsing = $True
                                 ErrorAction     = $resourceStrings.Preferences.ErrorAction
                             }
@@ -85,27 +87,27 @@ Function Save-LatestUpdate {
                             If ($PSBoundParameters.ContainsKey($Credential)) {
                                 $params.ProxyCredentials = $Credential
                             }
-                            $result = Invoke-WebRequest @params
+                            Invoke-WebRequest @params
                         }
                         catch [System.Net.WebException] {
                             Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
                         }
                         catch [System.Exception] {
-                            Write-Warning -Message "$($MyInvocation.MyCommand): failed to download: $URL."
+                            Write-Warning -Message "$($MyInvocation.MyCommand): failed to download: $url."
                             Throw $_.Exception.Message
                         }
                     }
                 }
                 Else {
-                    If ($pscmdlet.ShouldProcess($(Split-Path $URL -Leaf), "BitsDownload")) {
+                    If ($pscmdlet.ShouldProcess($(Split-Path $url -Leaf), "BitsDownload")) {
                         #Running on Windows PowerShell
                         try {
                             $params = @{
-                                Source      = $URL
-                                Destination = $target 
+                                Source      = $url
+                                Destination = $updateDownloadTarget 
                                 Priority    = "High"
                                 DisplayName = "test"
-                                Description = "Downloading $URL"
+                                Description = "Downloading $url"
                                 ErrorAction = $resourceStrings.Preferences.ErrorAction
                             }
                             If ($PSBoundParameters.ContainsKey($Proxy)) {
@@ -117,32 +119,32 @@ Function Save-LatestUpdate {
                             If ($PSBoundParameters.ContainsKey($Credential)) {
                                 $params.ProxyCredential = $ProxyCredentials
                             }
-                            $result = Start-BitsTransfer @params
+                            Start-BitsTransfer @params
                         }
                         catch [System.Net.WebException] {
                             Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
                         }
                         catch [System.Exception] {
-                            Write-Warning -Message "$($MyInvocation.MyCommand): failed to download: $URL."
+                            Write-Warning -Message "$($MyInvocation.MyCommand): failed to download: $url."
                             Throw $_.Exception.Message
                         }
                     }
                 }
-                If ($result.StatusCode -eq "200") {
+                If (Test-Path -Path $updateDownloadTarget) {
                     $PSObject = [PSCustomObject] @{
                         Note   = $update.Note
                         ID     = $update.KB
-                        Target = $target
+                        Target = $updateDownloadTarget
                     }
-                    $updateList.Add($PSObject) | Out-Null
+                    $downloadedUpdates.Add($PSObject) | Out-Null
                 }
                 Else {
-                    Write-Warning -Message "$($MyInvocation.MyCommand): no valid response."
+                    Write-Warning -Message "$($MyInvocation.MyCommand): failed to download [$updateDownloadTarget]."
                 }
             }
         }
     }
 
     # Output results to the pipeline
-    Write-Output -InputObject $updateList
+    Write-Output -InputObject $downloadedUpdates
 }

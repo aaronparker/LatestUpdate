@@ -223,7 +223,7 @@ If (Test-Path -Path 'env:APPVEYOR_BUILD_FOLDER') {
                 It "Given updates returned from Get-LatestCumulativeUpdate, it successfully downloads the update" {
                     (Join-Path $Target $Filename) | Should -Exist
                 }
-                It "Should match actual downloaded file and Get-LatestCumulativeUpdateoutput" {
+                It "Should match actual downloaded file and Get-LatestCumulativeUpdate output" {
                     $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
                 }
             }
@@ -261,12 +261,14 @@ If (Test-Path -Path 'env:APPVEYOR_BUILD_FOLDER') {
             $Target = $env:TEMP
             $Downloads = Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest
             ForEach ($Update in $Updates) {
-                $Filename = Split-Path $Update.Url -Leaf
-                It "Given updates returned from Get-LatestNetFrameworkUpdate, it successfully downloads the update" {
-                    (Join-Path $Target $Filename) | Should -Exist
-                }
-                It "Should match actual downloaded file and Get-LatestNetFrameworkUpdate output" {
-                    $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
+                ForEach ($url in $update.URL) {
+                    $Filename = Split-Path $url -Leaf
+                    It "Given updates returned from Get-LatestNetFrameworkUpdate, it successfully downloads the update" {
+                        (Join-Path $Target $Filename) | Should -Exist
+                    }
+                    It "Should match actual downloaded file and Get-LatestNetFrameworkUpdate output" {
+                        $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
+                    }
                 }
             }
         }
