@@ -13,7 +13,7 @@ Function Get-LatestMonthlyRollup {
         This commands reads the the Windows 8.1 update history feed and returns an object that lists the most recent Windows 8.1 Monthly Rollup Update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-latest")]
+    [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-monthly")]
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows version.")]
         [ValidateSet('Windows 8', 'Windows 7')]
@@ -30,10 +30,12 @@ Function Get-LatestMonthlyRollup {
             "Windows 8" {
                 $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows8
                 $osName = "Windows 8.1|Windows Server"
+                $matchPattern = $resourceStrings.Matches.Windows8Version
             }
             "Windows 7" {
                 $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows7
                 $osName = "Windows 7|Windows Server"
+                $matchPattern = $resourceStrings.Matches.Windows7Version
             }
         }
         If ($Null -ne $updateFeed) {
@@ -48,7 +50,7 @@ Function Get-LatestMonthlyRollup {
 
                 # Add the Version and Architecture properties to the list
                 $updateListWithVersion = Add-Property -InputObject $filteredDownloadInfo -Property "Note" -NewPropertyName "Version" `
-                    -MatchPattern $resourceStrings.Matches.Windows10Version
+                    -MatchPattern $matchPattern
                 $updateListWithArch = Add-Property -InputObject $updateListWithVersion -Property "Note" -NewPropertyName "Architecture" `
                     -MatchPattern $resourceStrings.Matches.Architecture
 

@@ -12,7 +12,9 @@
   "Matches" : {
     "DownloadUrl" : "(http[s]?\\://download\\.windowsupdate\\.com\\/[^\\'\\\"\"]*)",
     "DownloadDescription" : "<a[^>]*>([^<]+)<\\/a>",
-    "Windows10Version" : "([12][056789][01][379])",
+    "Windows10Version" : "([12][056789][01][346799])",
+    "Windows8Version" : "8.1|2012 R2",
+    "Windows7Version" : "7|2008 R2",
     "Architecture" : "(x86|x64|ARM64)"
   },
   "CatalogUris" : {
