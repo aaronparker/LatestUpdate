@@ -14,8 +14,13 @@ Function Get-LatestNetFrameworkUpdate {
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-net")]
-    Param ()
-    
+    Param (
+        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
+        [ValidateSet('Windows7', 'Windows8', 'Windows10', 'WindowsClient', 'WindowsServer', 'All')]
+        [ValidateNotNullOrEmpty()]
+        [System.String] $OS = 'Windows10'
+    )
+
     # Get module strings from the JSON
     $resourceStrings = Get-ModuleResource
 
@@ -27,42 +32,45 @@ Function Get-LatestNetFrameworkUpdate {
         If ($Null -ne $updateFeed) {
 
             # Filter the feed for NET Framework updates and continue if we get updates
-            $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed
+            $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | Where-Object { $_.Title -match $resourceStrings.SearchStrings.$OS }
+
             If ($Null -ne $updateList) {
                 ForEach ($update in $updateList) {
 
                     # Get download info for each update from the catalog
-                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $update.ID -OS $resourceStrings.SearchStrings.NetFrameworkWindows10 -Architecture ""
+                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $update.ID -OS $resourceStrings.SearchStrings.$OS -Architecture "" | Where-Object { $_.Note }
                     $filteredDownloadInfo = $downloadInfo | Sort-Object -Unique -Property Note
 
-                    # Add the Version and Architecture properties to the list
-                    $updateListWithVersionParams = @{
-                        InputObject = $filteredDownloadInfo
-                        Property = "Note"
-                        NewPropertyName = "Version"
-                        MatchPattern = $resourceStrings.Matches.Windows10Version
-                    }
-                    $updateListWithVersion = Add-Property @updateListWithVersionParams
-
-                    $updateListWithArchParams = @{
-                        InputObject = $updateListWithVersion
-                        Property = "Note"
-                        NewPropertyName = "Architecture"
-                        MatchPattern = $resourceStrings.Matches.Architecture
-                    }
-                    $updateListWithArch = Add-Property @updateListWithArchParams
-
-                    # If the value for Architecture is blank, make it "x86"
-                    $i = 0
-                    ForEach ($update in $updateListWithArch) {
-                        If ($update.Architecture.Length -eq 0) {
-                            $updateListWithArch[$i].Architecture = "x86"
+                    if ($filteredDownloadInfo) {
+                        # Add the Version and Architecture properties to the list
+                        $updateListWithVersionParams = @{
+                            InputObject = $filteredDownloadInfo
+                            Property = "Note"
+                            NewPropertyName = "Version"
+                            MatchPattern = $resourceStrings.Matches.Windows10Version
                         }
-                        $i++
-                    }
+                        $updateListWithVersion = Add-Property @updateListWithVersionParams
 
-                    # Return object to the pipeline
-                    Write-Output -InputObject $updateListWithArch
+                        $updateListWithArchParams = @{
+                            InputObject = $updateListWithVersion
+                            Property = "Note"
+                            NewPropertyName = "Architecture"
+                            MatchPattern = $resourceStrings.Matches.Architecture
+                        }
+                        $updateListWithArch = Add-Property @updateListWithArchParams
+
+                        # If the value for Architecture is blank, make it "x86"
+                        $i = 0
+                        ForEach ($update in $updateListWithArch) {
+                            If ($update.Architecture.Length -eq 0) {
+                                $updateListWithArch[$i].Architecture = "x86"
+                            }
+                            $i++
+                        }
+
+                        # Return object to the pipeline
+                        Write-Output -InputObject $updateListWithArch
+                    }
                 }
             }
         }
