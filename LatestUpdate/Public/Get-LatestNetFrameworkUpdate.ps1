@@ -36,11 +36,22 @@ Function Get-LatestNetFrameworkUpdate {
                     $filteredDownloadInfo = $downloadInfo | Sort-Object -Unique -Property Note
 
                     # Add the Version and Architecture properties to the list
-                    $updateListWithVersion = Add-Property -InputObject $filteredDownloadInfo -Property "Note" -NewPropertyName "Version" `
-                        -MatchPattern $resourceStrings.Matches.Windows10Version
-                    $updateListWithArch = Add-Property -InputObject $updateListWithVersion -Property "Note" -NewPropertyName "Architecture" `
-                        -MatchPattern $resourceStrings.Matches.Architecture
-                    
+                    $updateListWithVersionParams = @{
+                        InputObject = $filteredDownloadInfo
+                        Property = "Note"
+                        NewPropertyName = "Version"
+                        MatchPattern = $resourceStrings.Matches.Windows10Version
+                    }
+                    $updateListWithVersion = Add-Property @updateListWithVersionParams
+
+                    $updateListWithArchParams = @{
+                        InputObject = $updateListWithVersion
+                        Property = "Note"
+                        NewPropertyName = "Architecture"
+                        MatchPattern = $resourceStrings.Matches.Architecture
+                    }
+                    $updateListWithArch = Add-Property @updateListWithArchParams
+
                     # If the value for Architecture is blank, make it "x86"
                     $i = 0
                     ForEach ($update in $updateListWithArch) {
