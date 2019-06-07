@@ -171,8 +171,23 @@ Describe 'Get-LatestNetFrameworkUpdate' {
 }
 
 Describe 'Get-LatestMonthlyRollup' {
-    $Updates = Get-LatestMonthlyRollup
-    Context "Returns a valid Windows 8.1/7 monthly rollup update" {
+    Context "Returns a valid Windows 8.1 monthly rollup update" {
+        $Updates = Get-LatestMonthlyRollup
+        It "Given an OS as argument, returns an array of updates" {
+            $Updates | Should -BeOfType System.Management.Automation.PSObject
+        }
+        ForEach ($Update in $Updates) {
+            It "Given no arguments, returns a valid array with expected properties" {
+                $Update.KB.Length | Should -BeGreaterThan 0
+                $Update.Architecture.Length | Should -BeGreaterThan 0
+                $Update.Version.Length | Should -BeGreaterThan 0
+                $Update.Note.Length | Should -BeGreaterThan 0
+                $Update.URL.Length | Should -BeGreaterThan 0
+            }
+        }
+    }
+    Context "Returns a valid Windows 7 monthly rollup update" {
+        $Updates = Get-LatestMonthlyRollup -Version 'Windows 7'
         It "Given an OS as argument, returns an array of updates" {
             $Updates | Should -BeOfType System.Management.Automation.PSObject
         }
@@ -202,13 +217,13 @@ If (Test-Path -Path 'env:APPVEYOR_BUILD_FOLDER') {
         Context "Download the latest Windows 10 Cumulative updates" {
             $Updates = Get-LatestCumulativeUpdate
             $Target = $env:TEMP
-            $Downloads = Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest -Verbose
+            $Downloads = Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest
             ForEach ($Update in $Updates) {
                 $Filename = Split-Path $Update.Url -Leaf
                 It "Given updates returned from Get-LatestCumulativeUpdate, it successfully downloads the update" {
                     (Join-Path $Target $Filename) | Should -Exist
                 }
-                It "Should match actual downloaded file and Get-LatestAdobeFlashUpdate output" {
+                It "Should match actual downloaded file and Get-LatestCumulativeUpdateoutput" {
                     $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
                 }
             }
@@ -216,7 +231,7 @@ If (Test-Path -Path 'env:APPVEYOR_BUILD_FOLDER') {
         Context "Download the latest Adobe Flash Player updates" {
             $Updates = Get-LatestAdobeFlashUpdate
             $Target = $env:TEMP
-            $Downloads = Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest -Verbose
+            $Downloads = Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest
             ForEach ($Update in $Updates) {
                 $Filename = Split-Path $Update.Url -Leaf
                 It "Given updates returned from Get-LatestAdobeFlashUpdate, it successfully downloads the update" {
@@ -230,13 +245,55 @@ If (Test-Path -Path 'env:APPVEYOR_BUILD_FOLDER') {
         Context "Download the latest Servicing Stack updates" {
             $Updates = Get-LatestServicingStackUpdate
             $Target = $env:TEMP
-            $Downloads = Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest -Verbose
+            $Downloads = Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest
             ForEach ($Update in $Updates) {
                 $Filename = Split-Path $Update.Url -Leaf
                 It "Given updates returned from Get-LatestServicingStackUpdate, it successfully downloads the update" {
                     (Join-Path $Target $Filename) | Should -Exist
                 }
-                It "Should match actual downloaded file and Get-LatestAdobeFlashUpdate output" {
+                It "Should match actual downloaded file and Get-LatestServicingStackUpdate output" {
+                    $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
+                }
+            }
+        }
+        Context "Download the latest .NET Framework updates" {
+            $Updates = Get-LatestNetFrameworkUpdate
+            $Target = $env:TEMP
+            $Downloads = Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest
+            ForEach ($Update in $Updates) {
+                $Filename = Split-Path $Update.Url -Leaf
+                It "Given updates returned from Get-LatestNetFrameworkUpdate, it successfully downloads the update" {
+                    (Join-Path $Target $Filename) | Should -Exist
+                }
+                It "Should match actual downloaded file and Get-LatestNetFrameworkUpdate output" {
+                    $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
+                }
+            }
+        }
+        Context "Download the latest Windows 8.1 Monthly Rollup updates" {
+            $Updates = Get-LatestMonthlyRollup
+            $Target = $env:TEMP
+            $Downloads = Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest
+            ForEach ($Update in $Updates) {
+                $Filename = Split-Path $Update.Url -Leaf
+                It "Given updates returned from Get-LatestMonthlyRollup, it successfully downloads the update" {
+                    (Join-Path $Target $Filename) | Should -Exist
+                }
+                It "Should match actual downloaded file and Get-LatestMonthlyRollup output" {
+                    $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
+                }
+            }
+        }
+        Context "Download the latest Windows 7 Monthly Rollup updates" {
+            $Updates = Get-LatestMonthlyRollup -Version 'Windows 7'
+            $Target = $env:TEMP
+            $Downloads = Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest
+            ForEach ($Update in $Updates) {
+                $Filename = Split-Path $Update.Url -Leaf
+                It "Given updates returned from Get-LatestMonthlyRollup, it successfully downloads the update" {
+                    (Join-Path $Target $Filename) | Should -Exist
+                }
+                It "Should match actual downloaded file and Get-LatestMonthlyRollup output" {
                     $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
                 }
             }

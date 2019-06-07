@@ -15,19 +15,13 @@ Function Get-LatestAdobeFlashUpdate {
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-flash")]
     [Alias("Get-LatestFlash")]
-    Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
-        [ValidateSet('1903', '1809', '1803', '1709', '1703', '1607')]
-        [ValidateNotNullOrEmpty()]
-        [System.String[]] $Version = "1903"
-    )
+    Param ()
     
     # Get module strings from the JSON
     $resourceStrings = Get-ModuleResource
 
     # If resource strings are returned we can continue
     If ($Null -ne $resourceStrings) {
-        ForEach ($ver in $Version) {
 
             # Get the update feed and continue if successfully read
             $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows10
@@ -50,6 +44,5 @@ Function Get-LatestAdobeFlashUpdate {
                     Write-Output -InputObject $updateListWithArch
                 }
             }
-        }
     }
 }

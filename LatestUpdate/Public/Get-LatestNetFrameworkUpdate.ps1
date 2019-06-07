@@ -13,13 +13,8 @@ Function Get-LatestNetFrameworkUpdate {
         This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 .NET Framework Cumulative Update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-latest")]
-    Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
-        [ValidateSet('1903', '1809', '1803', '1709', '1703', '1607')]
-        [ValidateNotNullOrEmpty()]
-        [System.String[]] $Version = "1903"
-    )
+    [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-net")]
+    Param ()
     
     # Get module strings from the JSON
     $resourceStrings = Get-ModuleResource
