@@ -35,10 +35,21 @@ Function Get-LatestAdobeFlashUpdate {
                 $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID
 
                 # Add the Version and Architecture properties to the list
-                $updateListWithVersion = Add-Property -InputObject $downloadInfo -Property "Note" -NewPropertyName "Version" `
-                    -MatchPattern $resourceStrings.Matches.Windows10Version
-                $updateListWithArch = Add-Property -InputObject $updateListWithVersion -Property "Note" -NewPropertyName "Architecture" `
-                    -MatchPattern $resourceStrings.Matches.Architecture
+                $updateListWithVersionParams = @{
+                    InputObject = $downloadInfo
+                    Property = "Note"
+                    NewPropertyName = "Version"
+                    MatchPattern = $resourceStrings.Matches.Windows10Version
+                }
+                $updateListWithVersion = Add-Property @updateListWithVersionParams
+
+                $updateListWithArchParams = @{
+                    InputObject = $updateListWithVersion
+                    Property = "Note"
+                    NewPropertyName = "Architecture"
+                    MatchPattern = $resourceStrings.Matches.Architecture
+                }
+                $updateListWithArch = Add-Property @updateListWithArchParams
 
                 # Return object to the pipeline
                 Write-Output -InputObject $updateListWithArch
