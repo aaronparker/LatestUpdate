@@ -43,6 +43,6 @@ Function Invoke-UpdateCatalogDownloadDialog {
         }
     }
     Else {
-        Write-Warning -Message "$($MyInvocation.MyCommand): unable to retreive Update Catalog download."
+        Write-Warning -Message "$($MyInvocation.MyCommand): unable to retrieve Update Catalog download."
     }
 }
