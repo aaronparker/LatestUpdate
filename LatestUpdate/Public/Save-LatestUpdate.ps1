@@ -105,7 +105,6 @@ Function Save-LatestUpdate {
                             $params = @{
                                 Source      = $url
                                 Destination = $updateDownloadTarget 
-                                Priority    = "High"
                                 DisplayName = "test"
                                 Description = "Downloading $url"
                                 ErrorAction = $resourceStrings.Preferences.ErrorAction
