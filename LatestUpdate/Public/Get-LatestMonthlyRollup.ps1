@@ -49,10 +49,21 @@ Function Get-LatestMonthlyRollup {
                 $filteredDownloadInfo = $downloadInfo | Sort-Object -Unique -Property Note
 
                 # Add the Version and Architecture properties to the list
-                $updateListWithVersion = Add-Property -InputObject $filteredDownloadInfo -Property "Note" -NewPropertyName "Version" `
-                    -MatchPattern $matchPattern
-                $updateListWithArch = Add-Property -InputObject $updateListWithVersion -Property "Note" -NewPropertyName "Architecture" `
-                    -MatchPattern $resourceStrings.Matches.Architecture
+                $updateListWithVersionParams = @{
+                    InputObject = $filteredDownloadInfo
+                    Property = "Note"
+                    NewPropertyName = "Version"
+                    MatchPattern = $matchPattern
+                }
+                $updateListWithVersion = Add-Property @updateListWithVersionParams
+
+                $updateListWithArchParams = @{
+                    InputObject = $updateListWithVersion
+                    Property = "Note"
+                    NewPropertyName = "Architecture"
+                    MatchPattern = $resourceStrings.Matches.Architecture
+                }
+                $updateListWithArch = Add-Property @updateListWithArchParams
 
                 # Return object to the pipeline
                 Write-Output -InputObject $updateListWithArch
