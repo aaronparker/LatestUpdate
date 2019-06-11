@@ -24,7 +24,7 @@ Function Get-LatestAdobeFlashUpdate {
     If ($Null -ne $resourceStrings) {
 
         # Get the update feed and continue if successfully read
-        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OS
+        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows10
         If ($Null -ne $updateFeed) {
 
             # Filter the feed for Adobe Flash updates and continue if we get updates

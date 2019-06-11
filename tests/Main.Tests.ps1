@@ -14,7 +14,6 @@ $modulePrivate = Join-Path $moduleParent "Private"
 $modulePublic = Join-Path $moduleParent "Public"
 Import-Module (Join-Path $projectRoot $module) -Force
 
-InModuleScope LatestUpdate {
     Describe "General project validation" {
         $scripts = Get-ChildItem (Join-Path $projectRoot $module) -Recurse -Include *.ps1, *.psm1
 
@@ -76,4 +75,3 @@ InModuleScope LatestUpdate {
             { Import-Module $modulePath -Force -ErrorAction Stop } | Should Not Throw
         }
     }
-}
