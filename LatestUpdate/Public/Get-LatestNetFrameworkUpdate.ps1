@@ -47,7 +47,7 @@ Function Get-LatestNetFrameworkUpdate {
                             InputObject = $filteredDownloadInfo
                             Property = "Note"
                             NewPropertyName = "Version"
-                            MatchPattern = $resourceStrings.Matches.$OS
+                            MatchPattern = $resourceStrings.Matches."$($OS)Version"
                         }
                         $updateListWithVersion = Add-Property @updateListWithVersionParams
 
