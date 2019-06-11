@@ -15,10 +15,10 @@ Function Get-LatestMonthlyRollup {
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-monthly")]
     Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows version.")]
-        [ValidateSet('Windows 8', 'Windows 7')]
+        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
+        [ValidateSet('Windows7', 'Windows8', 'WindowsClient', 'WindowsServer', 'All')]
         [ValidateNotNullOrEmpty()]
-        [System.String] $Version = "Windows 8"
+        [System.String] $OS = 'Windows8'
     )
     
     # Get module strings from the JSON
@@ -26,18 +26,9 @@ Function Get-LatestMonthlyRollup {
 
     # If resource strings are returned we can continue
     If ($Null -ne $resourceStrings) {
-        Switch ($Version) {
-            "Windows 8" {
-                $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows8
-                $osName = "Windows 8.1|Windows Server"
-                $matchPattern = $resourceStrings.Matches.Windows8Version
-            }
-            "Windows 7" {
-                $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows7
-                $osName = "Windows 7|Windows Server"
-                $matchPattern = $resourceStrings.Matches.Windows7Version
-            }
-        }
+
+        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OS
+
         If ($Null -ne $updateFeed) {
 
             # Filter the feed for monthly rollup updates and continue if we get updates
@@ -45,7 +36,7 @@ Function Get-LatestMonthlyRollup {
             If ($Null -ne $updateList) {
 
                 # Get download info for each update from the catalog
-                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $osName -Architecture 'x86|x64'
+                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $resourceStrings.SearchStrings.$OS -Architecture $resourceStrings.Matches.Architecture
                 $filteredDownloadInfo = $downloadInfo | Sort-Object -Unique -Property Note
 
                 # Add the Version and Architecture properties to the list
@@ -53,7 +44,7 @@ Function Get-LatestMonthlyRollup {
                     InputObject = $filteredDownloadInfo
                     Property = "Note"
                     NewPropertyName = "Version"
-                    MatchPattern = $matchPattern
+                    MatchPattern = $resourceStrings.Matches."$($OS)Version"
                 }
                 $updateListWithVersion = Add-Property @updateListWithVersionParams
 
