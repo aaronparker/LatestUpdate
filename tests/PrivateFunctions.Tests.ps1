@@ -19,7 +19,7 @@ InModuleScope LatestUpdate {
     Describe 'Test-PSCore' {
         $Version = '6.0.0'
         Context "Tests whether we are running on PowerShell Core" {
-            It "Imports the MDT PowerShell module and returns True" {
+            It "Returns True if running Windows PowerShell" {
                 If (($PSVersionTable.PSVersion -ge [version]::Parse($Version)) -and ($PSVersionTable.PSEdition -eq "Core")) {
                     Test-PSCore | Should -Be $True
                 }
