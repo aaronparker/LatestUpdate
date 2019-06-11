@@ -45,6 +45,10 @@ Function Save-LatestUpdate {
 
         [Parameter(Mandatory = $False)]
         [System.Management.Automation.SwitchParameter] $ForceWebRequest,
+
+        [Parameter(Mandatory = $False)]
+        [ValidateSet('Foreground', 'High', 'Normal', 'Low')]
+        [System.String] $Priority = "Foreground",
         
         [Parameter(Mandatory = $False)]
         [System.Management.Automation.SwitchParameter] $Force
@@ -103,8 +107,8 @@ Function Save-LatestUpdate {
                         try {
                             $params = @{
                                 Source      = $url
-                                Destination = $updateDownloadTarget 
-                                Priority    = "High"
+                                Destination = $updateDownloadTarget
+                                Priority    = $Priority
                                 DisplayName = "test"
                                 Description = "Downloading $url"
                                 ErrorAction = $resourceStrings.Preferences.ErrorAction

@@ -39,7 +39,7 @@ Function Get-UpdateFeed {
         Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
     }
     catch [System.Exception] {
-        Write-Warning -Message "$($MyInvocation.MyCommand): failed to retreive the update feed: $Uri."
+        Write-Warning -Message "$($MyInvocation.MyCommand): failed to retrieve the update feed: $Uri."
         Throw $_.Exception.Message
     }
     

@@ -60,9 +60,10 @@ Function Get-UpdateCatalogDownloadInfo {
 
             # Match specific update
             If ($Null -ne $updateDownload) {
-                $updateDownloadURL = $updateDownload | Select-Object -ExpandProperty Content | `
-                    Select-String -AllMatches -Pattern $resourceStrings.Matches.DownloadUrl | `
-                    ForEach-Object { $_.Matches.Value }
+                $updateDownloadURL = $updateDownload | Select-Object -ExpandProperty Content |
+                        Select-String -AllMatches -Pattern $resourceStrings.Matches.DownloadUrl |
+                        ForEach-Object { $_.Matches.Value }
+                        
                 Write-Verbose -Message "$($MyInvocation.MyCommand): extract URL [$updateDownloadURL]"
             
                 $UpdateCatalogDownloadItem = [PSCustomObject] @{

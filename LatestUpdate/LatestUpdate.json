@@ -4,18 +4,24 @@
     "CumulativeUpdate" : ".*Cumulative Update.*",
     "AdobeFlash" : ".*Update for Adobe Flash Player.*",
     "MonthlyRollup" : "(?!Preview of Monthly Rollup)(\\(Monthly Rollup.*\\))",
-    "NetFramework" : "Cumulative Update for \\.NET Framework",
-    "NetFrameworkWindows10" : "Windows 10|Windows Server 2016|Windows Server 2019|Windows Server",
-    "NetFrameworkWindows8" : "Windows 8.1|Server 2012 R2",
-    "NetFrameworkWindows7" : "Windows 7|Server 2008 R2",
-    "WindowsDefender" : "Update for Windows Defender.*antimalware platform.*"
+    "NetFramework" : "Cumulative Update for \\.NET Framework|^Security and Quality Rollup for .NET Framework|^Security Only Update for .NET Framework",
+    "WindowsDefender" : "Update for Windows Defender.*antimalware platform.*",
+    "Windows10" : "Windows 10|Windows Server 2016|Windows Server 2019|Windows Server 1903",
+    "Windows8" : "Windows 8.1|Windows Server 2012",
+    "Windows7" : "Windows 7|Windows Server 2008",
+    "WindowsClient" : "Windows 7|Windows 8.1|Windows 10",
+    "WindowsServer" : "Windows Server",
+    "All" : "Windows.\\d|Windows Server"
   },
   "Matches" : {
     "DownloadUrl" : "(http[s]?\\://download\\.windowsupdate\\.com\\/[^\\'\\\"\"]*)",
     "DownloadDescription" : "<a[^>]*>([^<]+)<\\/a>",
     "Windows10Version" : "([12][056789][01][346799])",
-    "Windows8Version" : "8.1|2012 R2",
-    "Windows7Version" : "7|2008 R2",
+    "Windows8Version" : "8.1|2012",
+    "Windows7Version" : "7|2008",
+    "WindowsClientVersion" : "7|8.1|([12][056789][01][346799])",
+    "WindowsServerVersion" : "2008|2012|2016|2019|([12][056789][01][346799])",
+    "AllVersion" : "7|8.1|2008|2012|2016|2019|([12][056789][01][346799])",
     "Architecture" : "(x86|x64|ARM64)"
   },
   "CatalogUris" : {
