@@ -41,7 +41,7 @@ Function Get-LatestCumulativeUpdate {
             If ($Null -ne $updateFeed) {
 
                 # Filter the feed for cumulative updates and continue if we get updates
-                $updateList = Get-UpdateCumulative -UpdateFeed $updateFeed -Build $resourceStrings.VersionTable."$($OS)[$ver]"
+                $updateList = Get-UpdateCumulative -UpdateFeed $updateFeed -Build $resourceStrings.VersionTable.$($OS)[$ver]
                 If ($Null -ne $updateList) {
 
                     # Get download info for each update from the catalog
