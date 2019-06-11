@@ -194,7 +194,7 @@ Describe 'Get-LatestMonthlyRollup' {
         }
     }
     Context "Returns a valid Windows 7 monthly rollup update" {
-        $Updates = Get-LatestMonthlyRollup -Version 'Windows 7'
+        $Updates = Get-LatestMonthlyRollup -OS 'Windows7'
         It "Given an OS as argument, returns an array of updates" {
             $Updates | Should -BeOfType System.Management.Automation.PSObject
         }
@@ -310,7 +310,7 @@ If (Test-Path -Path 'env:APPVEYOR_BUILD_FOLDER') {
             }
         }
         Context "Download the latest Windows 7 Monthly Rollup updates" {
-            $Updates = Get-LatestMonthlyRollup -Version 'Windows 7'
+            $Updates = Get-LatestMonthlyRollup -OS 'Windows7'
             $Target = $env:TEMP
             $Downloads = Save-LatestUpdate -Updates $Updates -Path $Target -ForceWebRequest
             ForEach ($Update in $Updates) {
