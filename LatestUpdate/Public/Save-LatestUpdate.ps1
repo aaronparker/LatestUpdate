@@ -63,8 +63,7 @@ Function Save-LatestUpdate {
         ForEach ($url in $update.URL) {
 
             # Create the target file path where the update will be saved
-            $updateFilename = Split-Path -Path $url -Leaf
-            $updateDownloadTarget = Join-Path -Path $Path -ChildPath $updateFilename
+            $updateDownloadTarget = Join-Path -Path $Path -ChildPath (Split-Path -Path $url -Leaf)
                 
             # If the update is not already downloaded, download it.
             If ((Test-Path -Path $updateDownloadTarget) -and (-not $Force.IsPresent)) {
@@ -99,7 +98,7 @@ Function Save-LatestUpdate {
                     }
                 }
                 Else {
-                    If ($pscmdlet.ShouldProcess($(Split-Path $url -Leaf), "BitsDownload")) {
+                    If ($pscmdlet.ShouldProcess($(Split-Path -Path $url -Leaf), "BitsDownload")) {
                         #Running on Windows PowerShell
                         try {
                             $params = @{

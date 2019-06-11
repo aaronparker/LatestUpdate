@@ -5,6 +5,7 @@
     "AdobeFlash" : ".*Update for Adobe Flash Player.*",
     "MonthlyRollup" : "(?!Preview of Monthly Rollup)(\\(Monthly Rollup.*\\))",
     "NetFramework" : "Cumulative Update for \\.NET Framework|^Security and Quality Rollup for .NET Framework|^Security Only Update for .NET Framework",
+    "WindowsDefender" : "Update for Windows Defender.*antimalware platform.*",
     "Windows10" : "Windows 10|Windows Server 2016|Windows Server 2019|Windows Server 1903",
     "Windows8" : "Windows 8.1|Windows Server 2012",
     "Windows7" : "Windows 7|Windows Server 2008",
@@ -31,7 +32,8 @@
     "Windows10" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom",
     "Windows8" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/b905caa1-d413-c90c-bed3-20aead901092/atom",
     "Windows7" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/f825ca23-c7d1-aab8-4513-64980e1c3007/atom",
-    "NetFramework" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/df2c02f6-9610-d46d-2d76-fa570bd8c86a/atom"
+    "NetFramework" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/df2c02f6-9610-d46d-2d76-fa570bd8c86a/atom",
+    "WindowsDefender": "https://support.microsoft.com/app/content/api/content/feeds/sap/en-au/5d4715e7-a9c9-378e-3f83-fd410db4ef0a/atom"
   },
   "VersionTable" : {
     "Windows10" : {
