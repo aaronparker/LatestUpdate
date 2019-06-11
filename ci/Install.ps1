@@ -16,7 +16,10 @@ Write-Host -Object ''
 Write-Host "PowerShell Version:" $PSVersionTable.PSVersion.tostring()
 
 # Install packages
-Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.208
+If (Get-PSRepository -Name PSGallery | Where-Object { $_.InstallationPolicy -ne "Trusted" }) {
+    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+}
 Install-Module -Name Pester -SkipPublisherCheck -Force
 Install-Module -Name PSScriptAnalyzer -SkipPublisherCheck -Force
 Install-Module -Name posh-git -Force

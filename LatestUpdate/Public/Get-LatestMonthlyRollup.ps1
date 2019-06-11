@@ -18,7 +18,8 @@ Function Get-LatestMonthlyRollup {
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
         [ValidateSet('Windows8', 'Windows7')]
         [ValidateNotNullOrEmpty()]
-        [System.String] $OS = "Windows8"
+        [Alias("OS")]
+        [System.String] $Version = "Windows8"
     )
     
     # Get module strings from the JSON
@@ -27,7 +28,7 @@ Function Get-LatestMonthlyRollup {
     # If resource strings are returned we can continue
     If ($Null -ne $resourceStrings) {
 
-        Switch ($OS) {
+        Switch ($Version) {
             "Windows8" {
                 $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows8
                 $osName = $resourceStrings.SearchStrings.Windows8
