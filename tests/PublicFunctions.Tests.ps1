@@ -348,16 +348,19 @@ InModuleScope LatestUpdate {
             Context "Download the latest Windows Defender updates" {
                 $Downloads = Save-LatestUpdate -Updates $DefenderUpdates -Path $Target -ForceWebRequest
                 ForEach ($Update in $DefenderUpdates) {
-                    $Filename = Split-Path $Update.Url -Leaf
-                    It "Given updates returned from Get-LatestWindowsDefenderUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]" {
-                        (Join-Path $Target $Filename) | Should -Exist
-                    }
-                    It "Should match actual downloaded file and Get-LatestWindowsDefenderUpdate output: [$($Update.Version), $($Update.Architecture)]" {
-                        $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
+                    ForEach ($url in $update.URL) {
+                        $Filename = Split-Path $url -Leaf
+                        It "Given updates returned from Get-LatestWindowsDefenderUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]" {
+                            (Join-Path $Target $Filename) | Should -Exist
+                        }
+                        It "Should match actual downloaded file and Get-LatestWindowsDefenderUpdate output: [$($Update.Version), $($Update.Architecture)]" {
+                            $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
+                        }
                     }
                 }
             }
             Context "Download via BITS Transfer" {
+                Disable-NetFirewallRule -DisplayName 'Core Networking - Group Policy (TCP-Out)'
                 $DownloadPath = Join-Path -Path $Target -ChildPath ([System.IO.Path]::GetRandomFileName())
                 New-Item -Path $DownloadPath -ItemType Directory -Force
                 Save-LatestUpdate -Updates $StackUpdates -Path $DownloadPath
