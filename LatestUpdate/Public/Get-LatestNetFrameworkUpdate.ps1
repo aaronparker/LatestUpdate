@@ -16,7 +16,7 @@ Function Get-LatestNetFrameworkUpdate {
     [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-net")]
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
-        [ValidateSet('Windows7', 'Windows8', 'Windows10', 'WindowsClient', 'WindowsServer', 'WindowsAll')]
+        [ValidateSet('Windows7', 'Windows8', 'Windows10', 'WindowsClient', 'WindowsServer', 'All')]
         [ValidateNotNullOrEmpty()]
         [System.String] $OS = 'Windows10'
     )
@@ -47,7 +47,7 @@ Function Get-LatestNetFrameworkUpdate {
                             InputObject = $filteredDownloadInfo
                             Property = "Note"
                             NewPropertyName = "Version"
-                            MatchPattern = $resourceStrings.Matches."$($OS)Version"
+                            MatchPattern = $resourceStrings.Matches.$OS
                         }
                         $updateListWithVersion = Add-Property @updateListWithVersionParams
 
