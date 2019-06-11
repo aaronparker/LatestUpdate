@@ -30,7 +30,7 @@ CompanyName = 'stealthpuppy'
 Copyright = '(c) 2019 stealthpuppy. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'A module for retrieving the latest Windows 10 / Windows Server 2016, 2019, Semi Annual Channel Cumulative Updates, Servicing Stack Updates, .NET Framework Cumulative Updates, the Monthly Rollups for 8.1 / 7 (and Windows Server 2012 R2, 2008 R2) and the latest Adobe Flash Player updates from the Microsoft Update History page. In addition, the module provides a function for downloading the update files locally.
+Description = 'A module for retrieving the latest Windows 10 / Windows Server 2016, 2019, Semi Annual Channel Cumulative Updates, Servicing Stack Updates, .NET Framework Cumulative Updates,  Monthly Rollups for 8.1 / 7 (and Windows Server 2012 R2, 2008 R2), the latest Adobe Flash Player updates and Windows Defender antimalware platform updates from the Microsoft Update History feeds. In addition, the module provides a function for downloading the update files locally.
 
 This module assists IT Pros in speeding Windows operating system deployments with tracking of Windows updates, offline patching in MDT for reference images or PC deployments, or direct application of updates to a WIM.
 
@@ -105,7 +105,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'Windows10','WindowsServer2019','WindowsServer2016','CumulativeUpdate','AdobeFlash','Adobe','Flash','LatestUpdate','MDT','MicrosoftDeploymentToolkit','MonthlyUpdate','ServicingStack'
+        Tags = 'Windows10','WindowsServer2019','WindowsServer2016','CumulativeUpdate','AdobeFlash','Adobe','Flash','LatestUpdate','MDT','MicrosoftDeploymentToolkit','MonthlyUpdate','ServicingStack', 'WindowsDefender'
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/aaronparker/LatestUpdate/blob/master/LICENSE'

@@ -90,7 +90,7 @@ Else {
         }
         Catch {
             # Sad panda; it broke
-            Write-Warning "Publishing $module $newVersion to the PowerShell Gallery failed."
+            Write-Warning -Message "Publishing $module $newVersion to the PowerShell Gallery failed."
             throw $_
         }
     }

@@ -15,12 +15,7 @@ Function Get-LatestAdobeFlashUpdate {
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-flash")]
     [Alias("Get-LatestFlash")]
-    Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
-        [ValidateSet('Windows7', 'Windows8', 'Windows10', 'WindowsClient', 'WindowsServer', 'All')]
-        [ValidateNotNullOrEmpty()]
-        [System.String] $OS = 'Windows10'
-    )
+    Param ()
     
     # Get module strings from the JSON
     $resourceStrings = Get-ModuleResource
@@ -44,7 +39,7 @@ Function Get-LatestAdobeFlashUpdate {
                     InputObject = $downloadInfo
                     Property = "Note"
                     NewPropertyName = "Version"
-                    MatchPattern = $resourceStrings.Matches."$($OS)Version"
+                    MatchPattern = $resourceStrings.Matches.Windows10Version
                 }
                 $updateListWithVersion = Add-Property @updateListWithVersionParams
 

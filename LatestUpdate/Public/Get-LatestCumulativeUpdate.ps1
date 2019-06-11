@@ -18,11 +18,6 @@ Function Get-LatestCumulativeUpdate {
     [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-latest")]
     [Alias("Get-LatestUpdate")]
     Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
-        [ValidateSet('Windows10', 'WindowsClient', 'WindowsServer', 'All')]
-        [ValidateNotNullOrEmpty()]
-        [System.String] $OS = 'Windows10',
-
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [ValidateSet('1903', '1809', '1803', '1709', '1703', '1607')]
         [ValidateNotNullOrEmpty()]
@@ -41,7 +36,7 @@ Function Get-LatestCumulativeUpdate {
             If ($Null -ne $updateFeed) {
 
                 # Filter the feed for cumulative updates and continue if we get updates
-                $updateList = Get-UpdateCumulative -UpdateFeed $updateFeed -Build $resourceStrings.VersionTable.$($OS)[$ver]
+                $updateList = Get-UpdateCumulative -UpdateFeed $updateFeed -Build $resourceStrings.VersionTable.Windows10[$ver]
                 If ($Null -ne $updateList) {
 
                     # Get download info for each update from the catalog
@@ -52,7 +47,7 @@ Function Get-LatestCumulativeUpdate {
                         InputObject = $downloadInfo
                         Property = "Note"
                         NewPropertyName = "Version"
-                        MatchPattern = $resourceStrings.Matches."$($OS)Version"
+                        MatchPattern = $resourceStrings.Matches.Windows10Version
                     }
                     $updateListWithVersion = Add-Property @updateListWithVersionParams
 

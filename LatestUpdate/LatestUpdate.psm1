@@ -1,3 +1,8 @@
+<#
+    .SYNOPSIS
+        LatestUpdate script to initiate the module
+#>
+
 # Get public and private function definition files
 $publicRoot = Join-Path -Path $PSScriptRoot -ChildPath "Public"
 $privateRoot = Join-Path -Path $PSScriptRoot -ChildPath "Private"

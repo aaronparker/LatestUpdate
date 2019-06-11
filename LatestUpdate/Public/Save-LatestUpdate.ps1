@@ -78,7 +78,7 @@ Function Save-LatestUpdate {
                     If ($pscmdlet.ShouldProcess($url, "WebDownload")) {
                         #Running on PowerShell Core or ForceWebRequest
                         try {
-                            $params = @{
+                            $iwrParams = @{
                                 Uri             = $url
                                 OutFile         = $updateDownloadTarget
                                 UseBasicParsing = $True
@@ -90,7 +90,7 @@ Function Save-LatestUpdate {
                             If ($PSBoundParameters.ContainsKey($Credential)) {
                                 $params.ProxyCredentials = $Credential
                             }
-                            Invoke-WebRequest @params
+                            Invoke-WebRequest @iwrParams
                         }
                         catch [System.Net.WebException] {
                             Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
@@ -105,11 +105,11 @@ Function Save-LatestUpdate {
                     If ($pscmdlet.ShouldProcess($(Split-Path -Path $url -Leaf), "BitsDownload")) {
                         #Running on Windows PowerShell
                         try {
-                            $params = @{
+                            $sbtParams = @{
                                 Source      = $url
                                 Destination = $updateDownloadTarget
                                 Priority    = $Priority
-                                DisplayName = "test"
+                                DisplayName = $update.Note
                                 Description = "Downloading $url"
                                 ErrorAction = $resourceStrings.Preferences.ErrorAction
                             }
@@ -122,7 +122,7 @@ Function Save-LatestUpdate {
                             If ($PSBoundParameters.ContainsKey($Credential)) {
                                 $params.ProxyCredential = $ProxyCredentials
                             }
-                            Start-BitsTransfer @params
+                            Start-BitsTransfer @sbtParams
                         }
                         catch [System.Net.WebException] {
                             Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))

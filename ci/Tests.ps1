@@ -12,7 +12,7 @@ If (Get-Variable -Name projectRoot -ErrorAction SilentlyContinue) {
         (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path -Path $output))
     }
     Else {
-        Write-Warning "Cannot find: APPVEYOR_JOB_ID"
+        Write-Warning -Message "Cannot find: APPVEYOR_JOB_ID"
     }
 }
 Else {

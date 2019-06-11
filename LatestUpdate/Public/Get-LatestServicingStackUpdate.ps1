@@ -18,11 +18,6 @@ Function Get-LatestServicingStackUpdate {
     [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-stack")]
     [Alias("Get-LatestServicingStack")]
     Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
-        [ValidateSet('Windows7', 'Windows8', 'Windows10', 'WindowsClient', 'WindowsServer', 'All')]
-        [ValidateNotNullOrEmpty()]
-        [System.String] $OS = 'Windows10',
-
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [ValidateSet('1903', '1809', '1803', '1709', '1703', '1607')]
         [ValidateNotNullOrEmpty()]
@@ -37,7 +32,7 @@ Function Get-LatestServicingStackUpdate {
 
         # Get the update feed and continue if successfully read
         ForEach ($ver in $Version) {
-            $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OS
+            $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows10
             If ($Null -ne $updateFeed) {
 
                 # Filter the feed for servicing stack updates and continue if we get updates
@@ -52,7 +47,7 @@ Function Get-LatestServicingStackUpdate {
                         InputObject = $downloadInfo
                         Property = "Note"
                         NewPropertyName = "Version"
-                        MatchPattern = $resourceStrings.Matches."$($OS)Version"
+                        MatchPattern = $resourceStrings.Matches.Windows10Version
                     }
                     $updateListWithVersion = Add-Property @updateListWithVersionParams
 
