@@ -12,7 +12,7 @@
 RootModule = 'LatestUpdate.psm1'
 
 # Version number of this module.
-ModuleVersion = '3.0.120'
+ModuleVersion = '3.0.121'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
