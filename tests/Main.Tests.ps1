@@ -3,7 +3,7 @@ If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
     $projectRoot = Resolve-Path -Path $env:APPVEYOR_BUILD_FOLDER
 }
 Else {
-    # Local Testing 
+    # Local Testing
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
 }
 If ($Null -eq $module ) { $module = "LatestUpdate" }
@@ -18,7 +18,7 @@ Describe "General project validation" {
     $scripts = Get-ChildItem (Join-Path $projectRoot $module) -Recurse -Include *.ps1, *.psm1
 
     # TestCases are splatted to the script so we need hashtables
-    $testCase = $scripts | Foreach-Object { @{file = $_ } }         
+    $testCase = $scripts | Foreach-Object { @{file = $_ } }
     It "Script <file> should be valid PowerShell" -TestCases $testCase {
         param($file)
 
@@ -34,7 +34,7 @@ Describe "General project validation" {
         param($file)
         $analysis = Invoke-ScriptAnalyzer -Path  $file.fullname -ExcludeRule @('PSAvoidGlobalVars', 'PSAvoidUsingConvertToSecureStringWithPlainText', 'PSAvoidUsingWMICmdlet') -Severity @('Warning', 'Error')   
         
-        ForEach ($rule in $scriptAnalyzerRules) {        
+        ForEach ($rule in $scriptAnalyzerRules) {
             If ($analysis.RuleName -contains $rule) {
                 $analysis |
                 Where-Object RuleName -EQ $rule -outvariable failures |
@@ -46,8 +46,8 @@ Describe "General project validation" {
 }
 
 Describe "Function validation" {
-    $scripts = Get-ChildItem (Join-Path $projectRoot $module) -Recurse -Include *.ps1
-    $testCase = $scripts | ForEach-Object { @{file = $_ } }         
+    $scripts = Get-ChildItem -Path (Join-Path $projectRoot $module) -Recurse -Include *.ps1
+    $testCase = $scripts | ForEach-Object { @{file = $_ } }
     It "Script <file> should only contain one function" -TestCases $testCase {
         param($file)   
         $file.fullname | Should Exist
@@ -57,7 +57,7 @@ Describe "Function validation" {
         $test.Count | Should Be 1
     }
     It "<file> should match function name" -TestCases $testCase {
-        param($file)   
+        param($file)
         $file.fullname | Should Exist
         $contents = Get-Content -Path $file.fullname -ErrorAction Stop
         $describes = [Management.Automation.Language.Parser]::ParseInput($contents, [ref]$null, [ref]$null)
@@ -67,7 +67,7 @@ Describe "Function validation" {
 }
 
 # Test module and manifest
-Describe 'Module Metadata Validation' {      
+Describe 'Module Metadata Validation' {
     It 'Script fileinfo should be OK' {
         { Test-ModuleManifest -Path $manifestPath -ErrorAction Stop } | Should Not Throw
     }   
