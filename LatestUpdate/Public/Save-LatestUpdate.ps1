@@ -27,7 +27,10 @@ Function Save-LatestUpdate {
         [Parameter(Mandatory = $False, Position = 1)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                If (-not (Test-Path -Path $_ -PathType 'Container')) {
+                If (Test-Path -Path $_ -PathType 'Container') {
+                    return $true
+                }
+                Else {
                     Throw "Cannot find path $_"
                 }
             })]
