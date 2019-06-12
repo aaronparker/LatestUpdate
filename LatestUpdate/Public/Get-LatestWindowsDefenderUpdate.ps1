@@ -32,7 +32,6 @@ Function Get-LatestWindowsDefenderUpdate {
                 $downloadInfoParams = @{
                     UpdateId     = $updateList.ID
                     OS           = $resourceStrings.SearchStrings.WindowsDefender
-                    Architecture = $resourceStrings.Matches.Architecture
                 }
                 $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 
