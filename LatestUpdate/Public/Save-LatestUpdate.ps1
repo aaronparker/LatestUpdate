@@ -135,9 +135,9 @@ Function Save-LatestUpdate {
                 }
                 If (Test-Path -Path $updateDownloadTarget) {
                     $PSObject = [PSCustomObject] @{
-                        Note   = $update.Note
-                        ID     = $update.KB
-                        Target = $updateDownloadTarget
+                        KB   = $update.KB
+                        Note = $update.Note
+                        Path = (Resolve-Path -Path $updateDownloadTarget)
                     }
                     $downloadedUpdates.Add($PSObject) | Out-Null
                 }

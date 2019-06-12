@@ -350,27 +350,27 @@ InModuleScope LatestUpdate {
                 ForEach ($Update in $DefenderUpdates) {
                     ForEach ($url in $update.URL) {
                         $Filename = Split-Path $url -Leaf
-                        It "Given updates returned from Get-LatestWindowsDefenderUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]" {
+                        It "Given updates returned from Get-LatestWindowsDefenderUpdate, it successfully downloads the update" {
                             (Join-Path $Target $Filename) | Should -Exist
                         }
-                        It "Should match actual downloaded file and Get-LatestWindowsDefenderUpdate output: [$($Update.Version), $($Update.Architecture)]" {
+                        It "Should match actual downloaded file and Get-LatestWindowsDefenderUpdate output" {
                             $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
                         }
                     }
                 }
             }
-            Context "Download via BITS Transfer" {
+            <#Context "Download via BITS Transfer" {
                 Disable-NetFirewallRule -DisplayName 'Core Networking - Group Policy (TCP-Out)'
                 $DownloadPath = Join-Path -Path $Target -ChildPath ([System.IO.Path]::GetRandomFileName())
                 New-Item -Path $DownloadPath -ItemType Directory -Force
                 Save-LatestUpdate -Updates $StackUpdates -Path $DownloadPath
                 ForEach ($Update in $StackUpdates) {
                     $Filename = Split-Path $Update.Url -Leaf
-                    It "Given downloads via BITS, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]" {
+                    It "Given downloads via BITS, it successfully downloads the update" {
                         (Join-Path $DownloadPath $Filename) | Should -Exist
                     }
                 }
-            }
+            }#>
         }
     }
 }
