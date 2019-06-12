@@ -279,6 +279,8 @@ InModuleScope LatestUpdate {
                         (Join-Path $Target $Filename) | Should -Exist
                     }
                     It "Should match actual downloaded file and Get-LatestCumulativeUpdate output: [$($Update.Version), $($Update.Architecture)]" {
+                        Write-Host "Target:   $(Join-Path $Target $Filename)"
+                        Write-Host "Download: $($Downloads.Path)"
                         $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
                     }
                 }
