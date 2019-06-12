@@ -25,7 +25,8 @@ Function Get-UpdateCatalogDownloadInfo {
     $searchResult = Invoke-UpdateCatalogSearch -UpdateId $UpdateId
 
     If ($Null -ne $searchResult) {
-        $UpdateCatalogDownloadItems = @()
+        # Output object
+        $UpdateCatalogDownloadItems = New-Object -TypeName System.Collections.ArrayList
 
         # Determine link id's and update description
         $UpdateCatalogItems = ($searchResult.Links | Where-Object { $_.Id -match "_link" })
@@ -76,7 +77,7 @@ Function Get-UpdateCatalogDownloadInfo {
                 }
 
                 if ($UpdateCatalogDownloadItem.Note) {
-                    $UpdateCatalogDownloadItems += $UpdateCatalogDownloadItem
+                    $UpdateCatalogDownloadItems.Add($UpdateCatalogDownloadItem) | Out-Null
                 }
             }
         }

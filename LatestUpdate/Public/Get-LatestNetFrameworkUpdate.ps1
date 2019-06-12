@@ -34,7 +34,8 @@ Function Get-LatestNetFrameworkUpdate {
             $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | Where-Object { $_.Title -match $resourceStrings.SearchStrings.$OS }
 
             If ($Null -ne $updateList) {
-                $updateItems = @()
+                # Output object
+                $updateItems = New-Object -TypeName System.Collections.ArrayList
 
                 ForEach ($update in $updateList) {
 
@@ -68,7 +69,7 @@ Function Get-LatestNetFrameworkUpdate {
                             $i++
                         }
 
-                        $updateItems += $updateListWithArch
+                        $updateItems.Add($updateListWithArch) | Out-Null
                     }
                 }
 
