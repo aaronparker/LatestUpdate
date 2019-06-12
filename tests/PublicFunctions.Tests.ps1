@@ -278,10 +278,12 @@ InModuleScope LatestUpdate {
                     It "Given updates returned from Get-LatestCumulativeUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]" {
                         (Join-Path $Target $Filename) | Should -Exist
                     }
-                    It "Should match actual downloaded file and Get-LatestCumulativeUpdate output: [$($Update.Version), $($Update.Architecture)]" {
-                        Write-Host "Target:   $(Join-Path $Target $Filename)"
-                        Write-Host "Download: $($Downloads.Path)"
-                        $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
+                }
+                ForEach ($Download in $Downloads) {
+                    It "Output from Save-LatestUpdate should have the expected properties" {
+                        $Download.KB.Length | Should -BeGreaterThan 0
+                        $Download.Note.Length | Should -BeGreaterThan 0
+                        $Download.Path.Length | Should -BeGreaterThan 0
                     }
                 }
             }
@@ -292,8 +294,12 @@ InModuleScope LatestUpdate {
                     It "Given updates returned from Get-LatestAdobeFlashUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]" {
                         (Join-Path $Target $Filename) | Should -Exist
                     }
-                    It "Should match actual downloaded file and Get-LatestAdobeFlashUpdate output: [$($Update.Version), $($Update.Architecture)]" {
-                        $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
+                }
+                ForEach ($Download in $Downloads) {
+                    It "Output from Save-LatestUpdate should have the expected properties" {
+                        $Download.KB.Length | Should -BeGreaterThan 0
+                        $Download.Note.Length | Should -BeGreaterThan 0
+                        $Download.Path.Length | Should -BeGreaterThan 0
                     }
                 }
             }
@@ -304,8 +310,12 @@ InModuleScope LatestUpdate {
                     It "Given updates returned from Get-LatestServicingStackUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]" {
                         (Join-Path $Target $Filename) | Should -Exist
                     }
-                    It "Should match actual downloaded file and Get-LatestServicingStackUpdate output: [$($Update.Version), $($Update.Architecture)]" {
-                        $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
+                }
+                ForEach ($Download in $Downloads) {
+                    It "Output from Save-LatestUpdate should have the expected properties" {
+                        $Download.KB.Length | Should -BeGreaterThan 0
+                        $Download.Note.Length | Should -BeGreaterThan 0
+                        $Download.Path.Length | Should -BeGreaterThan 0
                     }
                 }
             }
@@ -317,8 +327,12 @@ InModuleScope LatestUpdate {
                         It "Given updates returned from Get-LatestNetFrameworkUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]" {
                             (Join-Path $Target $Filename) | Should -Exist
                         }
-                        It "Should match actual downloaded file and Get-LatestNetFrameworkUpdate output: [$($Update.Version), $($Update.Architecture)]" {
-                            $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
+                    }
+                    ForEach ($Download in $Downloads) {
+                        It "Output from Save-LatestUpdate should have the expected properties" {
+                            $Download.KB.Length | Should -BeGreaterThan 0
+                            $Download.Note.Length | Should -BeGreaterThan 0
+                            $Download.Path.Length | Should -BeGreaterThan 0
                         }
                     }
                 }
@@ -330,8 +344,12 @@ InModuleScope LatestUpdate {
                     It "Given updates returned from Get-LatestMonthlyRollup, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]" {
                         (Join-Path $Target $Filename) | Should -Exist
                     }
-                    It "Should match actual downloaded file and Get-LatestMonthlyRollup output: [$($Update.Version), $($Update.Architecture)]" {
-                        $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
+                }
+                ForEach ($Download in $Downloads) {
+                    It "Output from Save-LatestUpdate should have the expected properties" {
+                        $Download.KB.Length | Should -BeGreaterThan 0
+                        $Download.Note.Length | Should -BeGreaterThan 0
+                        $Download.Path.Length | Should -BeGreaterThan 0
                     }
                 }
             }
@@ -342,8 +360,12 @@ InModuleScope LatestUpdate {
                     It "Given updates returned from Get-LatestMonthlyRollup, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]" {
                         (Join-Path $Target $Filename) | Should -Exist
                     }
-                    It "Should match actual downloaded file and Get-LatestMonthlyRollup output: [$($Update.Version), $($Update.Architecture)]" {
-                        $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
+                }
+                ForEach ($Download in $Downloads) {
+                    It "Output from Save-LatestUpdate should have the expected properties" {
+                        $Download.KB.Length | Should -BeGreaterThan 0
+                        $Download.Note.Length | Should -BeGreaterThan 0
+                        $Download.Path.Length | Should -BeGreaterThan 0
                     }
                 }
             }
@@ -355,9 +377,13 @@ InModuleScope LatestUpdate {
                         It "Given updates returned from Get-LatestWindowsDefenderUpdate, it successfully downloads the update" {
                             (Join-Path $Target $Filename) | Should -Exist
                         }
-                        It "Should match actual downloaded file and Get-LatestWindowsDefenderUpdate output" {
-                            $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
-                        }
+                    }
+                }
+                ForEach ($Download in $Downloads) {
+                    It "Output from Save-LatestUpdate should have the expected properties" {
+                        $Download.KB.Length | Should -BeGreaterThan 0
+                        $Download.Note.Length | Should -BeGreaterThan 0
+                        $Download.Path.Length | Should -BeGreaterThan 0
                     }
                 }
             }
@@ -370,6 +396,13 @@ InModuleScope LatestUpdate {
                     $Filename = Split-Path $Update.Url -Leaf
                     It "Given downloads via BITS, it successfully downloads the update" {
                         (Join-Path $DownloadPath $Filename) | Should -Exist
+                    }
+                }
+                ForEach ($Download in $Downloads) {
+                    It "Output from Save-LatestUpdate should have the expected properties" {
+                        $Download.KB.Length | Should -BeGreaterThan 0
+                        $Download.Note.Length | Should -BeGreaterThan 0
+                        $Download.Path.Length | Should -BeGreaterThan 0
                     }
                 }
             }#>
