@@ -27,10 +27,7 @@ Function Save-LatestUpdate {
         [Parameter(Mandatory = $False, Position = 1)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
-                If (Test-Path -Path $_ -PathType 'Container') {
-                    Return $True
-                }
-                Else {
+                If (-not (Test-Path -Path $_ -PathType 'Container')) {
                     Throw "Cannot find path $_"
                 }
             })]
@@ -41,7 +38,7 @@ Function Save-LatestUpdate {
 
         [Parameter(Mandatory = $False)]
         [System.Management.Automation.PSCredential]
-        $Credential = [System.Management.Automation.PSCredential]::Empty,
+        $ProxyCredential = [System.Management.Automation.PSCredential]::Empty,
 
         [Parameter(Mandatory = $False)]
         [System.Management.Automation.SwitchParameter] $ForceWebRequest,
@@ -84,11 +81,11 @@ Function Save-LatestUpdate {
                                 UseBasicParsing = $True
                                 ErrorAction     = $resourceStrings.Preferences.ErrorAction
                             }
-                            If ($PSBoundParameters.ContainsKey($Proxy)) {
-                                $params.Proxy = $Proxy
+                            If ($PSBoundParameters.ContainsKey('Proxy')) {
+                                $iwrParams.Proxy = $Proxy
                             }
-                            If ($PSBoundParameters.ContainsKey($Credential)) {
-                                $params.ProxyCredentials = $Credential
+                            If ($PSBoundParameters.ContainsKey('ProxyCredential')) {
+                                $iwrParams.ProxyCredentials = $ProxyCredential
                             }
                             Invoke-WebRequest @iwrParams
                         }
@@ -113,14 +110,14 @@ Function Save-LatestUpdate {
                                 Description = "Downloading $url"
                                 ErrorAction = $resourceStrings.Preferences.ErrorAction
                             }
-                            If ($PSBoundParameters.ContainsKey($Proxy)) {
+                            If ($PSBoundParameters.ContainsKey('Proxy')) {
                                 # Set priority to Foreground because the proxy will remove the Range protocol header
-                                $params.Priority = "Foreground"
-                                $params.ProxyUsage = "Override"
-                                $params.ProxyList = $Proxy
+                                $sbtParams.Priority   = "Foreground"
+                                $sbtParams.ProxyUsage = "Override"
+                                $sbtParams.ProxyList  = $Proxy
                             }
-                            If ($PSBoundParameters.ContainsKey($Credential)) {
-                                $params.ProxyCredential = $ProxyCredentials
+                            If ($PSBoundParameters.ContainsKey('ProxyCredential')) {
+                                $sbtParams.ProxyCredential = $ProxyCredentials
                             }
                             Start-BitsTransfer @sbtParams
                         }
