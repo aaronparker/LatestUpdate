@@ -35,10 +35,10 @@ Function Get-LatestServicingStackUpdate {
     # If resource strings are returned we can continue
     If ($Null -ne $resourceStrings) {
         # Get the update feed and continue if successfully read
-        ForEach ($ver in $Version) {
-            $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OS
+        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OS
 
-            If ($Null -ne $updateFeed) {
+        If ($Null -ne $updateFeed) {
+            ForEach ($ver in $Version) {
                 $updateListParams = @{
                     UpdateFeed = $updateFeed
                 }

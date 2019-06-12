@@ -18,8 +18,7 @@ Function Get-LatestMonthlyRollup {
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
         [ValidateSet('Windows8', 'Windows7')]
         [ValidateNotNullOrEmpty()]
-        [Alias("OS")]
-        [System.String] $Version = "Windows8"
+        [System.String] $OS = "Windows8"
     )
     
     # Get module strings from the JSON

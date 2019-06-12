@@ -34,11 +34,11 @@ Function Get-LatestCumulativeUpdate {
 
     # If resource strings are returned we can continue
     If ($Null -ne $resourceStrings) {
-        ForEach ($ver in $Version) {
-            # Get the update feed and continue if successfully read
-            $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows10
+        # Get the update feed and continue if successfully read
+        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows10
 
-            If ($Null -ne $updateFeed) {
+        If ($Null -ne $updateFeed) {
+            ForEach ($ver in $Version) {
                 # Filter the feed for cumulative updates and continue if we get updates
                 $updateList = Get-UpdateCumulative -UpdateFeed $updateFeed -Build $resourceStrings.VersionTable.Windows10[$ver]
 
