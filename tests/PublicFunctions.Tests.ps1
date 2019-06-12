@@ -279,7 +279,7 @@ InModuleScope LatestUpdate {
                         (Join-Path $Target $Filename) | Should -Exist
                     }
                     It "Should match actual downloaded file and Get-LatestCumulativeUpdate output: [$($Update.Version), $($Update.Architecture)]" {
-                        $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
+                        $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
                     }
                 }
             }
@@ -291,7 +291,7 @@ InModuleScope LatestUpdate {
                         (Join-Path $Target $Filename) | Should -Exist
                     }
                     It "Should match actual downloaded file and Get-LatestAdobeFlashUpdate output: [$($Update.Version), $($Update.Architecture)]" {
-                        $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
+                        $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
                     }
                 }
             }
@@ -303,7 +303,7 @@ InModuleScope LatestUpdate {
                         (Join-Path $Target $Filename) | Should -Exist
                     }
                     It "Should match actual downloaded file and Get-LatestServicingStackUpdate output: [$($Update.Version), $($Update.Architecture)]" {
-                        $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
+                        $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
                     }
                 }
             }
@@ -316,7 +316,7 @@ InModuleScope LatestUpdate {
                             (Join-Path $Target $Filename) | Should -Exist
                         }
                         It "Should match actual downloaded file and Get-LatestNetFrameworkUpdate output: [$($Update.Version), $($Update.Architecture)]" {
-                            $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
+                            $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
                         }
                     }
                 }
@@ -329,7 +329,7 @@ InModuleScope LatestUpdate {
                         (Join-Path $Target $Filename) | Should -Exist
                     }
                     It "Should match actual downloaded file and Get-LatestMonthlyRollup output: [$($Update.Version), $($Update.Architecture)]" {
-                        $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
+                        $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
                     }
                 }
             }
@@ -341,7 +341,7 @@ InModuleScope LatestUpdate {
                         (Join-Path $Target $Filename) | Should -Exist
                     }
                     It "Should match actual downloaded file and Get-LatestMonthlyRollup output: [$($Update.Version), $($Update.Architecture)]" {
-                        $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
+                        $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
                     }
                 }
             }
@@ -354,7 +354,7 @@ InModuleScope LatestUpdate {
                             (Join-Path $Target $Filename) | Should -Exist
                         }
                         It "Should match actual downloaded file and Get-LatestWindowsDefenderUpdate output" {
-                            $Downloads.Target -contains (Join-Path $Target $Filename) | Should -Be $True
+                            $Downloads.Path -contains (Join-Path $Target $Filename) | Should -Be $True
                         }
                     }
                 }
