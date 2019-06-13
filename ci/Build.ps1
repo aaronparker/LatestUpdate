@@ -2,6 +2,8 @@
     .SYNOPSIS
         AppVeyor build script.
 #>
+[OutputType()]
+Param ()
 
 If (Get-Variable -Name projectRoot -ErrorAction SilentlyContinue) {
     # Do something

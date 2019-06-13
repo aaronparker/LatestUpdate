@@ -2,6 +2,8 @@
     .SYNOPSIS
         AppVeyor tests script.
 #>
+[OutputType()]
+Param ()
 
 If (Get-Variable -Name projectRoot -ErrorAction SilentlyContinue) {
 

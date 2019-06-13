@@ -2,6 +2,8 @@
     .SYNOPSIS
         Output variables for testing.
 #>
+[OutputType()]
+Param ()
 
 Write-Host "$env:APPVEYOR"
 Write-Host "$env:APPVEYOR_API_URL"

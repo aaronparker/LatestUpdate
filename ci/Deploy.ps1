@@ -2,6 +2,8 @@
     .SYNOPSIS
         AppVeyor pre-deploy script.
 #> 
+[OutputType()]
+Param ()
 
 # Line break for readability in AppVeyor console
 Write-Host -Object ''
