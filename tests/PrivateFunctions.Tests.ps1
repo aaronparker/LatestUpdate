@@ -1,18 +1,21 @@
-# Pester tests
+<#
+    .SYNOPSIS
+        Private Pester function tests.
+#>
+[OutputType()]
+Param ()
+
 # Set variables
 If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
+    # AppVeyor Testing
     $projectRoot = Resolve-Path -Path $env:APPVEYOR_BUILD_FOLDER
+    $module = $env:Module
 }
 Else {
     # Local Testing 
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
+    $module = "LatestUpdate"
 }
-If ($Null -eq $module ) { $module = "LatestUpdate" }
-$moduleParent = Join-Path $projectRoot $module
-$manifestPath = Join-Path $moduleParent "$module.psd1"
-$modulePath = Join-Path $moduleParent "$module.psm1"
-$modulePrivate = Join-Path $moduleParent "Private"
-$modulePublic = Join-Path $moduleParent "Public"
 Import-Module (Join-Path $projectRoot $module) -Force
 
 InModuleScope LatestUpdate {
