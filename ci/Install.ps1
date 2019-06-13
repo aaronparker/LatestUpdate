@@ -5,17 +5,17 @@
 [OutputType()]
 Param ()
 
-# AppVeyor Testing
+# Set variables
 If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
+    # AppVeyor Testing
     $projectRoot = Resolve-Path -Path $env:APPVEYOR_BUILD_FOLDER
+    $module = $env:Module
 }
 Else {
     # Local Testing 
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-    If (Test-Path -Path env:Module) { $module = $env:Module } Else { $module = "LatestUpdate" }
+    $module = "LatestUpdate"
 }
-
-# Set variables
 $tests = Join-Path $projectRoot "tests"
 $output = Join-Path $projectRoot "TestsResults.xml"
 

@@ -7,12 +7,14 @@ Param ()
 
 # Set variables
 If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
+    # AppVeyor Testing
     $projectRoot = Resolve-Path -Path $env:APPVEYOR_BUILD_FOLDER
+    $module = $env:Module
 }
 Else {
-    # Local Testing
+    # Local Testing 
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-    If (Test-Path -Path env:Module) { $module = $env:Module } Else { $module = "LatestUpdate" }
+    $module = "LatestUpdate"
 }
 $moduleParent = Join-Path $projectRoot $module
 $manifestPath = Join-Path $moduleParent "$module.psd1"

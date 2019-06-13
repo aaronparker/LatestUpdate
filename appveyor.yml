@@ -23,4 +23,3 @@ skip_commits:
 only_commits:
   files:
     - LatestUpdate/**/*
-    - tests/**/*
