@@ -21,7 +21,8 @@ Function Get-LatestServicingStackUpdate {
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
         [ValidateSet('Windows10', 'Windows8', 'Windows7')]
         [ValidateNotNullOrEmpty()]
-        [System.String] $OS = 'Windows10',
+        [alias('OS')]
+        [System.String] $OperatingSystem = 'Windows10',
 
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [ValidateSet('1903', '1809', '1803', '1709', '1703', '1607')]
@@ -35,14 +36,14 @@ Function Get-LatestServicingStackUpdate {
     # If resource strings are returned we can continue
     If ($Null -ne $resourceStrings) {
         # Get the update feed and continue if successfully read
-        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OS
+        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OperatingSystem
 
         If ($Null -ne $updateFeed) {
             ForEach ($ver in $Version) {
                 $updateListParams = @{
                     UpdateFeed = $updateFeed
                 }
-                if ($OS -eq "Windows10") {
+                if ($OperatingSystem -eq "Windows10") {
                     $updateListParams.Version = $ver
                 }
                 # Filter the feed for servicing stack updates and continue if we get updates
@@ -50,14 +51,14 @@ Function Get-LatestServicingStackUpdate {
 
                 If ($Null -ne $updateList) {
                     # Get download info for each update from the catalog
-                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $resourceStrings.SearchStrings.$OS
+                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $resourceStrings.SearchStrings.$OperatingSystem
 
                     # Add the Version and Architecture properties to the list
                     $updateListWithVersionParams = @{
                         InputObject = $downloadInfo
                         Property = "Note"
                         NewPropertyName = "Version"
-                        MatchPattern = $resourceStrings.Matches."$($OS)Version"
+                        MatchPattern = $resourceStrings.Matches."$($OperatingSystem)Version"
                     }
                     $updateListWithVersion = Add-Property @updateListWithVersionParams
 

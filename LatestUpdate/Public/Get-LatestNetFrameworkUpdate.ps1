@@ -18,7 +18,8 @@ Function Get-LatestNetFrameworkUpdate {
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
         [ValidateSet('Windows10', 'Windows8', 'Windows7', 'WindowsClient', 'WindowsServer', 'All')]
         [ValidateNotNullOrEmpty()]
-        [System.String] $OS = 'Windows10'
+        [alias('OS')]
+        [System.String] $OperatingSystem = 'Windows10'
     )
 
     # Get module strings from the JSON
@@ -31,7 +32,7 @@ Function Get-LatestNetFrameworkUpdate {
 
         If ($Null -ne $updateFeed) {
             # Filter the feed for NET Framework updates and continue if we get updates
-            $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | Where-Object { $_.Title -match $resourceStrings.SearchStrings.$OS }
+            $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | Where-Object { $_.Title -match $resourceStrings.SearchStrings.$OperatingSystem }
 
             If ($Null -ne $updateList) {
                 # Output object
@@ -40,7 +41,7 @@ Function Get-LatestNetFrameworkUpdate {
                 ForEach ($update in $updateList) {
 
                     # Get download info for each update from the catalog
-                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $update.ID -OS $resourceStrings.SearchStrings.$OS
+                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $update.ID -OS $resourceStrings.SearchStrings.$OperatingSystem
 
                     if ($downloadInfo) {
                         # Add the Version and Architecture properties to the list
@@ -48,7 +49,7 @@ Function Get-LatestNetFrameworkUpdate {
                             InputObject = $downloadInfo
                             Property = "Note"
                             NewPropertyName = "Version"
-                            MatchPattern = $resourceStrings.Matches."$($OS)Version"
+                            MatchPattern = $resourceStrings.Matches."$($OperatingSystem)Version"
                         }
                         $updateListWithVersion = Add-Property @updateListWithVersionParams
 

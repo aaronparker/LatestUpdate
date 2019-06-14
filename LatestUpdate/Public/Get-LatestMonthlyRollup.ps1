@@ -18,7 +18,8 @@ Function Get-LatestMonthlyRollup {
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
         [ValidateSet('Windows8', 'Windows7')]
         [ValidateNotNullOrEmpty()]
-        [System.String] $OS = "Windows8"
+        [alias('OS')]
+        [System.String] $OperatingSystem = "Windows8"
     )
     
     # Get module strings from the JSON
@@ -26,7 +27,7 @@ Function Get-LatestMonthlyRollup {
 
     # If resource strings are returned we can continue
     If ($Null -ne $resourceStrings) {
-        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OS
+        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OperatingSystem
 
         If ($Null -ne $updateFeed) {
             # Filter the feed for monthly rollup updates and continue if we get updates
@@ -34,14 +35,14 @@ Function Get-LatestMonthlyRollup {
 
             If ($Null -ne $updateList) {
                 # Get download info for each update from the catalog
-                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $resourceStrings.SearchStrings.$OS -Architecture $resourceStrings.Architecture.x86x64
+                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $resourceStrings.SearchStrings.$OperatingSystem -Architecture $resourceStrings.Architecture.x86x64
 
                 # Add the Version property to the list
                 $updateListWithVersionParams = @{
                     InputObject     = $downloadInfo
                     Property        = "Note"
                     NewPropertyName = "Version"
-                    MatchPattern    = $resourceStrings.Matches."$($OS)Version"
+                    MatchPattern    = $resourceStrings.Matches."$($OperatingSystem)Version"
                 }
                 $updateListWithVersion = Add-Property @updateListWithVersionParams
 

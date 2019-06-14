@@ -19,7 +19,8 @@ Function Get-LatestAdobeFlashUpdate {
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
         [ValidateSet('Windows10', 'Windows8')]
         [ValidateNotNullOrEmpty()]
-        [System.String] $OS = 'Windows10'
+        [alias('OS')]
+        [System.String] $OperatingSystem = 'Windows10'
     )
     
     # Get module strings from the JSON
@@ -28,7 +29,7 @@ Function Get-LatestAdobeFlashUpdate {
     # If resource strings are returned we can continue
     If ($Null -ne $resourceStrings) {
         # Get the update feed and continue if successfully read
-        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OS
+        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OperatingSystem
 
         If ($Null -ne $updateFeed) {
             # Filter the feed for Adobe Flash updates and continue if we get updates
@@ -36,14 +37,14 @@ Function Get-LatestAdobeFlashUpdate {
 
             If ($Null -ne $updateList) {
                 # Get download info for each update from the catalog
-                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $resourceStrings.SearchStrings.$OS
+                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $resourceStrings.SearchStrings.$OperatingSystem
 
                 # Add the Version and Architecture properties to the list
                 $updateListWithVersionParams = @{
                     InputObject = $downloadInfo
                     Property = "Note"
                     NewPropertyName = "Version"
-                    MatchPattern = $resourceStrings.Matches."$($OS)Version"
+                    MatchPattern = $resourceStrings.Matches."$($OperatingSystem)Version"
                 }
                 $updateListWithVersion = Add-Property @updateListWithVersionParams
 

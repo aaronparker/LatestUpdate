@@ -21,7 +21,8 @@ Function Get-LatestCumulativeUpdate {
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
         [ValidateSet('Windows10', 'WindowsClient', 'WindowsServer')]
         [ValidateNotNullOrEmpty()]
-        [System.String] $OS = 'Windows10',
+        [alias('OS')]
+        [System.String] $OperatingSystem = 'Windows10',
 
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [ValidateSet('1903', '1809', '1803', '1709', '1703', '1607')]
@@ -44,7 +45,7 @@ Function Get-LatestCumulativeUpdate {
 
                 If ($Null -ne $updateList) {
                     # Get download info for each update from the catalog
-                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $resourceStrings.SearchStrings.$OS
+                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $resourceStrings.SearchStrings.$OperatingSystem
 
                     # Add the Version and Architecture properties to the list
                     $updateListWithVersionParams = @{
