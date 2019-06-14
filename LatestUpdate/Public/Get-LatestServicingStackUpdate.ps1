@@ -26,6 +26,11 @@ Function Get-LatestServicingStackUpdate {
 
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [ValidateSet('1903', '1809', '1803', '1709', '1703', '1607')]
+        [ValidateScript({
+            if ($OperatingSystem -ne 'Windows10') {
+                Write-Warning -Message "Version can only be used in combination with the Windows 10 Operating System. Ignoring the input."
+            }
+        })]
         [ValidateNotNullOrEmpty()]
         [System.String[]] $Version = "1903"
     )
