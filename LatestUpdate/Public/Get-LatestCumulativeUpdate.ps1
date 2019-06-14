@@ -19,7 +19,7 @@ Function Get-LatestCumulativeUpdate {
     [Alias("Get-LatestUpdate")]
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
-        [ValidateSet('Windows10', 'WindowsClient', 'WindowsServer', 'All')]
+        [ValidateSet('Windows10', 'WindowsClient', 'WindowsServer')]
         [ValidateNotNullOrEmpty()]
         [System.String] $OS = 'Windows10',
 
