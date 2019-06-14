@@ -30,6 +30,7 @@ Function Get-LatestServicingStackUpdate {
             if ($OperatingSystem -ne 'Windows10') {
                 Write-Warning -Message "Version can only be used in combination with the Windows 10 Operating System. Ignoring the input."
             }
+            return $true
         })]
         [ValidateNotNullOrEmpty()]
         [System.String[]] $Version = "1903"
