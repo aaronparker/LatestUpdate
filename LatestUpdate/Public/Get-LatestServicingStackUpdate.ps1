@@ -18,8 +18,20 @@ Function Get-LatestServicingStackUpdate {
     [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-stack")]
     [Alias("Get-LatestServicingStack")]
     Param (
+        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
+        [ValidateSet('Windows10', 'Windows8', 'Windows7')]
+        [ValidateNotNullOrEmpty()]
+        [alias('OS')]
+        [System.String] $OperatingSystem = 'Windows10',
+
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [ValidateSet('1903', '1809', '1803', '1709', '1703', '1607')]
+        [ValidateScript({
+            if ($OperatingSystem -ne 'Windows10') {
+                Write-Warning -Message "Version can only be used in combination with the Windows 10 Operating System. Ignoring the input."
+            }
+            return $true
+        })]
         [ValidateNotNullOrEmpty()]
         [System.String[]] $Version = "1903"
     )
@@ -29,25 +41,30 @@ Function Get-LatestServicingStackUpdate {
 
     # If resource strings are returned we can continue
     If ($Null -ne $resourceStrings) {
-
         # Get the update feed and continue if successfully read
-        ForEach ($ver in $Version) {
-            $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows10
-            If ($Null -ne $updateFeed) {
+        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OperatingSystem
 
+        If ($Null -ne $updateFeed) {
+            ForEach ($ver in $Version) {
+                $updateListParams = @{
+                    UpdateFeed = $updateFeed
+                }
+                if ($OperatingSystem -eq "Windows10") {
+                    $updateListParams.Version = $ver
+                }
                 # Filter the feed for servicing stack updates and continue if we get updates
-                $updateList = Get-UpdateServicingStack -UpdateFeed $updateFeed -Version $ver
-                If ($Null -ne $updateList) {
+                $updateList = Get-UpdateServicingStack @updateListParams
 
+                If ($Null -ne $updateList) {
                     # Get download info for each update from the catalog
-                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID
+                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $resourceStrings.SearchStrings.$OperatingSystem
 
                     # Add the Version and Architecture properties to the list
                     $updateListWithVersionParams = @{
                         InputObject = $downloadInfo
                         Property = "Note"
                         NewPropertyName = "Version"
-                        MatchPattern = $resourceStrings.Matches.Windows10Version
+                        MatchPattern = $resourceStrings.Matches."$($OperatingSystem)Version"
                     }
                     $updateListWithVersion = Add-Property @updateListWithVersionParams
 
@@ -58,6 +75,15 @@ Function Get-LatestServicingStackUpdate {
                         MatchPattern = $resourceStrings.Matches.Architecture
                     }
                     $updateListWithArch = Add-Property @updateListWithArchParams
+
+                    # If the value for Architecture is blank, make it "x86"
+                    $i = 0
+                    ForEach ($update in $updateListWithArch) {
+                        If ($update.Architecture.Length -eq 0) {
+                            $updateListWithArch[$i].Architecture = "x86"
+                        }
+                        $i++
+                    }
 
                     # Return object to the pipeline
                     Write-Output -InputObject $updateListWithArch

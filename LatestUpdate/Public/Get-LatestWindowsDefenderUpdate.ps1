@@ -21,18 +21,19 @@ Function Get-LatestWindowsDefenderUpdate {
 
     # If resource strings are returned we can continue
     If ($Null -ne $resourceStrings) {
-
         $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.WindowsDefender
-        If ($Null -ne $updateFeed) {
 
+        If ($Null -ne $updateFeed) {
             # Filter the feed for servicing stack updates and continue if we get updates
             $updateList = Get-UpdateDefender -UpdateFeed $updateFeed
-            If ($Null -ne $updateList) {
 
+            If ($Null -ne $updateList) {
                 # Get download info for each update from the catalog
-                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
-                    -OS $resourceStrings.SearchStrings.WindowsDefender `
-                    -Architecture $resourceStrings.SearchStrings.WindowsDefender
+                $downloadInfoParams = @{
+                    UpdateId     = $updateList.ID
+                    OS           = $resourceStrings.SearchStrings.WindowsDefender
+                }
+                $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 
                 # Return object to the pipeline
                 Write-Output -InputObject $downloadInfo

@@ -18,8 +18,8 @@ Function Get-LatestMonthlyRollup {
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
         [ValidateSet('Windows8', 'Windows7')]
         [ValidateNotNullOrEmpty()]
-        [Alias("OS")]
-        [System.String] $Version = "Windows8"
+        [alias('OS')]
+        [System.String] $OperatingSystem = "Windows8"
     )
     
     # Get module strings from the JSON
@@ -27,36 +27,22 @@ Function Get-LatestMonthlyRollup {
 
     # If resource strings are returned we can continue
     If ($Null -ne $resourceStrings) {
-
-        Switch ($Version) {
-            "Windows8" {
-                $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows8
-                $osName = $resourceStrings.SearchStrings.Windows8
-                $matchPattern = $resourceStrings.Matches.Windows8Version
-            }
-            "Windows7" {
-                $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows7
-                $osName = $resourceStrings.SearchStrings.Windows7
-                $matchPattern = $resourceStrings.Matches.Windows7Version
-            }
-        }
+        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OperatingSystem
 
         If ($Null -ne $updateFeed) {
-
             # Filter the feed for monthly rollup updates and continue if we get updates
             $updateList = Get-UpdateMonthly -UpdateFeed $updateFeed
-            If ($Null -ne $updateList) {
 
+            If ($Null -ne $updateList) {
                 # Get download info for each update from the catalog
-                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $osName -Architecture $resourceStrings.Architecture.x86x64
-                $filteredDownloadInfo = $downloadInfo | Sort-Object -Unique -Property Note
+                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $resourceStrings.SearchStrings.$OperatingSystem -Architecture $resourceStrings.Architecture.x86x64
 
                 # Add the Version property to the list
                 $updateListWithVersionParams = @{
-                    InputObject     = $filteredDownloadInfo
+                    InputObject     = $downloadInfo
                     Property        = "Note"
                     NewPropertyName = "Version"
-                    MatchPattern    = $matchPattern
+                    MatchPattern    = $resourceStrings.Matches."$($OperatingSystem)Version"
                 }
                 $updateListWithVersion = Add-Property @updateListWithVersionParams
 
