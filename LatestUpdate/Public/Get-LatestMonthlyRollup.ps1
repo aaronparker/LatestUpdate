@@ -22,12 +22,9 @@ Function Get-LatestMonthlyRollup {
         [System.String] $OperatingSystem = "Windows8"
     )
     
-    # Get module strings from the JSON
-    $resourceStrings = Get-ModuleResource
-
     # If resource strings are returned we can continue
-    If ($Null -ne $resourceStrings) {
-        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OperatingSystem
+    If ($Null -ne $script:resourceStrings) {
+        $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.$OperatingSystem
 
         If ($Null -ne $updateFeed) {
             # Filter the feed for monthly rollup updates and continue if we get updates
@@ -36,15 +33,15 @@ Function Get-LatestMonthlyRollup {
             If ($Null -ne $updateList) {
                 # Get download info for each update from the catalog
                 $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
-                    -OperatingSystem $resourceStrings.SearchStrings.$OperatingSystem `
-                    -Architecture $resourceStrings.Architecture.x86x64
+                    -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem `
+                    -Architecture $script:resourceStrings.Architecture.x86x64
 
                 # Add the Version property to the list
                 $updateListWithVersionParams = @{
                     InputObject     = $downloadInfo
                     Property        = "Note"
                     NewPropertyName = "Version"
-                    MatchPattern    = $resourceStrings.Matches."$($OperatingSystem)Version"
+                    MatchPattern    = $script:resourceStrings.Matches."$($OperatingSystem)Version"
                 }
                 $updateListWithVersion = Add-Property @updateListWithVersionParams
 
@@ -53,7 +50,7 @@ Function Get-LatestMonthlyRollup {
                     InputObject     = $updateListWithVersion
                     Property        = "Note"
                     NewPropertyName = "Architecture"
-                    MatchPattern    = $resourceStrings.Matches.Architecture
+                    MatchPattern    = $script:resourceStrings.Matches.Architecture
                 }
                 $updateListWithArch = Add-Property @updateListWithArchParams
 

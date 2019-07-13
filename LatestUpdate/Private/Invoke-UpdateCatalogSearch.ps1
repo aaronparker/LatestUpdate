@@ -14,23 +14,20 @@ Function Invoke-UpdateCatalogSearch {
         [System.String] $SearchString
     )
 
-    # Get module strings from the JSON
-    $resourceStrings = Get-ModuleResource
-
-    If ($Null -ne $resourceStrings) {
+    If ($Null -ne $script:resourceStrings) {
         try {
             $iwrParams = @{
-                ContentType     = $resourceStrings.ContentType.html
+                ContentType     = $script:resourceStrings.ContentType.html
                 UserAgent       = [Microsoft.PowerShell.Commands.PSUserAgent]::Chrome
                 UseBasicParsing = $True
-                ErrorAction     = $resourceStrings.Preferences.ErrorAction
+                ErrorAction     = $script:resourceStrings.Preferences.ErrorAction
             }
             If ($PSBoundParameters.ContainsKey('SearchString')) {
-                $iwrParams.Uri = "$($resourceStrings.CatalogUris.Search)$($UpdateId)+$($SearchString)"
+                $iwrParams.Uri = "$($script:resourceStrings.CatalogUris.Search)$($UpdateId)+$($SearchString)"
                 Write-Verbose -Message "$($MyInvocation.MyCommand): search Catalog for [$UpdateId+$SearchString]"
             }
             Else {
-                $iwrParams.Uri = "$($resourceStrings.CatalogUris.Search)$($UpdateId)"
+                $iwrParams.Uri = "$($script:resourceStrings.CatalogUris.Search)$($UpdateId)"
                 Write-Verbose -Message "$($MyInvocation.MyCommand): search Catalog for [$UpdateId)]"
             }
             $searchResult = Invoke-WebRequest @iwrParams

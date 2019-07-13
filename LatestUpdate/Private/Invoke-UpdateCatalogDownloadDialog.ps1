@@ -11,18 +11,15 @@ Function Invoke-UpdateCatalogDownloadDialog {
         [System.Collections.Hashtable] $Body
     )
 
-    # Get module strings from the JSON
-    $resourceStrings = Get-ModuleResource
-
-    If ($Null -ne $resourceStrings) {
+    If ($Null -ne $script:resourceStrings) {
         try {
             $params = @{
-                Uri             = $resourceStrings.CatalogUris.Download
+                Uri             = $script:resourceStrings.CatalogUris.Download
                 Body            = $Body
-                ContentType     = $resourceStrings.ContentType.html
+                ContentType     = $script:resourceStrings.ContentType.html
                 UserAgent       = [Microsoft.PowerShell.Commands.PSUserAgent]::Chrome
                 UseBasicParsing = $True
-                ErrorAction     = $resourceStrings.Preferences.ErrorAction
+                ErrorAction     = $script:resourceStrings.Preferences.ErrorAction
             }
             $downloadResult = Invoke-WebRequest @params
         }

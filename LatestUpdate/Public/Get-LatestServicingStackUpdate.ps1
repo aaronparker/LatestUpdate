@@ -34,9 +34,6 @@ Function Get-LatestServicingStackUpdate {
         [System.String[]] $Version
     )
 
-    # Get module strings from the JSON
-    # $resourceStrings = Get-ModuleResource
-
     # If resource strings are returned we can continue
     If ($Null -ne $script:resourceStrings) {
         # Get the update feed and continue if successfully read

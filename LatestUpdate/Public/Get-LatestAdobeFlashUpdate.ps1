@@ -27,14 +27,11 @@ Function Get-LatestAdobeFlashUpdate {
         [System.String[]] $Version = "1903"
     )
     
-    # Get module strings from the JSON
-    $resourceStrings = Get-ModuleResource
-
     # If resource strings are returned we can continue
-    If ($Null -ne $resourceStrings) {
+    If ($Null -ne $script:resourceStrings) {
         
         # Get the update feed and continue if successfully read
-        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.$OperatingSystem
+        $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.$OperatingSystem
         If ($Null -ne $updateFeed) {
 
             # Filter the feed for Adobe Flash updates and continue if we get updates
@@ -47,7 +44,7 @@ Function Get-LatestAdobeFlashUpdate {
                         ForEach ($ver in $Version) {
                             # Get download info for each update from the catalog
                             $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
-                                -OperatingSystem $resourceStrings.SearchStrings.$OperatingSystem -SearchString $ver
+                                -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem -SearchString $ver
 
                             If ($Null -ne $downloadInfo) {
 
@@ -56,14 +53,14 @@ Function Get-LatestAdobeFlashUpdate {
                                     InputObject     = $downloadInfo
                                     Property        = "Note"
                                     NewPropertyName = "Version"
-                                    MatchPattern    = $resourceStrings.Matches."$($OperatingSystem)Version"
+                                    MatchPattern    = $script:resourceStrings.Matches."$($OperatingSystem)Version"
                                 }
                                 $updateListWithVersion = Add-Property @updateListWithVersionParams
                                 $updateListWithArchParams = @{
                                     InputObject     = $updateListWithVersion
                                     Property        = "Note"
                                     NewPropertyName = "Architecture"
-                                    MatchPattern    = $resourceStrings.Matches.Architecture
+                                    MatchPattern    = $script:resourceStrings.Matches.Architecture
                                 }
                                 $updateListWithArch = Add-Property @updateListWithArchParams
                 
@@ -76,7 +73,7 @@ Function Get-LatestAdobeFlashUpdate {
                     "Windows8" {
                         # Get download info for each update from the catalog
                         $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
-                            -OperatingSystem $resourceStrings.SearchStrings.$OperatingSystem
+                            -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem
 
                         If ($Null -ne $downloadInfo) {
 
@@ -85,14 +82,14 @@ Function Get-LatestAdobeFlashUpdate {
                                 InputObject     = $downloadInfo
                                 Property        = "Note"
                                 NewPropertyName = "Version"
-                                MatchPattern    = $resourceStrings.Matches."$($OperatingSystem)Version"
+                                MatchPattern    = $script:resourceStrings.Matches."$($OperatingSystem)Version"
                             }
                             $updateListWithVersion = Add-Property @updateListWithVersionParams
                             $updateListWithArchParams = @{
                                 InputObject     = $updateListWithVersion
                                 Property        = "Note"
                                 NewPropertyName = "Architecture"
-                                MatchPattern    = $resourceStrings.Matches.Architecture
+                                MatchPattern    = $script:resourceStrings.Matches.Architecture
                             }
                             $updateListWithArch = Add-Property @updateListWithArchParams
                 

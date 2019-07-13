@@ -16,12 +16,9 @@ Function Get-LatestWindowsDefenderUpdate {
     [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-defender")]
     Param ()
     
-    # Get module strings from the JSON
-    $resourceStrings = Get-ModuleResource
-
     # If resource strings are returned we can continue
-    If ($Null -ne $resourceStrings) {
-        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.WindowsDefender
+    If ($Null -ne $script:resourceStrings) {
+        $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.WindowsDefender
 
         If ($Null -ne $updateFeed) {
             # Filter the feed for servicing stack updates and continue if we get updates
@@ -31,7 +28,7 @@ Function Get-LatestWindowsDefenderUpdate {
                 # Get download info for each update from the catalog
                 $downloadInfoParams = @{
                     UpdateId = $updateList.ID
-                    OS       = $resourceStrings.SearchStrings.WindowsDefender
+                    OS       = $script:resourceStrings.SearchStrings.WindowsDefender
                 }
                 $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 

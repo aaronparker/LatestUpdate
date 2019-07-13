@@ -22,18 +22,15 @@ Function Get-LatestNetFrameworkUpdate {
         [System.String] $OperatingSystem = 'Windows10'
     )
 
-    # Get module strings from the JSON
-    $resourceStrings = Get-ModuleResource
-
     # If resource strings are returned we can continue
-    If ($Null -ne $resourceStrings) {
+    If ($Null -ne $script:resourceStrings) {
         # Get the update feed and continue if successfully read
-        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.NetFramework
+        $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.NetFramework
 
         If ($Null -ne $updateFeed) {
             # Filter the feed for NET Framework updates and continue if we get updates
             $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | `
-                Where-Object { $_.Title -match $resourceStrings.SearchStrings.$OperatingSystem }
+                Where-Object { $_.Title -match $script:resourceStrings.SearchStrings.$OperatingSystem }
 
             If ($Null -ne $updateList) {
                 # Output object
@@ -43,7 +40,7 @@ Function Get-LatestNetFrameworkUpdate {
 
                     # Get download info for each update from the catalog
                     $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $update.ID `
-                        -OperatingSystem $resourceStrings.SearchStrings.$OperatingSystem
+                        -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem
 
                     if ($downloadInfo) {
                         # Add the Version and Architecture properties to the list
@@ -51,7 +48,7 @@ Function Get-LatestNetFrameworkUpdate {
                             InputObject     = $downloadInfo
                             Property        = "Note"
                             NewPropertyName = "Version"
-                            MatchPattern    = $resourceStrings.Matches."$($OperatingSystem)Version"
+                            MatchPattern    = $script:resourceStrings.Matches."$($OperatingSystem)Version"
                         }
                         $updateListWithVersion = Add-Property @updateListWithVersionParams
 
@@ -59,7 +56,7 @@ Function Get-LatestNetFrameworkUpdate {
                             InputObject     = $updateListWithVersion
                             Property        = "Note"
                             NewPropertyName = "Architecture"
-                            MatchPattern    = $resourceStrings.Matches.Architecture
+                            MatchPattern    = $script:resourceStrings.Matches.Architecture
                         }
                         $updateListWithArch = Add-Property @updateListWithArchParams
 

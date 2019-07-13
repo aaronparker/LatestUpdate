@@ -21,9 +21,6 @@ Function Get-UpdateCatalogDownloadInfo {
         [System.String] $SearchString
     )
 
-    # Get module strings from the JSON
-    $resourceStrings = Get-ModuleResource
-
     # Search the Update Catalog for the specific update KB
     If ($PSBoundParameters.ContainsKey('SearchString')) {
         $searchResult = Invoke-UpdateCatalogSearch -UpdateId $UpdateId -SearchString $SearchString
@@ -41,7 +38,7 @@ Function Get-UpdateCatalogDownloadInfo {
 
         ForEach ($UpdateCatalogItem in $UpdateCatalogItems) {
             If (($UpdateCatalogItem.outerHTML -match $Architecture) -and ($UpdateCatalogItem.outerHTML -match $OperatingSystem)) {
-                $CurrentUpdateDescription = ($UpdateCatalogItem.outerHTML -replace $resourceStrings.Matches.DownloadDescription, '$1').Trim()
+                $CurrentUpdateDescription = ($UpdateCatalogItem.outerHTML -replace $script:resourceStrings.Matches.DownloadDescription, '$1').Trim()
                 $CurrentUpdateLinkID = $UpdateCatalogItem.id.Replace("_link", "")
                 Write-Verbose -Message "$($MyInvocation.MyCommand): match item [$CurrentUpdateDescription]"
             }
@@ -56,7 +53,7 @@ Function Get-UpdateCatalogDownloadInfo {
             # Construct an ordered hashtable containing the update ID data and convert to JSON
             $UpdateCatalogTable = [Ordered] @{
                 Size      = 0
-                Languages = $resourceStrings.Languages.Default
+                Languages = $script:resourceStrings.Languages.Default
                 UidInfo   = $UpdateCatalogData.LinkID
                 UpdateID  = $UpdateCatalogData.LinkID
             }
@@ -73,7 +70,7 @@ Function Get-UpdateCatalogDownloadInfo {
             # Match specific update
             If ($Null -ne $updateDownload) {
                 $updateDownloadURL = $updateDownload | Select-Object -ExpandProperty Content |
-                Select-String -AllMatches -Pattern $resourceStrings.Matches.DownloadUrl |
+                Select-String -AllMatches -Pattern $script:resourceStrings.Matches.DownloadUrl |
                 ForEach-Object { $_.Matches.Value }
                         
                 Write-Verbose -Message "$($MyInvocation.MyCommand): extract URL [$updateDownloadURL]"

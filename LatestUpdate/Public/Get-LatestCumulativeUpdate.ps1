@@ -29,38 +29,35 @@ Function Get-LatestCumulativeUpdate {
         [System.String[]] $Version = "1903"
     )
     
-    # Get module strings from the JSON
-    $resourceStrings = Get-ModuleResource
-
     # If resource strings are returned we can continue
-    If ($Null -ne $resourceStrings) {
+    If ($Null -ne $script:resourceStrings) {
         # Get the update feed and continue if successfully read
-        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows10
+        $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.Windows10
 
         If ($Null -ne $updateFeed) {
             ForEach ($ver in $Version) {
                 # Filter the feed for cumulative updates and continue if we get updates
                 $updateList = Get-UpdateCumulative -UpdateFeed $updateFeed `
-                    -Build $resourceStrings.VersionTable.Windows10Builds[$ver]
+                    -Build $script:resourceStrings.VersionTable.Windows10Builds[$ver]
 
                 If ($Null -ne $updateList) {
                     # Get download info for each update from the catalog
                     $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
-                        -OperatingSystem $resourceStrings.SearchStrings.$OperatingSystem
+                        -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem
 
                     # Add the Version and Architecture properties to the list
                     $updateListWithVersionParams = @{
                         InputObject     = $downloadInfo
                         Property        = "Note"
                         NewPropertyName = "Version"
-                        MatchPattern    = $resourceStrings.Matches.Windows10Version
+                        MatchPattern    = $script:resourceStrings.Matches.Windows10Version
                     }
                     $updateListWithVersion = Add-Property @updateListWithVersionParams
                     $updateListWithArchParams = @{
                         InputObject     = $updateListWithVersion
                         Property        = "Note"
                         NewPropertyName = "Architecture"
-                        MatchPattern    = $resourceStrings.Matches.Architecture
+                        MatchPattern    = $script:resourceStrings.Matches.Architecture
                     }
                     $updateListWithArch = Add-Property @updateListWithArchParams
 
