@@ -23,8 +23,7 @@ Function Get-LatestAdobeFlashUpdate {
         [System.String] $OperatingSystem = 'Windows10',
 
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
-        [ValidateNotNullOrEmpty()]
-        [System.String[]] $Version = "1903"
+        [System.String[]] $Version = $script:resourceStrings.ParameterValues.Windows10Versions[0]
     )
     
     # If resource strings are returned we can continue

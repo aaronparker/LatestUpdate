@@ -16,10 +16,9 @@ Function Get-LatestMonthlyRollup {
     [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-monthly")]
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
-        [ValidateSet('Windows8', 'Windows7')]
         [ValidateNotNullOrEmpty()]
         [Alias('OS')]
-        [System.String] $OperatingSystem = "Windows8"
+        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.Versions87[0]
     )
     
     # If resource strings are returned we can continue

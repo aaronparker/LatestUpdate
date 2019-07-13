@@ -15,7 +15,7 @@ Function Get-UpdateCatalogDownloadInfo {
 
         [Parameter(Mandatory = $False)]
         [Alias('OS')]
-        [System.String] $OperatingSystem = "Windows 10|Windows Server",
+        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.Windows10,
 
         [Parameter(Mandatory = $False)]
         [System.String] $SearchString
@@ -81,7 +81,7 @@ Function Get-UpdateCatalogDownloadInfo {
                     URL  = $updateDownloadURL
                 }
 
-                if ($UpdateCatalogDownloadItem.Note) {
+                If ($UpdateCatalogDownloadItem.Note) {
                     $UpdateCatalogDownloadItems.Add($UpdateCatalogDownloadItem) | Out-Null
                 }
             }

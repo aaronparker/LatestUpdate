@@ -16,10 +16,9 @@ Function Get-LatestNetFrameworkUpdate {
     [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-net")]
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
-        [ValidateSet('Windows10', 'Windows8', 'Windows7', 'WindowsClient', 'WindowsServer', 'All')]
         [ValidateNotNullOrEmpty()]
         [Alias('OS')]
-        [System.String] $OperatingSystem = 'Windows10'
+        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.VersionsComplete[0]
     )
 
     # If resource strings are returned we can continue

@@ -19,14 +19,12 @@ Function Get-LatestCumulativeUpdate {
     [Alias("Get-LatestUpdate")]
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
-        [ValidateSet('Windows10', 'WindowsClient', 'WindowsServer')]
         [ValidateNotNullOrEmpty()]
         [Alias('OS')]
-        [System.String] $OperatingSystem = 'Windows10',
+        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.VersionsAll[0],
 
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
-        [ValidateNotNullOrEmpty()]
-        [System.String[]] $Version = "1903"
+        [System.String[]] $Version = $script:resourceStrings.ParameterValues.Windows10Versions[0]
     )
     
     # If resource strings are returned we can continue

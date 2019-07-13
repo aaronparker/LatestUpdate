@@ -43,15 +43,28 @@
       "1709" : "16299",
       "1703" : "15063",
       "1607" : "14393"
-    },
+    }
+  },
+  "ParameterValues" : {
     "Windows10Versions" : [
-      "1903",
-      "1809",
-      "1803",
-      "1709",
-      "1703",
-      "1607"
-    ]
+      "1903", "1809", "1803", "1709", "1703", "1607"
+    ],
+    "VersionsAll" : [
+      "Windows10", "Windows8", "Windows7"
+    ],
+    "Versions108" : [
+      "Windows10", "Windows8"
+    ],
+    "Versions87" : [
+      "Windows8", "Windows7"
+    ],
+    "Versions10" : [
+      "Windows10", "WindowsClient", "WindowsServer"
+    ],
+    "VersionsComplete" : [
+    "Windows10", "Windows8", "Windows7", "WindowsClient", "WindowsServer", "All"
+    ],
+    "Windows10" : "Windows 10|Windows Server"
   },
   "Languages" : {
     "Default" : "en-US"

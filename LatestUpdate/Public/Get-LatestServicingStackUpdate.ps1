@@ -19,10 +19,9 @@ Function Get-LatestServicingStackUpdate {
     [Alias("Get-LatestServicingStack")]
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
-        [ValidateSet('Windows10', 'Windows8', 'Windows7')]
         [ValidateNotNullOrEmpty()]
         [Alias('OS')]
-        [System.String] $OperatingSystem = 'Windows10',
+        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.VersionsAll[0],
 
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [ValidateScript( {
