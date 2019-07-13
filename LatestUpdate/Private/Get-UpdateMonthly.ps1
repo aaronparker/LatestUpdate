@@ -4,9 +4,9 @@ Function Get-UpdateMonthly {
             Builds an object with the Windows 8.1/7 Monthly Update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False)]
+    [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline)]
+        [Parameter(Mandatory = $False, Position = 0)]
         [ValidateNotNullOrEmpty()]
         [System.Xml.XmlNode] $UpdateFeed
     )

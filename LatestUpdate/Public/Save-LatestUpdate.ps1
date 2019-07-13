@@ -92,11 +92,16 @@ Function Save-LatestUpdate {
                             }
                             Invoke-WebRequest @iwrParams
                         }
+                        catch [System.Net.Http.HttpRequestException] {
+                            Write-Warning -Message "$($MyInvocation.MyCommand): HttpRequestException: Check URL is valid: $url."
+                            Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
+                        }
                         catch [System.Net.WebException] {
+                            Write-Warning -Message "$($MyInvocation.MyCommand): WebException."
                             Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
                         }
                         catch [System.Exception] {
-                            Write-Warning -Message "$($MyInvocation.MyCommand): failed to download: $url."
+                            Write-Warning -Message "$($MyInvocation.MyCommand): Failed to download: $url."
                             Throw $_.Exception.Message
                         }
                     }
@@ -115,20 +120,17 @@ Function Save-LatestUpdate {
                             }
                             If ($PSBoundParameters.ContainsKey('Proxy')) {
                                 # Set priority to Foreground because the proxy will remove the Range protocol header
-                                $sbtParams.Priority   = "Foreground"
+                                $sbtParams.Priority = "Foreground"
                                 $sbtParams.ProxyUsage = "Override"
-                                $sbtParams.ProxyList  = $Proxy
+                                $sbtParams.ProxyList = $Proxy
                             }
                             If ($PSBoundParameters.ContainsKey('ProxyCredential')) {
                                 $sbtParams.ProxyCredential = $ProxyCredentials
                             }
                             Start-BitsTransfer @sbtParams
                         }
-                        catch [System.Net.WebException] {
-                            Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
-                        }
                         catch [System.Exception] {
-                            Write-Warning -Message "$($MyInvocation.MyCommand): failed to download: $url."
+                            Write-Warning -Message "$($MyInvocation.MyCommand): Exception: check URL is valid: $url."
                             Throw $_.Exception.Message
                         }
                     }

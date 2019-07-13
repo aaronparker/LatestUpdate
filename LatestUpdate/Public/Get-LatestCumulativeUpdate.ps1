@@ -15,13 +15,13 @@ Function Get-LatestCumulativeUpdate {
         This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Cumulative Update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-latest")]
+    [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-latest")]
     [Alias("Get-LatestUpdate")]
     Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
+        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
         [ValidateSet('Windows10', 'WindowsClient', 'WindowsServer')]
         [ValidateNotNullOrEmpty()]
-        [alias('OS')]
+        [Alias('OS')]
         [System.String] $OperatingSystem = 'Windows10',
 
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
@@ -41,26 +41,27 @@ Function Get-LatestCumulativeUpdate {
         If ($Null -ne $updateFeed) {
             ForEach ($ver in $Version) {
                 # Filter the feed for cumulative updates and continue if we get updates
-                $updateList = Get-UpdateCumulative -UpdateFeed $updateFeed -Build $resourceStrings.VersionTable.Windows10[$ver]
+                $updateList = Get-UpdateCumulative -UpdateFeed $updateFeed `
+                    -Build $resourceStrings.VersionTable.Windows10[$ver]
 
                 If ($Null -ne $updateList) {
                     # Get download info for each update from the catalog
-                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $resourceStrings.SearchStrings.$OperatingSystem
+                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
+                        -OperatingSystem $resourceStrings.SearchStrings.$OperatingSystem
 
                     # Add the Version and Architecture properties to the list
                     $updateListWithVersionParams = @{
-                        InputObject = $downloadInfo
-                        Property = "Note"
+                        InputObject     = $downloadInfo
+                        Property        = "Note"
                         NewPropertyName = "Version"
-                        MatchPattern = $resourceStrings.Matches.Windows10Version
+                        MatchPattern    = $resourceStrings.Matches.Windows10Version
                     }
                     $updateListWithVersion = Add-Property @updateListWithVersionParams
-
                     $updateListWithArchParams = @{
-                        InputObject = $updateListWithVersion
-                        Property = "Note"
+                        InputObject     = $updateListWithVersion
+                        Property        = "Note"
                         NewPropertyName = "Architecture"
-                        MatchPattern = $resourceStrings.Matches.Architecture
+                        MatchPattern    = $resourceStrings.Matches.Architecture
                     }
                     $updateListWithArch = Add-Property @updateListWithArchParams
 

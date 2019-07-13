@@ -15,23 +15,23 @@ Function Get-LatestServicingStackUpdate {
         This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Servicing Stack Update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-stack")]
+    [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-stack")]
     [Alias("Get-LatestServicingStack")]
     Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
+        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
         [ValidateSet('Windows10', 'Windows8', 'Windows7')]
         [ValidateNotNullOrEmpty()]
-        [alias('OS')]
+        [Alias('OS')]
         [System.String] $OperatingSystem = 'Windows10',
 
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [ValidateSet('1903', '1809', '1803', '1709', '1703', '1607')]
-        [ValidateScript({
-            if ($OperatingSystem -ne 'Windows10') {
-                Write-Warning -Message "Version can only be used in combination with the Windows 10 Operating System. Ignoring the input."
-            }
-            return $true
-        })]
+        [ValidateScript( {
+                if ($OperatingSystem -ne 'Windows10') {
+                    Write-Warning -Message "Version can only be used in combination with the Windows 10 Operating System. Ignoring the input."
+                }
+                return $true
+            })]
         [ValidateNotNullOrEmpty()]
         [System.String[]] $Version = "1903"
     )
@@ -57,22 +57,23 @@ Function Get-LatestServicingStackUpdate {
 
                 If ($Null -ne $updateList) {
                     # Get download info for each update from the catalog
-                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $resourceStrings.SearchStrings.$OperatingSystem
+                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
+                        -OperatingSystem $resourceStrings.SearchStrings.$OperatingSystem
 
                     # Add the Version and Architecture properties to the list
                     $updateListWithVersionParams = @{
-                        InputObject = $downloadInfo
-                        Property = "Note"
+                        InputObject     = $downloadInfo
+                        Property        = "Note"
                         NewPropertyName = "Version"
-                        MatchPattern = $resourceStrings.Matches."$($OperatingSystem)Version"
+                        MatchPattern    = $resourceStrings.Matches."$($OperatingSystem)Version"
                     }
                     $updateListWithVersion = Add-Property @updateListWithVersionParams
 
                     $updateListWithArchParams = @{
-                        InputObject = $updateListWithVersion
-                        Property = "Note"
+                        InputObject     = $updateListWithVersion
+                        Property        = "Note"
                         NewPropertyName = "Architecture"
-                        MatchPattern = $resourceStrings.Matches.Architecture
+                        MatchPattern    = $resourceStrings.Matches.Architecture
                     }
                     $updateListWithArch = Add-Property @updateListWithArchParams
 

@@ -4,7 +4,7 @@ Function Get-UpdateCatalogDownloadInfo {
             Builds an object with the update notes and download details.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False)]
+    [CmdletBinding()]
     Param(
         [Parameter(Mandatory = $True)]
         [ValidateNotNullOrEmpty()]
@@ -14,15 +14,23 @@ Function Get-UpdateCatalogDownloadInfo {
         [System.String] $Architecture,
 
         [Parameter(Mandatory = $False)]
-        [ValidateNotNullOrEmpty()]
-        [System.String] $OS = "Windows 10|Windows Server"
+        [Alias('OS')]
+        [System.String] $OperatingSystem = "Windows 10|Windows Server",
+
+        [Parameter(Mandatory = $False)]
+        [System.String] $SearchString
     )
 
     # Get module strings from the JSON
     $resourceStrings = Get-ModuleResource
 
     # Search the Update Catalog for the specific update KB
-    $searchResult = Invoke-UpdateCatalogSearch -UpdateId $UpdateId
+    If ($PSBoundParameters.ContainsKey('SearchString')) {
+        $searchResult = Invoke-UpdateCatalogSearch -UpdateId $UpdateId -SearchString $SearchString
+    }
+    Else {
+        $searchResult = Invoke-UpdateCatalogSearch -UpdateId $UpdateId
+    }
 
     If ($Null -ne $searchResult) {
         # Output object
@@ -32,7 +40,7 @@ Function Get-UpdateCatalogDownloadInfo {
         $UpdateCatalogItems = ($searchResult.Links | Where-Object { $_.Id -match "_link" })
 
         ForEach ($UpdateCatalogItem in $UpdateCatalogItems) {
-            If (($UpdateCatalogItem.outerHTML -match $Architecture) -and ($UpdateCatalogItem.outerHTML -match $OS)) {
+            If (($UpdateCatalogItem.outerHTML -match $Architecture) -and ($UpdateCatalogItem.outerHTML -match $OperatingSystem)) {
                 $CurrentUpdateDescription = ($UpdateCatalogItem.outerHTML -replace $resourceStrings.Matches.DownloadDescription, '$1').Trim()
                 $CurrentUpdateLinkID = $UpdateCatalogItem.id.Replace("_link", "")
                 Write-Verbose -Message "$($MyInvocation.MyCommand): match item [$CurrentUpdateDescription]"

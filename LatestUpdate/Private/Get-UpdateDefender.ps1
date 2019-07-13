@@ -4,9 +4,9 @@ Function Get-UpdateDefender {
             Builds an object with the update for Windows Defender antimalware platform.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False)]
+    [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline)]
+        [Parameter(Mandatory = $False, Position = 0)]
         [ValidateNotNullOrEmpty()]
         [System.Xml.XmlNode] $UpdateFeed
     )

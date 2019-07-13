@@ -13,7 +13,7 @@ Function Get-LatestWindowsDefenderUpdate {
         This commands reads the the Windows Defender update history feed and returns an object that lists the most recent Windows Defender antimalware platform update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-defender")]
+    [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-defender")]
     Param ()
     
     # Get module strings from the JSON
@@ -30,8 +30,8 @@ Function Get-LatestWindowsDefenderUpdate {
             If ($Null -ne $updateList) {
                 # Get download info for each update from the catalog
                 $downloadInfoParams = @{
-                    UpdateId     = $updateList.ID
-                    OS           = $resourceStrings.SearchStrings.WindowsDefender
+                    UpdateId = $updateList.ID
+                    OS       = $resourceStrings.SearchStrings.WindowsDefender
                 }
                 $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 

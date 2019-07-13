@@ -4,13 +4,13 @@ Function Get-UpdateServicingStack {
             Builds an object with the Servicing Stack Update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False)]
+    [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline)]
+        [Parameter(Mandatory = $False, Position = 0)]
         [ValidateNotNullOrEmpty()]
         [System.Xml.XmlNode] $UpdateFeed,
 
-        [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline)]
+        [Parameter(Mandatory = $False, Position = 1)]
         [ValidateNotNullOrEmpty()]
         [System.String] $Version
     )

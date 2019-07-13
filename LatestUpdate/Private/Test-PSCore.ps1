@@ -3,7 +3,7 @@ Function Test-PSCore {
         .SYNOPSIS
             Returns True if running on PowerShell Core.
     #>
-    [CmdletBinding(SupportsShouldProcess = $False)]
+    [CmdletBinding()]
     [OutputType([Boolean])]
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline)]

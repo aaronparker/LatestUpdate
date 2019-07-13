@@ -13,12 +13,12 @@ Function Get-LatestNetFrameworkUpdate {
         This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 .NET Framework Cumulative Update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-net")]
+    [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-net")]
     Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
+        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
         [ValidateSet('Windows10', 'Windows8', 'Windows7', 'WindowsClient', 'WindowsServer', 'All')]
         [ValidateNotNullOrEmpty()]
-        [alias('OS')]
+        [Alias('OS')]
         [System.String] $OperatingSystem = 'Windows10'
     )
 
@@ -32,7 +32,8 @@ Function Get-LatestNetFrameworkUpdate {
 
         If ($Null -ne $updateFeed) {
             # Filter the feed for NET Framework updates and continue if we get updates
-            $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | Where-Object { $_.Title -match $resourceStrings.SearchStrings.$OperatingSystem }
+            $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | `
+                Where-Object { $_.Title -match $resourceStrings.SearchStrings.$OperatingSystem }
 
             If ($Null -ne $updateList) {
                 # Output object
@@ -41,23 +42,24 @@ Function Get-LatestNetFrameworkUpdate {
                 ForEach ($update in $updateList) {
 
                     # Get download info for each update from the catalog
-                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $update.ID -OS $resourceStrings.SearchStrings.$OperatingSystem
+                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $update.ID `
+                        -OperatingSystem $resourceStrings.SearchStrings.$OperatingSystem
 
                     if ($downloadInfo) {
                         # Add the Version and Architecture properties to the list
                         $updateListWithVersionParams = @{
-                            InputObject = $downloadInfo
-                            Property = "Note"
+                            InputObject     = $downloadInfo
+                            Property        = "Note"
                             NewPropertyName = "Version"
-                            MatchPattern = $resourceStrings.Matches."$($OperatingSystem)Version"
+                            MatchPattern    = $resourceStrings.Matches."$($OperatingSystem)Version"
                         }
                         $updateListWithVersion = Add-Property @updateListWithVersionParams
 
                         $updateListWithArchParams = @{
-                            InputObject = $updateListWithVersion
-                            Property = "Note"
+                            InputObject     = $updateListWithVersion
+                            Property        = "Note"
                             NewPropertyName = "Architecture"
-                            MatchPattern = $resourceStrings.Matches.Architecture
+                            MatchPattern    = $resourceStrings.Matches.Architecture
                         }
                         $updateListWithArch = Add-Property @updateListWithArchParams
 
