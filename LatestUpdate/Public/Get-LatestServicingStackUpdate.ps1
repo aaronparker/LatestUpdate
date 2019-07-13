@@ -24,12 +24,6 @@ Function Get-LatestServicingStackUpdate {
         [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.VersionsAll[0],
 
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
-        [ValidateScript( {
-                If ($OperatingSystem -ne 'Windows10') {
-                    Write-Information -Message "INFO: The Version parameter is only valid for Windows10. Ignoring parameter." -InformationAction Continue
-                }
-                Return $True
-            })]
         [System.String[]] $Version
     )
 
@@ -85,6 +79,10 @@ Function Get-LatestServicingStackUpdate {
                 }
                 
                 "Windows8|Windows7" {
+                    If ($PSBoundParameters.ContainsKey('Version')) {
+                        Write-Information -Message "INFO: The Version parameter is only valid for Windows10. Ignoring parameter." -InformationAction Continue
+                    }
+
                     # Filter the feed for servicing stack updates and continue if we get updates
                     $updateList = Get-UpdateServicingStack -UpdateFeed $updateFeed
         
