@@ -2,8 +2,8 @@
 
 [![License][license-badge]][license]
 [![GitHub Release][github-release-badge]][github-release]
-[![PowerShell Gallery][psgallery-badge]][psgallery]
 [![PowerShell Gallery Version][psgallery-version-badge]][psgallery]
+[![PowerShell Gallery][psgallery-badge]][psgallery]
 
 [![Master build status][appveyor-badge]][appveyor-build]
 [![Development build status][appveyor-badge-dev]][appveyor-build]
