@@ -33,9 +33,9 @@ Function Get-UpdateDefender {
         $sortedUpdateList = New-Object -TypeName System.Collections.ArrayList
         ForEach ($update in $updateList) {
             $PSObject = [PSCustomObject] @{
-                Title    = $update.title
-                ID       = "KB{0}" -f ($update.id).Split(":")[2]
-                Updated  = ([DateTime]::Parse($update.updated))
+                Title   = $update.title
+                ID      = "KB{0}" -f ($update.id).Split(":")[2]
+                Updated = ([DateTime]::Parse($update.updated))
             }
             $sortedUpdateList.Add($PSObject) | Out-Null
         }

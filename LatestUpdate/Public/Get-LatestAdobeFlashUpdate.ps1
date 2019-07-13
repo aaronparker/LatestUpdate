@@ -23,7 +23,6 @@ Function Get-LatestAdobeFlashUpdate {
         [System.String] $OperatingSystem = 'Windows10',
 
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
-        [ValidateSet('1903', '1809', '1803', '1709', '1703', '1607')]
         [ValidateNotNullOrEmpty()]
         [System.String[]] $Version = "1903"
     )

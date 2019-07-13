@@ -2,6 +2,8 @@
     .SYNOPSIS
         LatestUpdate script to initiate the module
 #>
+[CmdletBinding()]
+Param ()
 
 # Get public and private function definition files
 $publicRoot = Join-Path -Path $PSScriptRoot -ChildPath "Public"
@@ -22,3 +24,16 @@ ForEach ($import in @($public + $private)) {
 
 # Export the Public modules
 Export-ModuleMember -Function $public.Basename -Alias *
+
+# Get module strings
+$script:resourceStrings = Get-ModuleResource
+
+# Dynamic autocompletion values
+$scriptBlock = {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)    
+    $script:resourceStrings = Get-ModuleResource
+    $script:resourceStrings.VersionTable.Windows10Versions
+}
+Register-ArgumentCompleter -CommandName Get-LatestServicingStackUpdate -ParameterName Version -ScriptBlock $scriptBlock
+Register-ArgumentCompleter -CommandName Get-LatestCumulativeUpdate -ParameterName Version -ScriptBlock $scriptBlock
+Register-ArgumentCompleter -CommandName Get-LatestAdobeFlashUpdate -ParameterName Version -ScriptBlock $scriptBlock

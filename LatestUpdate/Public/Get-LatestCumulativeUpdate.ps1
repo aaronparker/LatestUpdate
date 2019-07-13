@@ -25,7 +25,6 @@ Function Get-LatestCumulativeUpdate {
         [System.String] $OperatingSystem = 'Windows10',
 
         [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
-        [ValidateSet('1903', '1809', '1803', '1709', '1703', '1607')]
         [ValidateNotNullOrEmpty()]
         [System.String[]] $Version = "1903"
     )
@@ -42,7 +41,7 @@ Function Get-LatestCumulativeUpdate {
             ForEach ($ver in $Version) {
                 # Filter the feed for cumulative updates and continue if we get updates
                 $updateList = Get-UpdateCumulative -UpdateFeed $updateFeed `
-                    -Build $resourceStrings.VersionTable.Windows10[$ver]
+                    -Build $resourceStrings.VersionTable.Windows10Builds[$ver]
 
                 If ($Null -ne $updateList) {
                     # Get download info for each update from the catalog

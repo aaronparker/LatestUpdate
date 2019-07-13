@@ -33,17 +33,25 @@
     "Windows8" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/b905caa1-d413-c90c-bed3-20aead901092/atom",
     "Windows7" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/f825ca23-c7d1-aab8-4513-64980e1c3007/atom",
     "NetFramework" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/df2c02f6-9610-d46d-2d76-fa570bd8c86a/atom",
-    "WindowsDefender": "https://support.microsoft.com/app/content/api/content/feeds/sap/en-au/5d4715e7-a9c9-378e-3f83-fd410db4ef0a/atom"
+    "WindowsDefender" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-au/5d4715e7-a9c9-378e-3f83-fd410db4ef0a/atom"
   },
   "VersionTable" : {
-    "Windows10" : {
+    "Windows10Builds" : {
       "1903" : "18362",
       "1809" : "17763",
       "1803" : "17134",
       "1709" : "16299",
       "1703" : "15063",
       "1607" : "14393"
-    }
+    },
+    "Windows10Versions" : [
+      "1903",
+      "1809",
+      "1803",
+      "1709",
+      "1703",
+      "1607"
+    ]
   },
   "Languages" : {
     "Default" : "en-US"

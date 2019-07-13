@@ -24,9 +24,9 @@ Function Add-Property {
     )
 
     ForEach ($object in $InputObject) {
-        $value = $object | Select-Object -ExpandProperty $Property | 
-                Select-String -AllMatches -Pattern $MatchPattern |
-                ForEach-Object { $_.Matches.Value }
+        $value = $object | Select-Object -ExpandProperty $Property | `
+            Select-String -AllMatches -Pattern $MatchPattern | `
+            ForEach-Object { $_.Matches.Value }
         
         If ($value.Count -ge 2) {
             $value = $value | Select-Object -Last 1

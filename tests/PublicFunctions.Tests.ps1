@@ -36,7 +36,7 @@ InModuleScope LatestUpdate {
     If ($Null -eq $DefenderUpdates) { $DefenderUpdates = Get-LatestWindowsDefenderUpdate }
     If ($Null -eq $8RollupUpdates) { $8RollupUpdates = Get-LatestMonthlyRollup -OperatingSystem 'Windows8' }
     If ($Null -eq $7RollupUpdates) { $7RollupUpdates = Get-LatestMonthlyRollup -OperatingSystem 'Windows7' }
-    Write-Host "Update retrieved. Starting tests." -ForegroundColor Cyan
+    Write-Host "Updates retrieved. Starting tests." -ForegroundColor Cyan
 
     Describe 'Get-LatestCumulativeUpdate' {
         Context "Returns a valid list of Cumulative updates" {
