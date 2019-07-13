@@ -1,10 +1,12 @@
 # LatestUpdate
 
 [![License][license-badge]][license]
-[![Build status][appveyor-badge]][appveyor-build]
 [![GitHub Release][github-release-badge]][github-release]
 [![PowerShell Gallery][psgallery-badge]][psgallery]
 [![PowerShell Gallery Version][psgallery-version-badge]][psgallery]
+
+[![Master build status][appveyor-badge]][appveyor-build]
+[![Development build status][appveyor-badge-dev]][appveyor-build]
 
 ## About
 
@@ -31,7 +33,8 @@ This module uses code and inspiration from these sources:
 * [Keith Garner](https://twitter.com/keithga1) - [gist](https://gist.github.com/keithga/1ad0abd1f7ba6e2f8aff63d94ab03048)
 * [Nickolaj Andersen](https://twitter.com/NickolajA) - [script](https://github.com/SCConfigMgr/ConfigMgr/blob/master/Software%20Updates/Invoke-MSLatestUpdateDownload.ps1)
 
-[appveyor-badge]: https://ci.appveyor.com/api/projects/status/s4g24puifpegq7kf/branch/master?svg=true&logo=PowerShell&style=flat-square
+[appveyor-badge]: https://ci.appveyor.com/api/projects/status/s4g24puifpegq7kf/branch/master?svg=true&failingText=master%20-%20failing&passingText=master%20-%20OK&logo=PowerShell&style=flat-square
+[appveyor-badge-dev]: https://ci.appveyor.com/api/projects/status/s4g24puifpegq7kf/branch/development?svg=true&failingText=development%20-%20failing&passingText=development%20-%20OK&logo=PowerShell&style=flat-square
 [appveyor-build]: https://ci.appveyor.com/project/aaronparker/latestupdate/
 [psgallery-badge]: https://img.shields.io/powershellgallery/dt/latestupdate.svg?logo=PowerShell&style=flat-square
 [psgallery]: https://www.powershellgallery.com/packages/latestupdate
