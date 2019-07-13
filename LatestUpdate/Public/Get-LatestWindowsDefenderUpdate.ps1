@@ -27,8 +27,8 @@ Function Get-LatestWindowsDefenderUpdate {
             If ($Null -ne $updateList) {
                 # Get download info for each update from the catalog
                 $downloadInfoParams = @{
-                    UpdateId = $updateList.ID
-                    OS       = $script:resourceStrings.SearchStrings.WindowsDefender
+                    UpdateId        = $updateList.ID
+                    OperatingSystem = $script:resourceStrings.SearchStrings.WindowsDefender
                 }
                 $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 

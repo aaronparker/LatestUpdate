@@ -1,26 +1,49 @@
 Function Get-LatestAdobeFlashUpdate {
     <#
         .SYNOPSIS
-            Retrieves the latest Windows 10 Adobe Flash Player Update.
+            Retrieves the latest Adobe Flash Player Updates.
 
         .DESCRIPTION
-            Retrieves the latest Windows 10 Adobe Flash Player Update from the Windows 10 update history feed.
+            Retrieves the latest Adobe Flash Player Update from the Windows update history feeds.
+
+        .PARAMETER OperatingSystem
+            Specifies the the Windows operating system version to search for updates.
+
+        .PARAMETER Version
+            Specifies the Windows 10 Semi-annual Channel version number. Only valid when 'Windows10' is specified for -OperatingSystem.
 
         .EXAMPLE
 
         PS C:\> Get-LatestAdobeFlashUpdate
 
-        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Adobe Flash Player Update.
+        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Semi-annual Channel Adobe Flash Player Updates.
+
+        .EXAMPLE
+
+        PS C:\> Get-LatestAdobeFlashUpdate -OperatingSystem Windows10 -Version 1809
+
+        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 1809 Adobe Flash Player Updates.
+
+        .EXAMPLE
+
+        PS C:\> Get-LatestAdobeFlashUpdate -Version 1809
+
+        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 1809 Adobe Flash Player Updates.
+
+        .EXAMPLE
+
+        PS C:\> Get-LatestAdobeFlashUpdate -OperatingSystem Windows8
+
+        This commands reads the the Windows 8 update history feed and returns an object that lists the most recent Adobe Flash Player Updates.
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-flash")]
     [Alias("Get-LatestFlash")]
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
-        [ValidateSet('Windows10', 'Windows8')]
         [ValidateNotNullOrEmpty()]
         [Alias('OS')]
-        [System.String] $OperatingSystem = 'Windows10',
+        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.Versions108[0],
 
         [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [System.String[]] $Version = $script:resourceStrings.ParameterValues.Windows10Versions[0]

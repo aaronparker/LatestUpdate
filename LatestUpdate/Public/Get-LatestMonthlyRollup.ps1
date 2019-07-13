@@ -6,6 +6,9 @@ Function Get-LatestMonthlyRollup {
         .DESCRIPTION
             Retrieves the latest Windows 8.1 and 7 Monthly Rollup Update from the Windows 8.1/7 update history feed.
 
+        .PARAMETER OperatingSystem
+            Specifies the the Windows operating system version to search for updates.
+
         .EXAMPLE
 
         PS C:\> Get-LatestMonthlyRollup

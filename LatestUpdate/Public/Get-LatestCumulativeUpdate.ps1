@@ -8,11 +8,29 @@ Function Get-LatestCumulativeUpdate {
 
             More information on Windows 10 Cumulative Updates can be found here: https://docs.microsoft.com/en-us/windows/deployment/update/
 
+        .PARAMETER OperatingSystem
+            Specifies the the Windows 10 operating system version to search for updates.
+
+        .PARAMETER Version
+            Specifies the Windows 10 Semi-annual Channel version number.
+
         .EXAMPLE
 
         PS C:\> Get-LatestCumulativeUpdate
 
-        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Cumulative Update.
+        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Semi-annual Channel Cumulative Update.
+
+        .EXAMPLE
+
+        PS C:\> Get-LatestCumulativeUpdate -Version 1809
+
+        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 1809 Cumulative Update.
+
+        .EXAMPLE
+
+        PS C:\> Get-LatestCumulativeUpdate -OperatingSystem WindowsServer -Version 1809
+
+        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows Server 2019 Cumulative Update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-latest")]
@@ -21,7 +39,7 @@ Function Get-LatestCumulativeUpdate {
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
         [ValidateNotNullOrEmpty()]
         [Alias('OS')]
-        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.VersionsAll[0],
+        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.Windows10[0],
 
         [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [System.String[]] $Version = $script:resourceStrings.ParameterValues.Windows10Versions[0]

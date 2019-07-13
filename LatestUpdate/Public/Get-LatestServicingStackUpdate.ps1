@@ -8,6 +8,12 @@ Function Get-LatestServicingStackUpdate {
 
             More information on Windows 10 Servicing Stack Updates can be found here: https://docs.microsoft.com/en-us/windows/deployment/update/servicing-stack-updates
 
+        .PARAMETER OperatingSystem
+            Specifies the the Windows operating system version to search for updates.
+
+        .PARAMETER Version
+            Specifies the Windows 10 Semi-annual Channel version number. Only valid when 'Windows10' is specified for -OperatingSystem.
+
         .EXAMPLE
 
         PS C:\> Get-LatestServicingStackUpdate

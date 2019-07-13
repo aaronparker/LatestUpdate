@@ -6,11 +6,20 @@ Function Get-LatestNetFrameworkUpdate {
         .DESCRIPTION
             Retrieves the latest Windows 10 .NET Framework Cumulative Update from the Windows 10 update history feed.
 
+        .PARAMETER OperatingSystem
+            Specifies the the Windows operating system version to search for updates.
+
         .EXAMPLE
 
         PS C:\> Get-LatestNetFrameworkUpdate
 
         This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 .NET Framework Cumulative Update.
+
+        .EXAMPLE
+
+        PS C:\> Get-LatestNetFrameworkUpdate -OperatingSystem WindowsClient
+
+        This commands reads the the Windows update history feeds and returns an object that lists the most recent Windows 10/8.1/7 .NET Framework Cumulative Updates.
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-net")]
@@ -28,9 +37,10 @@ Function Get-LatestNetFrameworkUpdate {
 
         If ($Null -ne $updateFeed) {
             # Filter the feed for NET Framework updates and continue if we get updates
-            Write-Verbose -Message "$($MyInvocation.MyCommand): filter feed for $OperatingSystem."
+            Write-Verbose -Message "$($MyInvocation.MyCommand): filter feed for [$($script:resourceStrings.SearchStrings.$OperatingSystem)]."
             $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | `
                 Where-Object { $_.Title -match $script:resourceStrings.SearchStrings.$OperatingSystem }
+            Write-Verbose -Message "$($MyInvocation.MyCommand): filtered to $($updateList.Count) items."
 
             If ($Null -ne $updateList) {
                 # Output object
@@ -39,6 +49,7 @@ Function Get-LatestNetFrameworkUpdate {
                 ForEach ($update in $updateList) {
 
                     # Get download info for each update from the catalog
+                    Write-Verbose -Message "$($MyInvocation.MyCommand): searching [$($update.Title)]."
                     $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $update.ID `
                         -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem
 
@@ -69,6 +80,7 @@ Function Get-LatestNetFrameworkUpdate {
                             $i++
                         }
 
+                        # Add to output
                         $updateItems.Add($updateListWithArch) | Out-Null
                     }
                 }

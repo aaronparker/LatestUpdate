@@ -4,7 +4,7 @@
     "CumulativeUpdate" : ".*Cumulative Update.*",
     "AdobeFlash" : ".*Update for Adobe Flash Player.*",
     "MonthlyRollup" : "(?!Preview of Monthly Rollup)(\\(Monthly Rollup.*\\))",
-    "NetFramework" : "Cumulative Update for \\.NET Framework|^Security and Quality Rollup for .NET Framework|^Security Only Update for .NET Framework",
+    "NetFramework" : "Cumulative Update for \\.NET Framework|^Security and Quality Rollup for \\.NET Framework|^Security Only Update for \\.NET Framework",
     "WindowsDefender" : "Update for Windows Defender.*antimalware platform.*",
     "Windows10" : "Windows 10|Windows Server 2016|Windows Server 2019|version 1903",
     "Windows8" : "Windows 8.1|Windows Server 2012",
