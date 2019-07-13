@@ -23,6 +23,7 @@ Function Get-LatestMonthlyRollup {
     
     # If resource strings are returned we can continue
     If ($Null -ne $script:resourceStrings) {
+        Write-Verbose -Message "$($MyInvocation.MyCommand): get feed for $OperatingSystem."
         $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.$OperatingSystem
 
         If ($Null -ne $updateFeed) {

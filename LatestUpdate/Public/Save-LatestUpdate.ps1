@@ -24,7 +24,7 @@ Function Save-LatestUpdate {
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSObject] $Updates,
 
-        [Parameter(Mandatory = $False, Position = 1)]
+        [Parameter(Mandatory = $False, Position = 1, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 If (Test-Path -Path $_ -PathType 'Container') {

@@ -62,6 +62,7 @@ Function Get-UpdateFeed {
     }
 
     If ($Null -ne $xml) {
+        Write-Verbose -Message "$($MyInvocation.MyCommand): retrieved feed."
         Write-Output -InputObject $xml
     }
 }

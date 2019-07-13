@@ -21,21 +21,21 @@ Import-Module (Join-Path $projectRoot $module) -Force
 InModuleScope LatestUpdate {
     # Get list of updates
     Write-Host "Getting Windows updates. This might take a while." -ForegroundColor Cyan
-    If ($Null -eq $CumulativeUpdates) { $CumulativeUpdates = Get-LatestCumulativeUpdate }
-    If ($Null -eq $CumulativeUpdates1809) { $CumulativeUpdates1809 = Get-LatestCumulativeUpdate -Version '1809' }
-    If ($Null -eq $CumulativeUpdates1803) { $CumulativeUpdates1803 = Get-LatestCumulativeUpdate -Version '1803' }
-    If ($Null -eq $CumulativeUpdates1709) { $CumulativeUpdates1709 = Get-LatestCumulativeUpdate -Version '1709' }
-    If ($Null -eq $CumulativeUpdates1703) { $CumulativeUpdates1703 = Get-LatestCumulativeUpdate -Version '1703' }
-    If ($Null -eq $CumulativeUpdates1607) { $CumulativeUpdates1607 = Get-LatestCumulativeUpdate -Version '1607' }
-    If ($Null -eq $FlashUpdates) { $FlashUpdates = Get-LatestAdobeFlashUpdate }
-    If ($Null -eq $StackUpdates) { $StackUpdates = Get-LatestServicingStackUpdate }
-    If ($Null -eq $StackUpdates1809) { $StackUpdates = Get-LatestServicingStackUpdate -Version '1809' }
-    If ($Null -eq $StackUpdates1803) { $StackUpdates = Get-LatestServicingStackUpdate -Version '1803' }
-    If ($Null -eq $StackUpdates1709) { $StackUpdates = Get-LatestServicingStackUpdate -Version '1709' }
-    If ($Null -eq $NetUpdates) { $NetUpdates = Get-LatestNetFrameworkUpdate }
-    If ($Null -eq $DefenderUpdates) { $DefenderUpdates = Get-LatestWindowsDefenderUpdate }
-    If ($Null -eq $8RollupUpdates) { $8RollupUpdates = Get-LatestMonthlyRollup -OperatingSystem 'Windows8' }
-    If ($Null -eq $7RollupUpdates) { $7RollupUpdates = Get-LatestMonthlyRollup -OperatingSystem 'Windows7' }
+    $CumulativeUpdates = Get-LatestCumulativeUpdate
+    $CumulativeUpdates1809 = Get-LatestCumulativeUpdate -Version '1809'
+    $CumulativeUpdates1803 = Get-LatestCumulativeUpdate -Version '1803'
+    $CumulativeUpdates1709 = Get-LatestCumulativeUpdate -Version '1709'
+    $CumulativeUpdates1703 = Get-LatestCumulativeUpdate -Version '1703'
+    $CumulativeUpdates1607 = Get-LatestCumulativeUpdate -Version '1607'
+    $FlashUpdates = Get-LatestAdobeFlashUpdate
+    $StackUpdates = Get-LatestServicingStackUpdate
+    $StackUpdates1809 = Get-LatestServicingStackUpdate -Version '1809'
+    $StackUpdates1803 = Get-LatestServicingStackUpdate -Version '1803'
+    $StackUpdates1709 = Get-LatestServicingStackUpdate -Version '1709'
+    $NetUpdates = Get-LatestNetFrameworkUpdate
+    $DefenderUpdates = Get-LatestWindowsDefenderUpdate
+    $8RollupUpdates = Get-LatestMonthlyRollup -OperatingSystem 'Windows8'
+    $7RollupUpdates = Get-LatestMonthlyRollup -OperatingSystem 'Windows7'
     Write-Host "Updates retrieved. Starting tests." -ForegroundColor Cyan
 
     Describe 'Get-LatestCumulativeUpdate' {

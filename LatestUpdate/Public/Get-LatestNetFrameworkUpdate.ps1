@@ -28,6 +28,7 @@ Function Get-LatestNetFrameworkUpdate {
 
         If ($Null -ne $updateFeed) {
             # Filter the feed for NET Framework updates and continue if we get updates
+            Write-Verbose -Message "$($MyInvocation.MyCommand): filter feed for $OperatingSystem."
             $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | `
                 Where-Object { $_.Title -match $script:resourceStrings.SearchStrings.$OperatingSystem }
 

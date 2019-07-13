@@ -23,18 +23,21 @@ Function Get-LatestCumulativeUpdate {
         [Alias('OS')]
         [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.VersionsAll[0],
 
-        [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
+        [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [System.String[]] $Version = $script:resourceStrings.ParameterValues.Windows10Versions[0]
     )
     
     # If resource strings are returned we can continue
     If ($Null -ne $script:resourceStrings) {
         # Get the update feed and continue if successfully read
+        Write-Verbose -Message "$($MyInvocation.MyCommand): get feed for $OperatingSystem."
         $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.Windows10
 
         If ($Null -ne $updateFeed) {
             ForEach ($ver in $Version) {
+
                 # Filter the feed for cumulative updates and continue if we get updates
+                Write-Verbose -Message "$($MyInvocation.MyCommand): search feed for version $ver."
                 $updateList = Get-UpdateCumulative -UpdateFeed $updateFeed `
                     -Build $script:resourceStrings.VersionTable.Windows10Builds[$ver]
 

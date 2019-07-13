@@ -22,7 +22,7 @@ Function Get-LatestAdobeFlashUpdate {
         [Alias('OS')]
         [System.String] $OperatingSystem = 'Windows10',
 
-        [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
+        [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [System.String[]] $Version = $script:resourceStrings.ParameterValues.Windows10Versions[0]
     )
     
@@ -30,6 +30,7 @@ Function Get-LatestAdobeFlashUpdate {
     If ($Null -ne $script:resourceStrings) {
         
         # Get the update feed and continue if successfully read
+        Write-Verbose -Message "$($MyInvocation.MyCommand): get feed for $OperatingSystem."
         $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.$OperatingSystem
         If ($Null -ne $updateFeed) {
 
