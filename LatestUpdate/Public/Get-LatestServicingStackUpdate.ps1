@@ -84,7 +84,8 @@ Function Get-LatestServicingStackUpdate {
                 
                 "Windows8|Windows7" {
                     If ($PSBoundParameters.ContainsKey('Version')) {
-                        Write-Information -Message "INFO: The Version parameter is only valid for Windows10. Ignoring parameter." -InformationAction Continue
+                        Write-Information -MessageData "INFO: The Version parameter is only valid for Windows10. Ignoring parameter." `
+                            -InformationAction Continue -Tags UserNotify
                     }
 
                     # Filter the feed for servicing stack updates and continue if we get updates

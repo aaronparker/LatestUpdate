@@ -71,6 +71,11 @@ Function Get-LatestAdobeFlashUpdate {
                     }
 
                     "Windows8" {
+                        If ($PSBoundParameters.ContainsKey('Version')) {
+                            Write-Information -MessageData "INFO: The Version parameter is only valid for Windows10. Ignoring parameter." `
+                                -InformationAction Continue -Tags UserNotify
+                        }
+
                         # Get download info for each update from the catalog
                         $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
                             -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem
