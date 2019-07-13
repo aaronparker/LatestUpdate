@@ -36,10 +36,13 @@ Function Get-LatestNetFrameworkUpdate {
         $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.NetFramework
 
         If ($Null -ne $updateFeed) {
-            # Filter the feed for NET Framework updates and continue if we get updates
+            
+            # Filter the feed for NET Framework updates, reduce to updates from the most recent month and continue if we get updates
             Write-Verbose -Message "$($MyInvocation.MyCommand): filter feed for [$($script:resourceStrings.SearchStrings.$OperatingSystem)]."
             $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | `
                 Where-Object { $_.Title -match $script:resourceStrings.SearchStrings.$OperatingSystem }
+            $updateList = $updateList | Sort-Object -Property Updated -Descending
+            $updateList = $updateList | Where-Object { $_.Updated.Month -eq $updateList[0].Updated.Month }                
             Write-Verbose -Message "$($MyInvocation.MyCommand): filtered to $($updateList.Count) items."
 
             If ($Null -ne $updateList) {
@@ -47,7 +50,6 @@ Function Get-LatestNetFrameworkUpdate {
                 $updateItems = New-Object -TypeName System.Collections.ArrayList
 
                 ForEach ($update in $updateList) {
-
                     # Get download info for each update from the catalog
                     Write-Verbose -Message "$($MyInvocation.MyCommand): searching [$($update.Title)]."
                     $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $update.ID `
