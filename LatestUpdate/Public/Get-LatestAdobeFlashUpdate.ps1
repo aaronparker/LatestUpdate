@@ -4,7 +4,7 @@ Function Get-LatestAdobeFlashUpdate {
             Retrieves the latest Adobe Flash Player Updates.
 
         .DESCRIPTION
-            Retrieves the latest Adobe Flash Player Update from the Windows update history feeds.
+            Retrieves the latest Adobe Flash Player Updates for Windows 10 and 8.1 from the Windows update history feeds.
 
         .PARAMETER OperatingSystem
             Specifies the the Windows operating system version to search for updates.

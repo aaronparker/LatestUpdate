@@ -22,14 +22,14 @@ ForEach ($import in @($public + $private)) {
     }
 }
 
-# Export the Public modules
+# Export the public modules and aliases
 Export-ModuleMember -Function $public.Basename -Alias *
 #endregion
 
 # Get module strings
 $script:resourceStrings = Get-ModuleResource
 
-#region Dynamic autocompletion values
+#region Dynamic autocompletion values for function parameters extracted from the LatestUpdate.json
 $scriptBlock = {
     param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
     $script:resourceStrings.ParameterValues.Windows10Versions

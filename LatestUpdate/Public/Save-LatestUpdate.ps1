@@ -54,9 +54,6 @@ Function Save-LatestUpdate {
         [System.Management.Automation.SwitchParameter] $Force
     )
 
-    # Output object
-    $downloadedUpdates = New-Object -TypeName System.Collections.ArrayList
-
     # Step through each update in $Updates
     ForEach ($update in $Updates) {
 
@@ -133,12 +130,12 @@ Function Save-LatestUpdate {
                     }
                 }
                 If (Test-Path -Path $updateDownloadTarget) {
-                    $PSObject = [PSCustomObject] @{
+                    $outputObject = [PSCustomObject] @{
                         KB   = $update.KB
                         Note = $update.Note
                         Path = (Resolve-Path -Path $updateDownloadTarget)
                     }
-                    $downloadedUpdates.Add($PSObject) | Out-Null
+                    Write-Object -InputObject $outputObject
                 }
                 Else {
                     Write-Warning -Message "$($MyInvocation.MyCommand): failed to download [$updateDownloadTarget]."
@@ -146,7 +143,4 @@ Function Save-LatestUpdate {
             }
         }
     }
-
-    # Output results to the pipeline
-    Write-Output -InputObject $downloadedUpdates
 }

@@ -4,7 +4,7 @@ Function Get-LatestNetFrameworkUpdate {
             Retrieves the latest .NET Framework Cumulative Updates.
 
         .DESCRIPTION
-            Retrieves the latest .NET Framework Cumulative Update from the .NET Framework update history feed.
+            Retrieves the latest .NET Framework Cumulative Updates from the .NET Framework update history feed. Updates returned will be the most recent updates (i.e. released in the most recent month).
 
         .PARAMETER OperatingSystem
             Specifies the the Windows operating system version to search for updates.
