@@ -6,7 +6,7 @@ Function Get-LatestCumulativeUpdate {
         .DESCRIPTION
             Retrieves the latest Windows 10 Cumulative Update from the Windows 10 update history feed.
 
-            More information on Windows 10 Cumulative Updates can be found here: https://docs.microsoft.com/en-us/windows/deployment/update/
+            More information on Windows 10 Cumulative Updates can be found at: https://docs.microsoft.com/en-us/windows/deployment/update/
 
         .PARAMETER OperatingSystem
             Specifies the the Windows 10 operating system version to search for updates.
@@ -39,7 +39,7 @@ Function Get-LatestCumulativeUpdate {
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
         [ValidateNotNullOrEmpty()]
         [Alias('OS')]
-        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.Windows10[0],
+        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.Versions10[0],
 
         [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [System.String[]] $Version = $script:resourceStrings.ParameterValues.Windows10Versions[0]
@@ -58,11 +58,16 @@ Function Get-LatestCumulativeUpdate {
                 Write-Verbose -Message "$($MyInvocation.MyCommand): search feed for version $ver."
                 $updateList = Get-UpdateCumulative -UpdateFeed $updateFeed `
                     -Build $script:resourceStrings.VersionTable.Windows10Builds[$ver]
+                Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
 
                 If ($Null -ne $updateList) {
                     # Get download info for each update from the catalog
-                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
-                        -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem
+                    Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($updateList.Title)]."
+                    $downloadInfoParams = @{
+                        UpdateId        = $updateList.ID
+                        OperatingSystem = $script:resourceStrings.SearchStrings.$OperatingSystem
+                    }
+                    $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 
                     # Add the Version and Architecture properties to the list
                     $updateListWithVersionParams = @{

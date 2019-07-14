@@ -1,10 +1,10 @@
 Function Get-LatestNetFrameworkUpdate {
     <#
         .SYNOPSIS
-            Retrieves the latest Windows 10 .NET Framework Cumulative Update.
+            Retrieves the latest .NET Framework Cumulative Updates.
 
         .DESCRIPTION
-            Retrieves the latest Windows 10 .NET Framework Cumulative Update from the Windows 10 update history feed.
+            Retrieves the latest .NET Framework Cumulative Update from the .NET Framework update history feed.
 
         .PARAMETER OperatingSystem
             Specifies the the Windows operating system version to search for updates.
@@ -13,7 +13,7 @@ Function Get-LatestNetFrameworkUpdate {
 
         PS C:\> Get-LatestNetFrameworkUpdate
 
-        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 .NET Framework Cumulative Update.
+        This commands reads the the .NET Framework update history feed and returns an object that lists the most recent Windows 10 .NET Framework Cumulative Updates.
 
         .EXAMPLE
 
@@ -37,25 +37,29 @@ Function Get-LatestNetFrameworkUpdate {
 
         If ($Null -ne $updateFeed) {
             
-            # Filter the feed for NET Framework updates, reduce to updates from the most recent month and continue if we get updates
+            # Filter the feed for .NET Framework updates
             Write-Verbose -Message "$($MyInvocation.MyCommand): filter feed for [$($script:resourceStrings.SearchStrings.$OperatingSystem)]."
             $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | `
                 Where-Object { $_.Title -match $script:resourceStrings.SearchStrings.$OperatingSystem }
+            Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
+
+            # Filter again for updates from the most recent month, otherwise we have too many updates
             $updateList = $updateList | Sort-Object -Property Updated -Descending
             $updateList = $updateList | Where-Object { $_.Updated.Month -eq $updateList[0].Updated.Month }                
             Write-Verbose -Message "$($MyInvocation.MyCommand): filtered to $($updateList.Count) items."
 
             If ($Null -ne $updateList) {
-                # Output object
-                $updateItems = New-Object -TypeName System.Collections.ArrayList
-
                 ForEach ($update in $updateList) {
                     # Get download info for each update from the catalog
-                    Write-Verbose -Message "$($MyInvocation.MyCommand): searching [$($update.Title)]."
-                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $update.ID `
-                        -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem
+                    Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
+                    $downloadInfoParams = @{
+                        UpdateId        = $update.ID
+                        OperatingSystem = $script:resourceStrings.SearchStrings.$OperatingSystem
+                    }
+                    $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 
-                    if ($downloadInfo) {
+                    If ($downloadInfo) {
+                        
                         # Add the Version and Architecture properties to the list
                         $updateListWithVersionParams = @{
                             InputObject     = $downloadInfo
@@ -64,7 +68,6 @@ Function Get-LatestNetFrameworkUpdate {
                             MatchPattern    = $script:resourceStrings.Matches."$($OperatingSystem)Version"
                         }
                         $updateListWithVersion = Add-Property @updateListWithVersionParams
-
                         $updateListWithArchParams = @{
                             InputObject     = $updateListWithVersion
                             Property        = "Note"
@@ -82,13 +85,10 @@ Function Get-LatestNetFrameworkUpdate {
                             $i++
                         }
 
-                        # Add to output
-                        $updateItems.Add($updateListWithArch) | Out-Null
+                        # Output to pipeline
+                        Write-Output -InputObject $updateListWithArch
                     }
                 }
-
-                # Return object to the pipeline
-                Write-Output -InputObject $updateItems
             }
         }
     }

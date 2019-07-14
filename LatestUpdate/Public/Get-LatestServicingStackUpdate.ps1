@@ -53,6 +53,7 @@ Function Get-LatestServicingStackUpdate {
         
                         If ($Null -ne $updateList) {
                             # Get download info for each update from the catalog
+                            Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
                             $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
                                 -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem
         
@@ -96,11 +97,16 @@ Function Get-LatestServicingStackUpdate {
 
                     # Filter the feed for servicing stack updates and continue if we get updates
                     $updateList = Get-UpdateServicingStack -UpdateFeed $updateFeed
+                    Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
         
                     If ($Null -ne $updateList) {
                         # Get download info for each update from the catalog
-                        $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
-                            -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem
+                        Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
+                        $downloadInfoParams = @{
+                            UpdateId        = $updateList.ID
+                            OperatingSystem = $script:resourceStrings.SearchStrings.$OperatingSystem
+                        }
+                        $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
     
                         # Add the Version and Architecture properties to the list
                         $updateListWithVersionParams = @{
@@ -110,7 +116,6 @@ Function Get-LatestServicingStackUpdate {
                             MatchPattern    = $script:resourceStrings.Matches."$($OperatingSystem)Version"
                         }
                         $updateListWithVersion = Add-Property @updateListWithVersionParams
-    
                         $updateListWithArchParams = @{
                             InputObject     = $updateListWithVersion
                             Property        = "Note"

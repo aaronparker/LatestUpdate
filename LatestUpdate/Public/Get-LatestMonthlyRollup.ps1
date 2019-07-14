@@ -32,14 +32,18 @@ Function Get-LatestMonthlyRollup {
         If ($Null -ne $updateFeed) {
             # Filter the feed for monthly rollup updates and continue if we get updates
             $updateList = Get-UpdateMonthly -UpdateFeed $updateFeed
+            Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
 
             If ($Null -ne $updateList) {
                 # Get download info for each update from the catalog
-                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
-                    -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem `
-                    -Architecture $script:resourceStrings.Architecture.x86x64
+                $downloadInfoParams = @{
+                    UpdateId        = $updateList.ID
+                    OperatingSystem = $script:resourceStrings.SearchStrings.$OperatingSystem
+                    Architecture    = $script:resourceStrings.Architecture.x86x64
+                }
+                $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 
-                # Add the Version property to the list
+                # Add the Version and Architecture properties to the list
                 $updateListWithVersionParams = @{
                     InputObject     = $downloadInfo
                     Property        = "Note"
@@ -47,8 +51,6 @@ Function Get-LatestMonthlyRollup {
                     MatchPattern    = $script:resourceStrings.Matches."$($OperatingSystem)Version"
                 }
                 $updateListWithVersion = Add-Property @updateListWithVersionParams
-
-                # Add Architecture property to the list
                 $updateListWithArchParams = @{
                     InputObject     = $updateListWithVersion
                     Property        = "Note"

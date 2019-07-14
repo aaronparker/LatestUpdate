@@ -59,6 +59,7 @@ Function Get-LatestAdobeFlashUpdate {
 
             # Filter the feed for Adobe Flash updates and continue if we get updates
             $updateList = Get-UpdateAdobeFlash -UpdateFeed $updateFeed
+            Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
 
             If ($Null -ne $updateList) {
                 Switch ($OperatingSystem) {
@@ -66,8 +67,13 @@ Function Get-LatestAdobeFlashUpdate {
                     "Windows10" {
                         ForEach ($ver in $Version) {
                             # Get download info for each update from the catalog
-                            $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
-                                -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem -SearchString $ver
+                            Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
+                            $downloadInfoParams = @{
+                                UpdateId        = $updateList.ID
+                                OperatingSystem = $script:resourceStrings.SearchStrings.$OperatingSystem
+                                SearchString    = $ver
+                            }
+                            $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 
                             If ($Null -ne $downloadInfo) {
 
@@ -100,8 +106,12 @@ Function Get-LatestAdobeFlashUpdate {
                         }
 
                         # Get download info for each update from the catalog
-                        $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
-                            -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem
+                        Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
+                        $downloadInfoParams = @{
+                            UpdateId        = $updateList.ID
+                            OperatingSystem = $script:resourceStrings.SearchStrings.$OperatingSystem
+                        }
+                        $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 
                         If ($Null -ne $downloadInfo) {
 
