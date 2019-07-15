@@ -8,34 +8,36 @@ Function Get-LatestWindowsDefenderUpdate {
 
         .EXAMPLE
 
-        PS C:\> Get-LatestWindowsDefenderUpdate
+            PS C:\> Get-LatestWindowsDefenderUpdate
 
-        This commands reads the the Windows Defender update history feed and returns an object that lists the most recent Windows Defender antimalware platform update.
+            This commands reads the the Windows Defender update history feed and returns an object that lists the most recent Windows Defender antimalware platform update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-defender")]
+    [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-defender")]
     Param ()
     
-    # Get module strings from the JSON
-    $resourceStrings = Get-ModuleResource
-
     # If resource strings are returned we can continue
-    If ($Null -ne $resourceStrings) {
+    If ($Null -ne $script:resourceStrings) {
+        $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.WindowsDefender
 
-        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.WindowsDefender
         If ($Null -ne $updateFeed) {
-
             # Filter the feed for servicing stack updates and continue if we get updates
             $updateList = Get-UpdateDefender -UpdateFeed $updateFeed
-            If ($Null -ne $updateList) {
+            Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
 
+            If ($Null -ne $updateList) {
                 # Get download info for each update from the catalog
-                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
-                    -OS $resourceStrings.SearchStrings.WindowsDefender `
-                    -Architecture $resourceStrings.SearchStrings.WindowsDefender
+                Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
+                $downloadInfoParams = @{
+                    UpdateId        = $updateList.ID
+                    OperatingSystem = $script:resourceStrings.SearchStrings.WindowsDefender
+                }
+                $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 
                 # Return object to the pipeline
-                Write-Output -InputObject $downloadInfo
+                If ($Null -ne $downloadInfo) {
+                    Write-Output -InputObject $downloadInfo
+                }
             }
         }
     }

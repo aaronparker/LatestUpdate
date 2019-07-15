@@ -1,61 +1,79 @@
 Function Get-LatestNetFrameworkUpdate {
     <#
         .SYNOPSIS
-            Retrieves the latest Windows 10 .NET Framework Cumulative Update.
+            Retrieves the latest .NET Framework Cumulative Updates.
 
         .DESCRIPTION
-            Retrieves the latest Windows 10 .NET Framework Cumulative Update from the Windows 10 update history feed.
+            Retrieves the latest .NET Framework Cumulative Updates from the .NET Framework update history feed. Updates returned will be the most recent updates (i.e. released in the most recent month).
+
+        .PARAMETER OperatingSystem
+            Specifies the the Windows operating system version to search for updates.
 
         .EXAMPLE
 
-        PS C:\> Get-LatestNetFrameworkUpdate
+            PS C:\> Get-LatestNetFrameworkUpdate
 
-        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 .NET Framework Cumulative Update.
+            This commands reads the the .NET Framework update history feed and returns an object that lists the most recent Windows 10 .NET Framework Cumulative Updates.
+
+        .EXAMPLE
+
+            PS C:\> Get-LatestNetFrameworkUpdate -OperatingSystem WindowsClient
+
+            This commands reads the the Windows update history feeds and returns an object that lists the most recent Windows 10/8.1/7 .NET Framework Cumulative Updates.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-net")]
+    [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-net")]
     Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS Name")]
-        [ValidateSet('Windows7', 'Windows8', 'Windows10', 'WindowsClient', 'WindowsServer', 'All')]
+        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
         [ValidateNotNullOrEmpty()]
-        [System.String] $OS = 'Windows10'
+        [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.VersionsComplete })]
+        [Alias('OS')]
+        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.VersionsComplete[0]
     )
 
-    # Get module strings from the JSON
-    $resourceStrings = Get-ModuleResource
-
     # If resource strings are returned we can continue
-    If ($Null -ne $resourceStrings) {
-        
+    If ($Null -ne $script:resourceStrings) {
         # Get the update feed and continue if successfully read
-        $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.NetFramework
-        If ($Null -ne $updateFeed) {
+        $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.NetFramework
 
-            # Filter the feed for NET Framework updates and continue if we get updates
-            $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | Where-Object { $_.Title -match $resourceStrings.SearchStrings.$OS }
+        If ($Null -ne $updateFeed) {
+            
+            # Filter the feed for .NET Framework updates
+            Write-Verbose -Message "$($MyInvocation.MyCommand): filter feed for [$($script:resourceStrings.SearchStrings.$OperatingSystem)]."
+            $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | `
+                Where-Object { $_.Title -match $script:resourceStrings.SearchStrings.$OperatingSystem }
+            Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
+
+            # Filter again for updates from the most recent month, otherwise we have too many updates
+            $updateList = $updateList | Sort-Object -Property Updated -Descending
+            $updateList = $updateList | Where-Object { $_.Updated.Month -eq $updateList[0].Updated.Month }                
+            Write-Verbose -Message "$($MyInvocation.MyCommand): filtered to $($updateList.Count) items."
 
             If ($Null -ne $updateList) {
                 ForEach ($update in $updateList) {
-
                     # Get download info for each update from the catalog
-                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $update.ID -OS $resourceStrings.SearchStrings.$OS -Architecture "" | Where-Object { $_.Note }
-                    $filteredDownloadInfo = $downloadInfo | Sort-Object -Unique -Property Note
+                    Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
+                    $downloadInfoParams = @{
+                        UpdateId        = $update.ID
+                        OperatingSystem = $script:resourceStrings.SearchStrings.$OperatingSystem
+                    }
+                    $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 
-                    if ($filteredDownloadInfo) {
+                    If ($downloadInfo) {
+                        
                         # Add the Version and Architecture properties to the list
                         $updateListWithVersionParams = @{
-                            InputObject = $filteredDownloadInfo
-                            Property = "Note"
+                            InputObject     = $downloadInfo
+                            Property        = "Note"
                             NewPropertyName = "Version"
-                            MatchPattern = $resourceStrings.Matches."$($OS)Version"
+                            MatchPattern    = $script:resourceStrings.Matches."$($OperatingSystem)Version"
                         }
                         $updateListWithVersion = Add-Property @updateListWithVersionParams
-
                         $updateListWithArchParams = @{
-                            InputObject = $updateListWithVersion
-                            Property = "Note"
+                            InputObject     = $updateListWithVersion
+                            Property        = "Note"
                             NewPropertyName = "Architecture"
-                            MatchPattern = $resourceStrings.Matches.Architecture
+                            MatchPattern    = $script:resourceStrings.Matches.Architecture
                         }
                         $updateListWithArch = Add-Property @updateListWithArchParams
 
@@ -68,8 +86,10 @@ Function Get-LatestNetFrameworkUpdate {
                             $i++
                         }
 
-                        # Return object to the pipeline
-                        Write-Output -InputObject $updateListWithArch
+                        # Output to pipeline
+                        If ($Null -ne $updateListWithArch) {
+                            Write-Output -InputObject $updateListWithArch
+                        }
                     }
                 }
             }

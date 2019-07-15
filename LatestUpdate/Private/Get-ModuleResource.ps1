@@ -4,7 +4,7 @@ Function Get-ModuleResource {
             Reads the module strings from the JSON file and returns a hashtable.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False)]
+    [CmdletBinding()]
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline)]
         [ValidateNotNull()]
@@ -23,10 +23,10 @@ Function Get-ModuleResource {
 
     try {
         If (Test-PSCore) {
-            $resourceStringsTable = $content | ConvertFrom-Json -AsHashtable -ErrorAction SilentlyContinue
+            $script:resourceStringsTable = $content | ConvertFrom-Json -AsHashtable -ErrorAction SilentlyContinue
         }
         Else {
-            $resourceStringsTable = $content | ConvertFrom-Json -ErrorAction SilentlyContinue | ConvertTo-Hashtable
+            $script:resourceStringsTable = $content | ConvertFrom-Json -ErrorAction SilentlyContinue | ConvertTo-Hashtable
         }
     }
     catch [System.Exception] {
@@ -34,8 +34,8 @@ Function Get-ModuleResource {
         Throw $_.Exception.Message
     }
     finally {
-        If ($Null -ne $resourceStringsTable) {
-            Write-Output -InputObject $resourceStringsTable
+        If ($Null -ne $script:resourceStringsTable) {
+            Write-Output -InputObject $script:resourceStringsTable
         }
     }
 }

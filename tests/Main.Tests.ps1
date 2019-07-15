@@ -52,7 +52,7 @@ Describe "General project validation" {
     }
 }
 
-Describe "Function validation" {
+Describe "Module Function validation" {
     $scripts = Get-ChildItem -Path (Join-Path $projectRoot $module) -Recurse -Include *.ps1
     $testCase = $scripts | ForEach-Object { @{file = $_ } }
     It "Script <file> should only contain one function" -TestCases $testCase {
@@ -74,7 +74,7 @@ Describe "Function validation" {
 }
 
 # Test module and manifest
-Describe 'Module Metadata Validation' {
+Describe 'Module Metadata validation' {
     It 'Script fileinfo should be OK' {
         { Test-ModuleManifest -Path $manifestPath -ErrorAction Stop } | Should Not Throw
     }   

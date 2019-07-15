@@ -4,20 +4,17 @@ Function Get-UpdateNetFramework {
             Builds an object with the .NET Framework Cumulative Update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False)]
+    [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline)]
+        [Parameter(Mandatory = $False, Position = 0)]
         [ValidateNotNullOrEmpty()]
         [System.Xml.XmlNode] $UpdateFeed
     )
 
-    # Get module strings from the JSON
-    $resourceStrings = Get-ModuleResource
-
     # Filter object matching desired update type
     $updateList = New-Object -TypeName System.Collections.ArrayList
     ForEach ($item in $UpdateFeed.feed.entry) {
-        If ($item.title -match $resourceStrings.SearchStrings.NetFramework) {
+        If ($item.title -match $script:resourceStrings.SearchStrings.NetFramework) {
             Write-Verbose -Message "$($MyInvocation.MyCommand): matched item [$($item.title)]"
             $PSObject = [PSCustomObject] @{
                 Title   = $item.title
@@ -33,9 +30,9 @@ Function Get-UpdateNetFramework {
         $sortedUpdateList = New-Object -TypeName System.Collections.ArrayList
         ForEach ($update in $updateList) {
             $PSObject = [PSCustomObject] @{
-                Title    = $update.title
-                ID       = "KB{0}" -f ($update.id).Split(":")[2]
-                Updated  = ([DateTime]::Parse($update.updated))
+                Title   = $update.title
+                ID      = "KB{0}" -f ($update.id).Split(":")[2]
+                Updated = ([DateTime]::Parse($update.updated))
             }
             $sortedUpdateList.Add($PSObject) | Out-Null
         }

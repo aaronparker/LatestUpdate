@@ -4,27 +4,33 @@ Function Invoke-UpdateCatalogSearch {
             Searches the Microsoft Update Catalog for the specific KB number.
     #>
     [OutputType([Microsoft.PowerShell.Commands.WebResponseObject])]
-    [CmdletBinding(SupportsShouldProcess = $False)]
+    [CmdletBinding()]
     Param(
         [Parameter(Mandatory = $True)]
         [ValidateNotNullOrEmpty()]
-        [System.String] $UpdateId
+        [System.String] $UpdateId,
+
+        [Parameter(Mandatory = $False)]
+        [System.String] $SearchString
     )
 
-    # Get module strings from the JSON
-    $resourceStrings = Get-ModuleResource
-
-    If ($Null -ne $resourceStrings) {
+    If ($Null -ne $script:resourceStrings) {
         try {
-            $params = @{
-                Uri             = "$($resourceStrings.CatalogUris.Search)$($UpdateId)"
-                ContentType     = $resourceStrings.ContentType.html
+            $iwrParams = @{
+                ContentType     = $script:resourceStrings.ContentType.html
                 UserAgent       = [Microsoft.PowerShell.Commands.PSUserAgent]::Chrome
                 UseBasicParsing = $True
-                ErrorAction     = $resourceStrings.Preferences.ErrorAction
+                ErrorAction     = $script:resourceStrings.Preferences.ErrorAction
             }
-            Write-Verbose -Message "$($MyInvocation.MyCommand): search Catalog for [$UpdateId)]"
-            $searchResult = Invoke-WebRequest @params
+            If ($PSBoundParameters.ContainsKey('SearchString')) {
+                $iwrParams.Uri = "$($script:resourceStrings.CatalogUris.Search)$($UpdateId)+$($SearchString)"
+                Write-Verbose -Message "$($MyInvocation.MyCommand): search Catalog for [$UpdateId+$SearchString]"
+            }
+            Else {
+                $iwrParams.Uri = "$($script:resourceStrings.CatalogUris.Search)$($UpdateId)"
+                Write-Verbose -Message "$($MyInvocation.MyCommand): search Catalog for [$UpdateId)]"
+            }
+            $searchResult = Invoke-WebRequest @iwrParams
         }
         catch [System.Net.WebException] {
             Write-Warning -Message ($($MyInvocation.MyCommand))

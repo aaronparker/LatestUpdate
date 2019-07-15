@@ -4,73 +4,72 @@ Function Get-LatestMonthlyRollup {
             Retrieves the latest Windows 8.1 and 7 Monthly Rollup Update.
 
         .DESCRIPTION
-            Retrieves the latest Windows 8.1 and 7 Monthly Rollup Update from the Windows 8.1/7 update history feed.
+            Retrieves the latest Windows 8.1 and 7 Monthly Rollup Update from the Windows 8.1/7 update history feeds.
+
+        .PARAMETER OperatingSystem
+            Specifies the the Windows operating system version to search for updates.
 
         .EXAMPLE
 
-        PS C:\> Get-LatestMonthlyRollup
+            PS C:\> Get-LatestMonthlyRollup
 
-        This commands reads the the Windows 8.1 update history feed and returns an object that lists the most recent Windows 8.1 Monthly Rollup Update.
+            This commands reads the the Windows 8.1 update history feed and returns an object that lists the most recent Windows 8.1 Monthly Rollup Update.
+
+        .EXAMPLE
+
+            PS C:\> Get-LatestMonthlyRollup -OperatingSystem Windows7
+
+            This commands reads the the Windows 7 update history feed and returns an object that lists the most recent Windows 7 Monthly Rollup Update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-monthly")]
+    [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-monthly")]
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
-        [ValidateSet('Windows8', 'Windows7')]
         [ValidateNotNullOrEmpty()]
-        [Alias("OS")]
-        [System.String] $Version = "Windows8"
+        [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.Versions87 })]
+        [Alias('OS')]
+        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.Versions87[0]
     )
     
-    # Get module strings from the JSON
-    $resourceStrings = Get-ModuleResource
-
     # If resource strings are returned we can continue
-    If ($Null -ne $resourceStrings) {
-
-        Switch ($Version) {
-            "Windows8" {
-                $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows8
-                $osName = $resourceStrings.SearchStrings.Windows8
-                $matchPattern = $resourceStrings.Matches.Windows8Version
-            }
-            "Windows7" {
-                $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows7
-                $osName = $resourceStrings.SearchStrings.Windows7
-                $matchPattern = $resourceStrings.Matches.Windows7Version
-            }
-        }
+    If ($Null -ne $script:resourceStrings) {
+        Write-Verbose -Message "$($MyInvocation.MyCommand): get feed for $OperatingSystem."
+        $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.$OperatingSystem
 
         If ($Null -ne $updateFeed) {
-
             # Filter the feed for monthly rollup updates and continue if we get updates
             $updateList = Get-UpdateMonthly -UpdateFeed $updateFeed
+            Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
+
             If ($Null -ne $updateList) {
-
                 # Get download info for each update from the catalog
-                $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID -OS $osName -Architecture $resourceStrings.Architecture.x86x64
-                $filteredDownloadInfo = $downloadInfo | Sort-Object -Unique -Property Note
+                $downloadInfoParams = @{
+                    UpdateId        = $updateList.ID
+                    OperatingSystem = $script:resourceStrings.SearchStrings.$OperatingSystem
+                    Architecture    = $script:resourceStrings.Architecture.x86x64
+                }
+                $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 
-                # Add the Version property to the list
+                # Add the Version and Architecture properties to the list
                 $updateListWithVersionParams = @{
-                    InputObject     = $filteredDownloadInfo
+                    InputObject     = $downloadInfo
                     Property        = "Note"
                     NewPropertyName = "Version"
-                    MatchPattern    = $matchPattern
+                    MatchPattern    = $script:resourceStrings.Matches."$($OperatingSystem)Version"
                 }
                 $updateListWithVersion = Add-Property @updateListWithVersionParams
-
-                # Add Architecture property to the list
                 $updateListWithArchParams = @{
                     InputObject     = $updateListWithVersion
                     Property        = "Note"
                     NewPropertyName = "Architecture"
-                    MatchPattern    = $resourceStrings.Matches.Architecture
+                    MatchPattern    = $script:resourceStrings.Matches.Architecture
                 }
                 $updateListWithArch = Add-Property @updateListWithArchParams
 
                 # Return object to the pipeline
-                Write-Output -InputObject $updateListWithArch
+                If ($Null -ne $updateListWithArch) {
+                    Write-Output -InputObject $updateListWithArch
+                }
             }
         }
     }

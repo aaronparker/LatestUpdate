@@ -4,7 +4,7 @@ Function Add-Property {
             Adds a property to a PSObject by querying another property
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False)]
+    [CmdletBinding()]
     Param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
@@ -24,16 +24,15 @@ Function Add-Property {
     )
 
     ForEach ($object in $InputObject) {
-        $value = $object | Select-Object -ExpandProperty $Property | 
-                Select-String -AllMatches -Pattern $MatchPattern |
-                ForEach-Object { $_.Matches.Value }
+        $value = $object | Select-Object -ExpandProperty $Property | `
+            Select-String -AllMatches -Pattern $MatchPattern | `
+            ForEach-Object { $_.Matches.Value }
         
         If ($value.Count -ge 2) {
             $value = $value | Select-Object -Last 1
         }
 
         $object | Add-Member -NotePropertyName $NewPropertyName -NotePropertyValue $value
-        
         Write-Output -InputObject $object
     }
 }

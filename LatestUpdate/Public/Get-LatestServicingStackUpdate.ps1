@@ -8,59 +8,149 @@ Function Get-LatestServicingStackUpdate {
 
             More information on Windows 10 Servicing Stack Updates can be found here: https://docs.microsoft.com/en-us/windows/deployment/update/servicing-stack-updates
 
+        .PARAMETER OperatingSystem
+            Specifies the the Windows operating system version to search for updates.
+
+        .PARAMETER Version
+            Specifies the Windows 10 Semi-annual Channel version number. Only valid when 'Windows10' is specified for -OperatingSystem.
+
         .EXAMPLE
 
-        PS C:\> Get-LatestServicingStackUpdate
+            PS C:\> Get-LatestServicingStackUpdate
 
-        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Servicing Stack Update.
+            This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Servicing Stack Update.
+
+        .EXAMPLE
+
+            PS C:\> Get-LatestServicingStackUpdate -OperatingSystem WindowsServer
+
+            This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows Server 2016, 2019 and Semi-Annual Channel Servicing Stack Updates.
     #>
     [OutputType([System.Management.Automation.PSObject])]
-    [CmdletBinding(SupportsShouldProcess = $False, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-stack")]
+    [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-stack")]
     [Alias("Get-LatestServicingStack")]
     Param (
-        [Parameter(Mandatory = $False, Position = 1, ValueFromPipeline, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
-        [ValidateSet('1903', '1809', '1803', '1709', '1703', '1607')]
+        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
         [ValidateNotNullOrEmpty()]
-        [System.String[]] $Version = "1903"
+        [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.VersionsAll })]
+        [Alias('OS')]
+        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.VersionsAll[0],
+
+        [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
+        [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.Windows10Versions })]
+        [System.String[]] $Version
     )
 
-    # Get module strings from the JSON
-    $resourceStrings = Get-ModuleResource
-
     # If resource strings are returned we can continue
-    If ($Null -ne $resourceStrings) {
-
+    If ($Null -ne $script:resourceStrings) {
         # Get the update feed and continue if successfully read
-        ForEach ($ver in $Version) {
-            $updateFeed = Get-UpdateFeed -Uri $resourceStrings.UpdateFeeds.Windows10
-            If ($Null -ne $updateFeed) {
+        Write-Verbose -Message "$($MyInvocation.MyCommand): get feed for $OperatingSystem."
+        $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.$OperatingSystem
 
-                # Filter the feed for servicing stack updates and continue if we get updates
-                $updateList = Get-UpdateServicingStack -UpdateFeed $updateFeed -Version $ver
-                If ($Null -ne $updateList) {
+        If ($Null -ne $updateFeed) {
+            Switch -RegEx ($OperatingSystem) {
 
-                    # Get download info for each update from the catalog
-                    $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID
-
-                    # Add the Version and Architecture properties to the list
-                    $updateListWithVersionParams = @{
-                        InputObject = $downloadInfo
-                        Property = "Note"
-                        NewPropertyName = "Version"
-                        MatchPattern = $resourceStrings.Matches.Windows10Version
+                "Windows10" {
+                    If (-not ($PSBoundParameters.ContainsKey('Version'))) {
+                        $Version = @($script:resourceStrings.ParameterValues.Windows10Versions[0])
                     }
-                    $updateListWithVersion = Add-Property @updateListWithVersionParams
-
-                    $updateListWithArchParams = @{
-                        InputObject = $updateListWithVersion
-                        Property = "Note"
-                        NewPropertyName = "Architecture"
-                        MatchPattern = $resourceStrings.Matches.Architecture
+                    ForEach ($ver in $Version) {
+                        # Filter the feed for servicing stack updates and continue if we get updates
+                        Write-Verbose -Message "$($MyInvocation.MyCommand): search feed for version $ver."
+                        $updateList = Get-UpdateServicingStack -UpdateFeed $updateFeed -Version $ver
+        
+                        If ($Null -ne $updateList) {
+                            # Get download info for each update from the catalog
+                            Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
+                            $downloadInfoParams = @{
+                                UpdateId        = $updateList.ID
+                                OperatingSystem = $script:resourceStrings.SearchStrings.$OperatingSystem
+                            }
+                            $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
+        
+                            # Add the Version and Architecture properties to the list
+                            $updateListWithVersionParams = @{
+                                InputObject     = $downloadInfo
+                                Property        = "Note"
+                                NewPropertyName = "Version"
+                                MatchPattern    = $script:resourceStrings.Matches."$($OperatingSystem)Version"
+                            }
+                            $updateListWithVersion = Add-Property @updateListWithVersionParams
+        
+                            $updateListWithArchParams = @{
+                                InputObject     = $updateListWithVersion
+                                Property        = "Note"
+                                NewPropertyName = "Architecture"
+                                MatchPattern    = $script:resourceStrings.Matches.Architecture
+                            }
+                            $updateListWithArch = Add-Property @updateListWithArchParams
+        
+                            # If the value for Architecture is blank, make it "x86"
+                            $i = 0
+                            ForEach ($update in $updateListWithArch) {
+                                If ($update.Architecture.Length -eq 0) {
+                                    $updateListWithArch[$i].Architecture = "x86"
+                                }
+                                $i++
+                            }
+        
+                            # Return object to the pipeline
+                            If ($Null -ne $updateListWithArch) {
+                                Write-Output -InputObject $updateListWithArch
+                            }
+                        }
                     }
-                    $updateListWithArch = Add-Property @updateListWithArchParams
+                }
+                
+                "Windows8|Windows7" {
+                    If ($PSBoundParameters.ContainsKey('Version')) {
+                        Write-Information -MessageData "INFO: The Version parameter is only valid for Windows10. Ignoring parameter." `
+                            -InformationAction Continue -Tags UserNotify
+                    }
 
-                    # Return object to the pipeline
-                    Write-Output -InputObject $updateListWithArch
+                    # Filter the feed for servicing stack updates and continue if we get updates
+                    $updateList = Get-UpdateServicingStack -UpdateFeed $updateFeed
+                    Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
+        
+                    If ($Null -ne $updateList) {
+                        # Get download info for each update from the catalog
+                        Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
+                        $downloadInfoParams = @{
+                            UpdateId        = $updateList.ID
+                            OperatingSystem = $script:resourceStrings.SearchStrings.$OperatingSystem
+                        }
+                        $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
+    
+                        # Add the Version and Architecture properties to the list
+                        $updateListWithVersionParams = @{
+                            InputObject     = $downloadInfo
+                            Property        = "Note"
+                            NewPropertyName = "Version"
+                            MatchPattern    = $script:resourceStrings.Matches."$($OperatingSystem)Version"
+                        }
+                        $updateListWithVersion = Add-Property @updateListWithVersionParams
+                        $updateListWithArchParams = @{
+                            InputObject     = $updateListWithVersion
+                            Property        = "Note"
+                            NewPropertyName = "Architecture"
+                            MatchPattern    = $script:resourceStrings.Matches.Architecture
+                        }
+                        $updateListWithArch = Add-Property @updateListWithArchParams
+    
+                        # If the value for Architecture is blank, make it "x86"
+                        $i = 0
+                        ForEach ($update in $updateListWithArch) {
+                            If ($update.Architecture.Length -eq 0) {
+                                $updateListWithArch[$i].Architecture = "x86"
+                            }
+                            $i++
+                        }
+    
+                        # Return object to the pipeline
+                        If ($Null -ne $updateListWithArch) {
+                            Write-Output -InputObject $updateListWithArch
+                        }
+                    }
                 }
             }
         }
