@@ -26,6 +26,7 @@ Import-Module (Join-Path $projectRoot $module) -Force
 $ModulePath = Join-Path -Path $projectRoot -ChildPath $module
 . "$ModulePath\Private\Test-PSCore.ps1"
 . "$ModulePath\Private\Get-ModuleResource.ps1"
+. "$ModulePath\Private\ConvertTo-Hashtable.ps1"
 $ResourceStrings = Get-ModuleResource -Path "$ModulePath\LatestUpdate.json"
 
 InModuleScope LatestUpdate {
