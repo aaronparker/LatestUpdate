@@ -11,15 +11,15 @@ Function Get-LatestMonthlyRollup {
 
         .EXAMPLE
 
-        PS C:\> Get-LatestMonthlyRollup
+            PS C:\> Get-LatestMonthlyRollup
 
-        This commands reads the the Windows 8.1 update history feed and returns an object that lists the most recent Windows 8.1 Monthly Rollup Update.
+            This commands reads the the Windows 8.1 update history feed and returns an object that lists the most recent Windows 8.1 Monthly Rollup Update.
 
         .EXAMPLE
 
-        PS C:\> Get-LatestMonthlyRollup -OperatingSystem Windows7
+            PS C:\> Get-LatestMonthlyRollup -OperatingSystem Windows7
 
-        This commands reads the the Windows 7 update history feed and returns an object that lists the most recent Windows 7 Monthly Rollup Update.
+            This commands reads the the Windows 7 update history feed and returns an object that lists the most recent Windows 7 Monthly Rollup Update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-monthly")]
@@ -67,7 +67,9 @@ Function Get-LatestMonthlyRollup {
                 $updateListWithArch = Add-Property @updateListWithArchParams
 
                 # Return object to the pipeline
-                Write-Output -InputObject $updateListWithArch
+                If ($Null -ne $updateListWithArch) {
+                    Write-Output -InputObject $updateListWithArch
+                }
             }
         }
     }

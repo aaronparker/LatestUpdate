@@ -8,9 +8,9 @@ Function Get-LatestWindowsDefenderUpdate {
 
         .EXAMPLE
 
-        PS C:\> Get-LatestWindowsDefenderUpdate
+            PS C:\> Get-LatestWindowsDefenderUpdate
 
-        This commands reads the the Windows Defender update history feed and returns an object that lists the most recent Windows Defender antimalware platform update.
+            This commands reads the the Windows Defender update history feed and returns an object that lists the most recent Windows Defender antimalware platform update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-defender")]
@@ -35,7 +35,9 @@ Function Get-LatestWindowsDefenderUpdate {
                 $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 
                 # Return object to the pipeline
-                Write-Output -InputObject $downloadInfo
+                If ($Null -ne $downloadInfo) {
+                    Write-Output -InputObject $downloadInfo
+                }
             }
         }
     }

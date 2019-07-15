@@ -14,27 +14,27 @@ Function Get-LatestAdobeFlashUpdate {
 
         .EXAMPLE
 
-        PS C:\> Get-LatestAdobeFlashUpdate
+            PS C:\> Get-LatestAdobeFlashUpdate
 
-        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Semi-annual Channel Adobe Flash Player Updates.
-
-        .EXAMPLE
-
-        PS C:\> Get-LatestAdobeFlashUpdate -OperatingSystem Windows10 -Version 1809
-
-        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 1809 Adobe Flash Player Updates.
+            This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Semi-annual Channel Adobe Flash Player Updates.
 
         .EXAMPLE
 
-        PS C:\> Get-LatestAdobeFlashUpdate -Version 1809
+            PS C:\> Get-LatestAdobeFlashUpdate -OperatingSystem Windows10 -Version 1809
 
-        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 1809 Adobe Flash Player Updates.
+            This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 1809 Adobe Flash Player Updates.
 
         .EXAMPLE
 
-        PS C:\> Get-LatestAdobeFlashUpdate -OperatingSystem Windows8
+            PS C:\> Get-LatestAdobeFlashUpdate -Version 1809
 
-        This commands reads the the Windows 8 update history feed and returns an object that lists the most recent Adobe Flash Player Updates.
+            This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 1809 Adobe Flash Player Updates.
+
+        .EXAMPLE
+
+            PS C:\> Get-LatestAdobeFlashUpdate -OperatingSystem Windows8
+
+            This commands reads the the Windows 8 update history feed and returns an object that lists the most recent Adobe Flash Player Updates.
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-flash")]
@@ -134,7 +134,9 @@ Function Get-LatestAdobeFlashUpdate {
                             $updateListWithArch = Add-Property @updateListWithArchParams
                 
                             # Return object to the pipeline
-                            Write-Output -InputObject $updateListWithArch
+                            If ($Null -ne $updateListWithArch) {
+                                Write-Output -InputObject $updateListWithArch
+                            }
                         }
                     }
                 }

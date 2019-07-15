@@ -16,21 +16,21 @@ Function Get-LatestCumulativeUpdate {
 
         .EXAMPLE
 
-        PS C:\> Get-LatestCumulativeUpdate
+            PS C:\> Get-LatestCumulativeUpdate
 
-        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Semi-annual Channel Cumulative Update.
-
-        .EXAMPLE
-
-        PS C:\> Get-LatestCumulativeUpdate -Version 1809
-
-        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 1809 Cumulative Update.
+            This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Semi-annual Channel Cumulative Update.
 
         .EXAMPLE
 
-        PS C:\> Get-LatestCumulativeUpdate -OperatingSystem WindowsServer -Version 1809
+            PS C:\> Get-LatestCumulativeUpdate -Version 1809
 
-        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows Server 2019 Cumulative Update.
+            This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 1809 Cumulative Update.
+
+        .EXAMPLE
+
+            PS C:\> Get-LatestCumulativeUpdate -OperatingSystem WindowsServer -Version 1809
+
+            This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows Server 2019 Cumulative Update.
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-latest")]
@@ -88,7 +88,9 @@ Function Get-LatestCumulativeUpdate {
                     $updateListWithArch = Add-Property @updateListWithArchParams
 
                     # Return object to the pipeline
-                    Write-Output -InputObject $updateListWithArch
+                    If ($Null -ne $updateListWithArch) {
+                        Write-Output -InputObject $updateListWithArch
+                    }
                 }
             }
         }

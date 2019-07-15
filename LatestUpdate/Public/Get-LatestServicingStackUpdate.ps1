@@ -16,15 +16,15 @@ Function Get-LatestServicingStackUpdate {
 
         .EXAMPLE
 
-        PS C:\> Get-LatestServicingStackUpdate
+            PS C:\> Get-LatestServicingStackUpdate
 
-        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Servicing Stack Update.
+            This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Servicing Stack Update.
 
         .EXAMPLE
 
-        PS C:\> Get-LatestServicingStackUpdate -OperatingSystem WindowsServer
+            PS C:\> Get-LatestServicingStackUpdate -OperatingSystem WindowsServer
 
-        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows Server 2016, 2019 and Semi-Annual Channel Servicing Stack Updates.
+            This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows Server 2016, 2019 and Semi-Annual Channel Servicing Stack Updates.
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-stack")]
@@ -62,8 +62,11 @@ Function Get-LatestServicingStackUpdate {
                         If ($Null -ne $updateList) {
                             # Get download info for each update from the catalog
                             Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
-                            $downloadInfo = Get-UpdateCatalogDownloadInfo -UpdateId $updateList.ID `
-                                -OperatingSystem $script:resourceStrings.SearchStrings.$OperatingSystem
+                            $downloadInfoParams = @{
+                                UpdateId        = $updateList.ID
+                                OperatingSystem = $script:resourceStrings.SearchStrings.$OperatingSystem
+                            }
+                            $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
         
                             # Add the Version and Architecture properties to the list
                             $updateListWithVersionParams = @{
@@ -92,7 +95,9 @@ Function Get-LatestServicingStackUpdate {
                             }
         
                             # Return object to the pipeline
-                            Write-Output -InputObject $updateListWithArch
+                            If ($Null -ne $updateListWithArch) {
+                                Write-Output -InputObject $updateListWithArch
+                            }
                         }
                     }
                 }
@@ -142,7 +147,9 @@ Function Get-LatestServicingStackUpdate {
                         }
     
                         # Return object to the pipeline
-                        Write-Output -InputObject $updateListWithArch
+                        If ($Null -ne $updateListWithArch) {
+                            Write-Output -InputObject $updateListWithArch
+                        }
                     }
                 }
             }

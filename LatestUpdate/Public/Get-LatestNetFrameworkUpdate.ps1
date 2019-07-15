@@ -11,15 +11,15 @@ Function Get-LatestNetFrameworkUpdate {
 
         .EXAMPLE
 
-        PS C:\> Get-LatestNetFrameworkUpdate
+            PS C:\> Get-LatestNetFrameworkUpdate
 
-        This commands reads the the .NET Framework update history feed and returns an object that lists the most recent Windows 10 .NET Framework Cumulative Updates.
+            This commands reads the the .NET Framework update history feed and returns an object that lists the most recent Windows 10 .NET Framework Cumulative Updates.
 
         .EXAMPLE
 
-        PS C:\> Get-LatestNetFrameworkUpdate -OperatingSystem WindowsClient
+            PS C:\> Get-LatestNetFrameworkUpdate -OperatingSystem WindowsClient
 
-        This commands reads the the Windows update history feeds and returns an object that lists the most recent Windows 10/8.1/7 .NET Framework Cumulative Updates.
+            This commands reads the the Windows update history feeds and returns an object that lists the most recent Windows 10/8.1/7 .NET Framework Cumulative Updates.
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-net")]
@@ -87,7 +87,9 @@ Function Get-LatestNetFrameworkUpdate {
                         }
 
                         # Output to pipeline
-                        Write-Output -InputObject $updateListWithArch
+                        If ($Null -ne $updateListWithArch) {
+                            Write-Output -InputObject $updateListWithArch
+                        }
                     }
                 }
             }

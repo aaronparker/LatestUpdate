@@ -1,21 +1,51 @@
 Function Save-LatestUpdate {
     <#
         .SYNOPSIS
-            Downloads the latest Windows 10 Cumulative, Servicing Stack and Adobe Flash Player updates.
+            Downloads the updates passed from other LatestUpdate Get functions.
 
         .DESCRIPTION
-            Downloads the latest Windows 10 Cumulative, Servicing Stack and Adobe Flash Player updates to a local folder.
+            Downloads the updates passed from other LatestUpdate Get functions to a local folder.
+            
+            Use functions such as Get-LatestCumulativeUpdate and Get-LatestMonthlyRollup to retrieve the list of updates to then pass to Save-LatestUpdate to download each update locally. 
 
-            Then do one or more of the following:
-            - Import the update into an MDT share with Import-LatestUpdate to speed up deployment of Windows (reference images etc.)
+            Do one or more of the following with the downloaded updates:
+            - Import the update into an MDT share to speed deployment of Windows (new PCs, reference images etc.)
             - Apply the update to an offline WIM using DISM
             - Deploy the update with ConfigMgr (if not using WSUS)
+
+        .PARAMETER Updates
+            Specifies the list of updates from other LatestUpdate functions such as Get-LatestCumulativeUpdate and Get-LatestMonthlyRollup.
+
+        .PARAMETER Path
+            Specifies a path as the destination for the downloaded updates. All updates passed in -Updates will be downloaded to this path.
+
+        .PARAMETER ForceWebRequest
+            Forces the use of Invoke-WebRequest instead of Start-BitsTransfer when running under Windows PowerShell.
+
+        .PARAMETER Priority
+            Specifies the priority of a BITS transfer job. Defaults to Foreground. Foreground will enforced when proxy credentials are passed to Save-LatestUpdate
+
+        .PARAMETER Proxy
+            Specifies a proxy server address to use when initiating a download.
+
+        .PARAMETER ProxyCredential
+            Specifies a [System.Management.Automation.PSCredential] object to use when the proxy server requires authentication.
+
+        .PARAMETER Force
+            Specifies that existing downloaded updates will be re-downloaded and overwritten.
+
+        .EXAMPLE
+
+        PS C:\> $Updates = Get-LatestCumulativeUpdate
+        PS C:\> Save-LatestUpdate -Updates $Updates -Path C:\Temp\Updates
+
+        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Cumulative Updates. Save-LatestUpdate will download each returned update to C:\Temp\Updates.
 
         .EXAMPLE
 
         PS C:\> Get-LatestServicingStackUpdate | Save-LatestUpdate
 
-        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Servicing Stack Updates. The output is then passed to Save-LatestUpdate and each update is downloaded locally.
+        This commands reads the the Windows 10 update history feed and returns an object that lists the most recent Windows 10 Servicing Stack Updates. The output is then passed to Save-LatestUpdate and each update is downloaded to the current directory.
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding(SupportsShouldProcess = $True, HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/download")]
@@ -37,18 +67,18 @@ Function Save-LatestUpdate {
         [System.String] $Path = $PWD,
 
         [Parameter(Mandatory = $False)]
-        [System.String] $Proxy,
-
-        [Parameter(Mandatory = $False)]
-        [System.Management.Automation.PSCredential]
-        $ProxyCredential = [System.Management.Automation.PSCredential]::Empty,
-
-        [Parameter(Mandatory = $False)]
         [System.Management.Automation.SwitchParameter] $ForceWebRequest,
 
         [Parameter(Mandatory = $False)]
         [ValidateSet('Foreground', 'High', 'Normal', 'Low')]
         [System.String] $Priority = "Foreground",
+
+        [Parameter(Mandatory = $False)]
+        [System.String] $Proxy,
+
+        [Parameter(Mandatory = $False)]
+        [System.Management.Automation.PSCredential]
+        $ProxyCredential = [System.Management.Automation.PSCredential]::Empty,
         
         [Parameter(Mandatory = $False)]
         [System.Management.Automation.SwitchParameter] $Force
