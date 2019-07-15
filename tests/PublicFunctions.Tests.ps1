@@ -299,7 +299,7 @@ InModuleScope LatestUpdate {
         If (Test-Path -Path 'env:APPVEYOR_BUILD_FOLDER') {
 
             # Get-LatestCumulativeUpdate
-            ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions) {
+            ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions[0]) {
                 Write-Host ""
                 Write-Host "`tBuilding variable for Get-LatestCumulativeUpdate Windows 10 [$Version]." -ForegroundColor Cyan
                 New-Variable -Name "Updates$Version" -Value (Get-LatestCumulativeUpdate -OperatingSystem Windows10 -Version $Version)
@@ -326,7 +326,7 @@ InModuleScope LatestUpdate {
             }
 
             # Get-LatestServicingStack
-            ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions) {
+            ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions[0]) {
                 Write-Host ""
                 Write-Host "`tBuilding variable for Get-LatestServicingStack Windows 10 [$Version]." -ForegroundColor Cyan
                 New-Variable -Name "Updates$Version" -Value (Get-LatestServicingStack -OperatingSystem Windows10 -Version $Version)
@@ -353,7 +353,7 @@ InModuleScope LatestUpdate {
             }
 
             # Get-LatestNetFrameworkUpdate
-            ForEach ($Version in $ResourceStrings.ParameterValues.VersionsComplete) {
+            ForEach ($Version in $ResourceStrings.ParameterValues.VersionsComplete[0]) {
                 Write-Host ""
                 Write-Host "`tBuilding variable for Get-LatestNetFrameworkUpdate [$Version]." -ForegroundColor Cyan
                 New-Variable -Name "Updates$Version" -Value (Get-LatestNetFrameworkUpdate -OperatingSystem $Version)
@@ -380,7 +380,7 @@ InModuleScope LatestUpdate {
             }
 
             # Get-LatestAdobeFlashUpdate Windows 10
-            ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions) {
+            ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions[0]) {
                 Write-Host ""
                 Write-Host "`tBuilding variable for Get-LatestAdobeFlashUpdate Windows 10 [$Version]." -ForegroundColor Cyan
                 New-Variable -Name "Updates$Version" -Value (Get-LatestAdobeFlashUpdate -OperatingSystem Windows10 -Version $Version)
@@ -430,7 +430,7 @@ InModuleScope LatestUpdate {
             }
 
             # Get-LatestMonthlyRollup
-            ForEach ($Version in $ResourceStrings.ParameterValues.Versions87) {
+            ForEach ($Version in $ResourceStrings.ParameterValues.Versions87[0]) {
                 Write-Host ""
                 Write-Host "`tBuilding variable for Get-LatestMonthlyRollup [$Version]." -ForegroundColor Cyan
                 New-Variable -Name "Updates$Version" -Value (Get-LatestMonthlyRollup -OperatingSystem $Version)
