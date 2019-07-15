@@ -10,7 +10,7 @@
 
 ## About
 
-A module for retrieving the latest Windows 10 / Windows Server 2016, 2019, Semi Annual Channel Cumulative Updates, Servicing Stack Updates, .NET Framework Cumulative Updates, the Monthly Rollups for 8.1 / 7 (and Windows Server 2012 R2, 2008 R2) and the latest Adobe Flash Player updates from the Microsoft Update History page. In addition, the module provides a function for downloading the update files locally.
+A module for retrieving the latest Windows 10 / Windows Server 2016, 2019, Semi-annual Channel Cumulative Updates, Servicing Stack Updates, .NET Framework Cumulative Updates, the Monthly Rollups for 8.1 / 7 (and Windows Server 2012 R2, 2008 R2), Windows Defender updates and the latest Adobe Flash Player updates from the Microsoft Update History pages. In addition, the module provides a function for downloading the update files locally.
 
 Importing a cumulative update into [the Packages nodes in an MDT share](https://docs.microsoft.com/en-us/sccm/mdt/use-the-mdt#ConfiguringPackagesintheDeploymentWorkbench) enables updates during the offline phase of Windows setup, speeding up an installation of Windows. Updates can also be [applied directly to a WIM](https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/dism-operating-system-package-servicing-command-line-options).
 
