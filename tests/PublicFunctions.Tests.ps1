@@ -36,6 +36,7 @@ InModuleScope LatestUpdate {
             Write-Host "`tBuilding variable for Windows 10 [$Version]." -ForegroundColor Cyan
             New-Variable -Name "Updates$Version" -Value (Get-LatestCumulativeUpdate -OperatingSystem Windows10 -Version $Version)
             $Output = (Get-Variable -Name "Updates$Version").Value
+            Remove-Variable -Name "Updates$Version"
 
             Context "Validate list of Cumulative updates for Windows 10 $Version" {
                 It "Returns an array of 1 or more updates" {
@@ -72,6 +73,7 @@ InModuleScope LatestUpdate {
             Write-Host "`tBuilding variable for Windows 10 [$Version]." -ForegroundColor Cyan
             New-Variable -Name "Updates$Version" -Value (Get-LatestServicingStack -OperatingSystem Windows10 -Version $Version)
             $Output = (Get-Variable -Name "Updates$Version").Value
+            Remove-Variable -Name "Updates$Version"
 
             Context "Validate list of Servicing Stack updates for Windows 10 $Version" {
                 It "Returns an array of 1 or more updates" {
@@ -108,6 +110,7 @@ InModuleScope LatestUpdate {
             Write-Host "`tBuilding variable for [$Version]." -ForegroundColor Cyan
             New-Variable -Name "Updates$Version" -Value (Get-LatestNetFrameworkUpdate -OperatingSystem $Version)
             $Output = (Get-Variable -Name "Updates$Version").Value
+            Remove-Variable -Name "Updates$Version"
 
             Context "Validate list of .NET Framework updates for $Version" {
                 It "Returns an array of 1 or more updates" {
@@ -144,6 +147,7 @@ InModuleScope LatestUpdate {
             Write-Host "`tBuilding variable for [$Version]." -ForegroundColor Cyan
             New-Variable -Name "Updates$Version" -Value (Get-LatestMonthlyRollup -OperatingSystem $Version)
             $Output = (Get-Variable -Name "Updates$Version").Value
+            Remove-Variable -Name "Updates$Version"
 
             Context "Validate list of Monthly Rollup updates for $Version" {
                 It "Returns an array of 1 or more updates" {
@@ -180,6 +184,7 @@ InModuleScope LatestUpdate {
             Write-Host "`tBuilding variable for Windows 10 [$Version]." -ForegroundColor Cyan
             New-Variable -Name "Updates$Version" -Value (Get-LatestAdobeFlashUpdate -OperatingSystem Windows10 -Version $Version)
             $Output = (Get-Variable -Name "Updates$Version").Value
+            Remove-Variable -Name "Updates$Version"
 
             Context "Validate list of Adobe Flash Player updates for Windows 10 $Version" {
                 It "Returns an array of 1 or more updates" {
@@ -302,8 +307,9 @@ InModuleScope LatestUpdate {
             ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions[0]) {
                 Write-Host ""
                 Write-Host "`tBuilding variable for Get-LatestCumulativeUpdate Windows 10 [$Version]." -ForegroundColor Cyan
-                New-Variable -Name "Updates$Version" -Value (Get-LatestCumulativeUpdate -OperatingSystem Windows10 -Version $Version)
-                $Output = (Get-Variable -Name "Updates$Version").Value
+                New-Variable -Name "Downloads$Version" -Value (Get-LatestCumulativeUpdate -OperatingSystem Windows10 -Version $Version)
+                $Output = (Get-Variable -Name "Downloads$Version").Value
+                Remove-Variable -Name "Downloads$Version"
     
                 Context "Downloads updates from Get-LatestCumulativeUpdate for Windows 10 $Version" {
                     $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
@@ -329,8 +335,9 @@ InModuleScope LatestUpdate {
             ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions[0]) {
                 Write-Host ""
                 Write-Host "`tBuilding variable for Get-LatestServicingStack Windows 10 [$Version]." -ForegroundColor Cyan
-                New-Variable -Name "Updates$Version" -Value (Get-LatestServicingStack -OperatingSystem Windows10 -Version $Version)
-                $Output = (Get-Variable -Name "Updates$Version").Value
+                New-Variable -Name "Downloads$Version" -Value (Get-LatestServicingStack -OperatingSystem Windows10 -Version $Version)
+                $Output = (Get-Variable -Name "Downloads$Version").Value
+                Remove-Variable -Name "Downloads$Version"
 
                 Context "Downloads updates from Get-LatestServicingStack for Windows 10 $Version" {
                     $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
@@ -356,8 +363,9 @@ InModuleScope LatestUpdate {
             ForEach ($Version in $ResourceStrings.ParameterValues.VersionsComplete[0]) {
                 Write-Host ""
                 Write-Host "`tBuilding variable for Get-LatestNetFrameworkUpdate [$Version]." -ForegroundColor Cyan
-                New-Variable -Name "Updates$Version" -Value (Get-LatestNetFrameworkUpdate -OperatingSystem $Version)
-                $Output = (Get-Variable -Name "Updates$Version").Value
+                New-Variable -Name "Downloads$Version" -Value (Get-LatestNetFrameworkUpdate -OperatingSystem $Version)
+                $Output = (Get-Variable -Name "Downloads$Version").Value
+                Remove-Variable -Name "Downloads$Version"
 
                 Context "Downloads updates from Get-LatestNetFrameworkUpdate for Windows $Version" {
                     $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
@@ -383,8 +391,9 @@ InModuleScope LatestUpdate {
             ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions[0]) {
                 Write-Host ""
                 Write-Host "`tBuilding variable for Get-LatestAdobeFlashUpdate Windows 10 [$Version]." -ForegroundColor Cyan
-                New-Variable -Name "Updates$Version" -Value (Get-LatestAdobeFlashUpdate -OperatingSystem Windows10 -Version $Version)
-                $Output = (Get-Variable -Name "Updates$Version").Value
+                New-Variable -Name "Downloads$Version" -Value (Get-LatestAdobeFlashUpdate -OperatingSystem Windows10 -Version $Version)
+                $Output = (Get-Variable -Name "Downloads$Version").Value
+                Remove-Variable -Name "Downloads$Version"
         
                 Context "Downloads updates from Get-LatestAdobeFlashUpdate for Windows 10 $Version" {
                     $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
@@ -433,8 +442,9 @@ InModuleScope LatestUpdate {
             ForEach ($Version in $ResourceStrings.ParameterValues.Versions87[0]) {
                 Write-Host ""
                 Write-Host "`tBuilding variable for Get-LatestMonthlyRollup [$Version]." -ForegroundColor Cyan
-                New-Variable -Name "Updates$Version" -Value (Get-LatestMonthlyRollup -OperatingSystem $Version)
-                $Output = (Get-Variable -Name "Updates$Version").Value
+                New-Variable -Name "Downloads$Version" -Value (Get-LatestMonthlyRollup -OperatingSystem $Version)
+                $Output = (Get-Variable -Name "Downloads$Version").Value
+                Remove-Variable -Name "Downloads$Version"
         
                 Context "Downloads updates from Get-LatestMonthlyRollup for $Version" {
                     $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest

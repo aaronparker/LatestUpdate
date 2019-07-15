@@ -26,6 +26,7 @@ Function Get-LatestNetFrameworkUpdate {
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
         [ValidateNotNullOrEmpty()]
+        [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.VersionsComplete })]
         [Alias('OS')]
         [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.VersionsComplete[0]
     )

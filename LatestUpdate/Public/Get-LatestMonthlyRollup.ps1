@@ -26,6 +26,7 @@ Function Get-LatestMonthlyRollup {
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
         [ValidateNotNullOrEmpty()]
+        [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.Versions87 })]
         [Alias('OS')]
         [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.Versions87[0]
     )

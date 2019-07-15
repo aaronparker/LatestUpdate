@@ -68,3 +68,20 @@ $scriptBlock = {
 }
 Register-ArgumentCompleter -CommandName Get-LatestNetFrameworkUpdate -ParameterName OperatingSystem -ScriptBlock $scriptBlock
 #endregion
+
+#region Dyamic ValidateSet for parameters, required PowerShell Core
+<#
+Class Windows10Versions : System.Management.Automation.IValidateSetValuesGenerator {
+    [String[]] GetValidValues() {    
+        $Windows10Versions = $script:resourceStrings.ParameterValues.Windows10Versions
+    return $Windows10Versions
+    }
+}
+
+Class Versions10 : System.Management.Automation.IValidateSetValuesGenerator {
+    [String[]] GetValidValues() {    
+        $Versions10 = $script:resourceStrings.ParameterValues.Versions10
+    return $Versions10
+    }
+}#>
+#endregion

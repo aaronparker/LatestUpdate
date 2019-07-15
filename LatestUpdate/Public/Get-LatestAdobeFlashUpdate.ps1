@@ -42,10 +42,12 @@ Function Get-LatestAdobeFlashUpdate {
     Param (
         [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
         [ValidateNotNullOrEmpty()]
+        [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.Versions108 })]
         [Alias('OS')]
         [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.Versions108[0],
 
         [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
+        [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.Windows10Versions })]
         [System.String[]] $Version = $script:resourceStrings.ParameterValues.Windows10Versions[0]
     )
     
