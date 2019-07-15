@@ -135,7 +135,7 @@ Function Save-LatestUpdate {
                         Note = $update.Note
                         Path = (Resolve-Path -Path $updateDownloadTarget)
                     }
-                    Write-Object -InputObject $outputObject
+                    Write-Output -InputObject $outputObject
                 }
                 Else {
                     Write-Warning -Message "$($MyInvocation.MyCommand): failed to download [$updateDownloadTarget]."
