@@ -33,7 +33,6 @@ Function Add-Property {
         }
 
         $object | Add-Member -NotePropertyName $NewPropertyName -NotePropertyValue $value
-        
         Write-Output -InputObject $object
     }
 }
