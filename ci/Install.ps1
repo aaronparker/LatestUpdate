@@ -47,4 +47,4 @@ If ([Version]((Find-Module -Name posh-git).Version) -gt (Get-Module -Name posh-g
 
 # Import module
 Write-Host -Object ''
-Import-Module (Join-Path $projectRoot $module) -Verbose -Force
+Import-Module (Join-Path -Path $projectRoot -ChildPath "src") -Verbose -Force

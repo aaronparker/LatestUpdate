@@ -20,10 +20,10 @@ Else {
 # Import module
 Write-Host ""
 Write-Host "Importing module." -ForegroundColor Cyan
-Import-Module (Join-Path $projectRoot $module) -Force
+Import-Module (Join-Path -Path $projectRoot -ChildPath "src") -Force
 
 # Read module resource strings for testing
-$ModulePath = Join-Path -Path $projectRoot -ChildPath $module
+$ModulePath = Join-Path -Path $projectRoot -ChildPath "src"
 . "$ModulePath\Private\Test-PSCore.ps1"
 . "$ModulePath\Private\Get-ModuleResource.ps1"
 . "$ModulePath\Private\ConvertTo-Hashtable.ps1"
@@ -132,7 +132,7 @@ InModuleScope LatestUpdate {
     Describe 'Get-LatestServicingStack -Previous' {
         ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions) {
             Write-Host ""
-            Write-Host "`tBuilding variable for Windows 10 [$Version]." -ForegroundColor Cyan
+            Write-Host "`tBuilding variable for Windows 10 [$Version] with -Previous." -ForegroundColor Cyan
             New-Variable -Name "Updates$Version" -Value (Get-LatestServicingStack -OperatingSystem Windows10 -Version $Version -Previous)
             $Output = (Get-Variable -Name "Updates$Version").Value
             Remove-Variable -Name "Updates$Version"
@@ -231,7 +231,7 @@ InModuleScope LatestUpdate {
     Describe 'Get-LatestMonthlyRollup -Previous' {
         ForEach ($Version in $ResourceStrings.ParameterValues.Versions87) {
             Write-Host ""
-            Write-Host "`tBuilding variable for [$Version]." -ForegroundColor Cyan
+            Write-Host "`tBuilding variable for [$Version] with -Previous." -ForegroundColor Cyan
             New-Variable -Name "Updates$Version" -Value (Get-LatestMonthlyRollup -OperatingSystem $Version -Previous)
             $Output = (Get-Variable -Name "Updates$Version").Value
             Remove-Variable -Name "Updates$Version"
@@ -324,7 +324,7 @@ InModuleScope LatestUpdate {
     Describe 'Get-LatestAdobeFlashUpdate -Previous' {
         ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions) {
             Write-Host ""
-            Write-Host "`tBuilding variable for Windows 10 [$Version]." -ForegroundColor Cyan
+            Write-Host "`tBuilding variable for Windows 10 [$Version] with -Previous." -ForegroundColor Cyan
             New-Variable -Name "Updates$Version" -Value (Get-LatestAdobeFlashUpdate -OperatingSystem Windows10 -Version $Version -Previous)
             $Output = (Get-Variable -Name "Updates$Version").Value
             Remove-Variable -Name "Updates$Version"

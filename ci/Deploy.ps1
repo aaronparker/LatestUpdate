@@ -25,7 +25,7 @@ Else {
         # This means that the major / minor / build values will be consistent across GitHub and the Gallery
         Try {
             # This is where the module manifest lives
-            $modulePath = Join-Path $projectRoot $module
+            $modulePath = Join-Path $projectRoot "src"
             $manifestPath = Join-Path $modulePath "$module.psd1"
 
             # Start by importing the manifest to determine the version, then add 1 to the revision
@@ -74,7 +74,7 @@ Else {
         }
         Catch {
             # Sad panda; it broke
-            Write-Warning "Push to GitHub failed."
+            Write-Warning -Message "Push to GitHub failed."
             Throw $_
         }
 
@@ -83,7 +83,7 @@ Else {
         Try {
             # Build a splat containing the required details and make sure to Stop for errors which will trigger the catch
             $PM = @{
-                Path        = (Join-Path $projectRoot $module)
+                Path        = (Join-Path -Path $projectRoot -ChildPath "src")
                 NuGetApiKey = $env:NuGetApiKey
                 ErrorAction = 'Stop'
             }
@@ -93,7 +93,7 @@ Else {
         Catch {
             # Sad panda; it broke
             Write-Warning -Message "Publishing $module $newVersion to the PowerShell Gallery failed."
-            throw $_
+            Throw $_
         }
     }
 }

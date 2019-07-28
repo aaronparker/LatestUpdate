@@ -16,13 +16,15 @@ Else {
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
     $module = "LatestUpdate"
 }
-$moduleParent = Join-Path $projectRoot $module
-$manifestPath = Join-Path $moduleParent "$module.psd1"
-$modulePath = Join-Path $moduleParent "$module.psm1"
-Import-Module (Join-Path $projectRoot $module) -Force
+$moduleParent = Join-Path -Path $projectRoot -ChildPath "src"
+$manifestPath = Join-Path -Path $moduleParent -ChildPath "$module.psd1"
+$modulePath = Join-Path -Path $moduleParent -ChildPath "$module.psm1"
+Write-Host ""
+Write-Host "Importing module." -ForegroundColor Cyan
+Import-Module $moduleParent -Force
 
 Describe "General project validation" {
-    $scripts = Get-ChildItem (Join-Path $projectRoot $module) -Recurse -Include *.ps1, *.psm1
+    $scripts = Get-ChildItem -Path $moduleParent -Recurse -Include *.ps1, *.psm1
 
     # TestCases are splatted to the script so we need hashtables
     $testCase = $scripts | ForEach-Object { @{file = $_ } }

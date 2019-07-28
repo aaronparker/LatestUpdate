@@ -16,7 +16,9 @@ Else {
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
     $module = "LatestUpdate"
 }
-Import-Module (Join-Path $projectRoot $module) -Force
+Write-Host ""
+Write-Host "Importing module." -ForegroundColor Cyan
+Import-Module (Join-Path -Path $projectRoot -ChildPath "src") -Force
 
 InModuleScope LatestUpdate {
     Describe 'Test-PSCore' {
