@@ -23,7 +23,7 @@ $manifestPath = Join-Path -Path $moduleParent -ChildPath "$module.psd1"
 $modulePath = Join-Path -Path $moduleParent -ChildPath "$module.psm1"
 
 # Echo variables
-Write-Host -Object ''
+Write-Host ""
 Write-Host "ProjectRoot:     $projectRoot."
 Write-Host "Module name:     $module."
 Write-Host "Module parent:   $moduleParent."
@@ -33,7 +33,7 @@ Write-Host "Tests path:      $tests."
 Write-Host "Output path:     $output."
 
 # Line break for readability in AppVeyor console
-Write-Host -Object ''
+Write-Host ""
 Write-Host "PowerShell Version:" $PSVersionTable.PSVersion.ToString()
 
 # Install packages

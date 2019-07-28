@@ -6,7 +6,7 @@
 Param ()
 
 # Line break for readability in AppVeyor console
-Write-Host -Object ''
+Write-Host ""
 
 # Make sure we're using the Master branch and that it's not a pull request
 # Environmental Variables Guide: https://www.appveyor.com/docs/environment-variables/
@@ -99,4 +99,4 @@ Else {
 }
 
 # Line break for readability in AppVeyor console
-Write-Host -Object ''
+Write-Host ""
