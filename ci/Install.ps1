@@ -14,17 +14,23 @@ If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
 Else {
     # Local Testing 
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-    $module = "LatestUpdate"
+    $module = Split-Path -Path $projectRoot -Leaf
 }
 $tests = Join-Path $projectRoot "tests"
 $output = Join-Path $projectRoot "TestsResults.xml"
+$moduleParent = Join-Path -Path $projectRoot -ChildPath "src"
+$manifestPath = Join-Path -Path $moduleParent -ChildPath "$module.psd1"
+$modulePath = Join-Path -Path $moduleParent -ChildPath "$module.psm1"
 
 # Echo variables
 Write-Host -Object ''
-Write-Host "ProjectRoot: $projectRoot."
-Write-Host "Module name: $module."
-Write-Host "Tests path:  $tests."
-Write-Host "Output path: $output."
+Write-Host "ProjectRoot:     $projectRoot."
+Write-Host "Module name:     $module."
+Write-Host "Module parent:   $moduleParent."
+Write-Host "Module manifest: $manifestPath."
+Write-Host "Module path:     $modulePath."
+Write-Host "Tests path:      $tests."
+Write-Host "Output path:     $output."
 
 # Line break for readability in AppVeyor console
 Write-Host -Object ''
@@ -46,5 +52,6 @@ If ([Version]((Find-Module -Name posh-git).Version) -gt (Get-Module -Name posh-g
 }
 
 # Import module
-Write-Host -Object ''
-Import-Module (Join-Path -Path $projectRoot -ChildPath "src") -Verbose -Force
+Write-Host ""
+Write-Host "Importing module." -ForegroundColor Cyan
+Import-Module $manifestPath -Force

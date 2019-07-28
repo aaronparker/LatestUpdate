@@ -14,14 +14,16 @@ If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
 Else {
     # Local Testing 
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-    $module = "LatestUpdate"
+    $module = Split-Path -Path $projectRoot -Leaf
 }
 $moduleParent = Join-Path -Path $projectRoot -ChildPath "src"
 $manifestPath = Join-Path -Path $moduleParent -ChildPath "$module.psd1"
 $modulePath = Join-Path -Path $moduleParent -ChildPath "$module.psm1"
+
+# Import module
 Write-Host ""
 Write-Host "Importing module." -ForegroundColor Cyan
-Import-Module $moduleParent -Force
+Import-Module $manifestPath -Force
 
 Describe "General project validation" {
     $scripts = Get-ChildItem -Path $moduleParent -Recurse -Include *.ps1, *.psm1
