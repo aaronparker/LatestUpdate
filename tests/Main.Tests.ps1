@@ -57,7 +57,7 @@ Describe "General project validation" {
 }
 
 Describe "Module Function validation" {
-    $scripts = Get-ChildItem -Path (Join-Path $projectRoot $module) -Recurse -Include *.ps1
+    $scripts = Get-ChildItem -Path $moduleParent -Recurse -Include *.ps1
     $testCase = $scripts | ForEach-Object { @{file = $_ } }
     It "Script <file> should only contain one function" -TestCases $testCase {
         param($file)   
