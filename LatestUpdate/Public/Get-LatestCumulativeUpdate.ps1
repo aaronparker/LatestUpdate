@@ -44,7 +44,10 @@ Function Get-LatestCumulativeUpdate {
 
         [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.Windows10Versions })]
-        [System.String[]] $Version = $script:resourceStrings.ParameterValues.Windows10Versions[0]
+        [System.String[]] $Version = $script:resourceStrings.ParameterValues.Windows10Versions[0],
+
+        [Parameter(Mandatory = $False)]
+        [System.Management.Automation.SwitchParameter] $Previous
     )
     
     # If resource strings are returned we can continue
@@ -58,8 +61,12 @@ Function Get-LatestCumulativeUpdate {
 
                 # Filter the feed for cumulative updates and continue if we get updates
                 Write-Verbose -Message "$($MyInvocation.MyCommand): search feed for version $ver."
-                $updateList = Get-UpdateCumulative -UpdateFeed $updateFeed `
-                    -Build $script:resourceStrings.VersionTable.Windows10Builds[$ver]
+                $gucParams = @{
+                    UpdateFeed = $updateFeed
+                    Build = $script:resourceStrings.VersionTable.Windows10Builds[$ver]
+                }
+                If ($Previous.IsPresent) { $gucParams.Previous = $True }
+                $updateList = Get-UpdateCumulative @gucParams
                 Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
 
                 If ($Null -ne $updateList) {
