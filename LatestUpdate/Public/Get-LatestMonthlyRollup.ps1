@@ -9,6 +9,9 @@ Function Get-LatestMonthlyRollup {
         .PARAMETER OperatingSystem
             Specifies the the Windows operating system version to search for updates.
 
+        .PARAMETER Previous
+            Specifies that the previous to the latest update should be returned.
+
         .EXAMPLE
 
             PS C:\> Get-LatestMonthlyRollup
@@ -28,7 +31,10 @@ Function Get-LatestMonthlyRollup {
         [ValidateNotNullOrEmpty()]
         [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.Versions87 })]
         [Alias('OS')]
-        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.Versions87[0]
+        [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.Versions87[0],
+
+        [Parameter(Mandatory = $False)]
+        [System.Management.Automation.SwitchParameter] $Previous
     )
     
     # If resource strings are returned we can continue
@@ -38,7 +44,11 @@ Function Get-LatestMonthlyRollup {
 
         If ($Null -ne $updateFeed) {
             # Filter the feed for monthly rollup updates and continue if we get updates
-            $updateList = Get-UpdateMonthly -UpdateFeed $updateFeed
+            $gumParams = @{
+                UpdateFeed = $updateFeed
+            }
+            If ($Previous.IsPresent) { $gumParams.Previous = $True }
+            $updateList = Get-UpdateMonthly @gumParams
             Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
 
             If ($Null -ne $updateList) {

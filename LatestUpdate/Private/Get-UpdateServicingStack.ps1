@@ -12,7 +12,10 @@ Function Get-UpdateServicingStack {
 
         [Parameter(Mandatory = $False, Position = 1)]
         [ValidateNotNullOrEmpty()]
-        [System.String] $Version
+        [System.String] $Version,
+
+        [Parameter(Mandatory = $False)]
+        [System.Management.Automation.SwitchParameter] $Previous
     )
 
     # Filter object matching desired update type
@@ -41,7 +44,13 @@ Function Get-UpdateServicingStack {
             }
             $sortedUpdateList.Add($PSObject) | Out-Null
         }
-        $latestUpdate = $sortedUpdateList | Sort-Object -Property Updated -Descending | Select-Object -First 1
+        If ($Previous.IsPresent) {
+            Write-Verbose -Message "$($MyInvocation.MyCommand): selecting previous update"
+            $latestUpdate = $sortedUpdateList | Sort-Object -Property Updated -Descending | Select-Object -First 2 | Select-Object -Last 1
+        }
+        Else {
+            $latestUpdate = $sortedUpdateList | Sort-Object -Property Updated -Descending | Select-Object -First 1
+        }
         Write-Verbose -Message "$($MyInvocation.MyCommand): selected item [$($latestUpdate.title)]"
     }
 

@@ -14,6 +14,9 @@ Function Get-LatestCumulativeUpdate {
         .PARAMETER Version
             Specifies the Windows 10 Semi-annual Channel version number.
 
+        .PARAMETER Previous
+            Specifies that the previous to the latest update should be returned.
+
         .EXAMPLE
 
             PS C:\> Get-LatestCumulativeUpdate

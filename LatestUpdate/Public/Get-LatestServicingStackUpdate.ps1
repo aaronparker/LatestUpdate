@@ -14,6 +14,9 @@ Function Get-LatestServicingStackUpdate {
         .PARAMETER Version
             Specifies the Windows 10 Semi-annual Channel version number. Only valid when 'Windows10' is specified for -OperatingSystem.
 
+        .PARAMETER Previous
+            Specifies that the previous to the latest update should be returned.
+
         .EXAMPLE
 
             PS C:\> Get-LatestServicingStackUpdate
@@ -38,7 +41,10 @@ Function Get-LatestServicingStackUpdate {
 
         [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.Windows10Versions })]
-        [System.String[]] $Version
+        [System.String[]] $Version,
+
+        [Parameter(Mandatory = $False)]
+        [System.Management.Automation.SwitchParameter] $Previous
     )
 
     # If resource strings are returned we can continue
@@ -57,7 +63,12 @@ Function Get-LatestServicingStackUpdate {
                     ForEach ($ver in $Version) {
                         # Filter the feed for servicing stack updates and continue if we get updates
                         Write-Verbose -Message "$($MyInvocation.MyCommand): search feed for version $ver."
-                        $updateList = Get-UpdateServicingStack -UpdateFeed $updateFeed -Version $ver
+                        $gusParams = @{
+                            UpdateFeed = $updateFeed
+                            Version    = $ver
+                        }
+                        If ($Previous.IsPresent) { $gusParams.Previous = $True }
+                        $updateList = Get-UpdateServicingStack @gusParams
         
                         If ($Null -ne $updateList) {
                             # Get download info for each update from the catalog
