@@ -12,7 +12,10 @@ Function Get-UpdateCumulative {
 
         [Parameter(Mandatory = $False, Position = 1)]
         [ValidateNotNullOrEmpty()]
-        [System.String] $Build
+        [System.String] $Build,
+
+        [Parameter(Mandatory = $False)]
+        [System.Management.Automation.SwitchParameter] $Previous
     )
 
     # Filter object matching desired update type
@@ -45,7 +48,13 @@ Function Get-UpdateCumulative {
             }
             $sortedUpdateList.Add($PSObject) | Out-Null
         }
-        $latestUpdate = $sortedUpdateList | Sort-Object -Property Revision -Descending | Select-Object -First 1
+        If ($Previous.IsPresent) {
+            Write-Verbose -Message "$($MyInvocation.MyCommand): selecting previous update"
+            $latestUpdate = $sortedUpdateList | Sort-Object -Property Revision -Descending | Select-Object -First 2 | Select-Object -Last 1
+        }
+        Else {
+            $latestUpdate = $sortedUpdateList | Sort-Object -Property Revision -Descending | Select-Object -First 1
+        }
         Write-Verbose -Message "$($MyInvocation.MyCommand): selected item [$($latestUpdate.title)]"
     }
 

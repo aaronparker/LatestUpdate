@@ -33,7 +33,7 @@ Function Get-UpdateCatalogDownloadInfo {
         # Output object
         $UpdateCatalogDownloadItems = New-Object -TypeName System.Collections.ArrayList
 
-        # Determine link id's and update description
+        # Determine link ids and update description
         $UpdateCatalogItems = ($searchResult.Links | Where-Object { $_.Id -match "_link" })
 
         ForEach ($UpdateCatalogItem in $UpdateCatalogItems) {

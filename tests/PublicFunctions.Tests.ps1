@@ -14,16 +14,19 @@ If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
 Else {
     # Local Testing 
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-    $module = "LatestUpdate"
+    $module = Split-Path -Path $projectRoot -Leaf
 }
+$moduleParent = Join-Path -Path $projectRoot -ChildPath "src"
+$manifestPath = Join-Path -Path $moduleParent -ChildPath "$module.psd1"
+$modulePath = Join-Path -Path $moduleParent -ChildPath "$module.psm1"
 
 # Import module
 Write-Host ""
 Write-Host "Importing module." -ForegroundColor Cyan
-Import-Module (Join-Path $projectRoot $module) -Force
+Import-Module $manifestPath -Force
 
 # Read module resource strings for testing
-$ModulePath = Join-Path -Path $projectRoot -ChildPath $module
+$ModulePath = Join-Path -Path $projectRoot -ChildPath "src"
 . "$ModulePath\Private\Test-PSCore.ps1"
 . "$ModulePath\Private\Get-ModuleResource.ps1"
 . "$ModulePath\Private\ConvertTo-Hashtable.ps1"
@@ -67,6 +70,31 @@ InModuleScope LatestUpdate {
         }
     }
 
+    Describe 'Get-LatestCumulativeUpdate -Previous' {
+        ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions) {
+            Write-Host ""
+            Write-Host "`tBuilding variable for Windows 10 [$Version] with -Previous." -ForegroundColor Cyan
+            New-Variable -Name "Updates$Version" -Value (Get-LatestCumulativeUpdate -OperatingSystem Windows10 -Version $Version -Previous)
+            $Output = (Get-Variable -Name "Updates$Version").Value
+            Remove-Variable -Name "Updates$Version"
+
+            Context "Validate list of previous Cumulative updates for Windows 10 $Version" {
+                It "Returns an array of 1 or more updates" {
+                    $Output.Count | Should -BeGreaterThan 0
+                }
+                ForEach ($Update in $Output) {
+                    It "Returns a valid array with expected properties: [$($Update.Version), $($Update.Architecture)]" {
+                        $Update.KB.Length | Should -BeGreaterThan 0
+                        $Update.Note.Length | Should -BeGreaterThan 0
+                        $Update.URL.Length | Should -BeGreaterThan 0
+                        $Update.Architecture.Length | Should -BeGreaterThan 0
+                        $Update.Version.Length | Should -BeGreaterThan 0
+                    }
+                }
+            }
+        }
+    }
+
     Describe 'Get-LatestServicingStack' {
         ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions) {
             Write-Host ""
@@ -98,6 +126,31 @@ InModuleScope LatestUpdate {
                         $Update.Note -match "$($ResourceStrings.SearchStrings.ServicingStack).*$Version" | Should -Not -BeNullOrEmpty
                         $Update.Architecture -match $ResourceStrings.Architecture.All | Should -Not -BeNullOrEmpty
                         $Update.Version -match $Version | Should -Not -BeNullOrEmpty
+                    }
+                }
+            }
+        }
+    }
+
+    Describe 'Get-LatestServicingStack -Previous' {
+        ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions) {
+            Write-Host ""
+            Write-Host "`tBuilding variable for Windows 10 [$Version] with -Previous." -ForegroundColor Cyan
+            New-Variable -Name "Updates$Version" -Value (Get-LatestServicingStack -OperatingSystem Windows10 -Version $Version -Previous)
+            $Output = (Get-Variable -Name "Updates$Version").Value
+            Remove-Variable -Name "Updates$Version"
+
+            Context "Validate list of previous Servicing Stack updates for Windows 10 $Version" {
+                It "Returns an array of 1 or more updates" {
+                    $Output.Count | Should -BeGreaterThan 0
+                }
+                ForEach ($Update in $Output) {
+                    It "Returns a valid array with expected properties: [$($Update.Version), $($Update.Architecture)]" {
+                        $Update.KB.Length | Should -BeGreaterThan 0
+                        $Update.Note.Length | Should -BeGreaterThan 0
+                        $Update.URL.Length | Should -BeGreaterThan 0
+                        $Update.Architecture.Length | Should -BeGreaterThan 0
+                        $Update.Version.Length | Should -BeGreaterThan 0
                     }
                 }
             }
@@ -178,6 +231,31 @@ InModuleScope LatestUpdate {
         }
     }
 
+    Describe 'Get-LatestMonthlyRollup -Previous' {
+        ForEach ($Version in $ResourceStrings.ParameterValues.Versions87) {
+            Write-Host ""
+            Write-Host "`tBuilding variable for [$Version] with -Previous." -ForegroundColor Cyan
+            New-Variable -Name "Updates$Version" -Value (Get-LatestMonthlyRollup -OperatingSystem $Version -Previous)
+            $Output = (Get-Variable -Name "Updates$Version").Value
+            Remove-Variable -Name "Updates$Version"
+
+            Context "Validate list of Monthly Rollup updates for $Version" {
+                It "Returns an array of 1 or more updates" {
+                    $Output.Count | Should -BeGreaterThan 0
+                }
+                ForEach ($Update in $Output) {
+                    It "Returns a valid array with expected properties: [$($Update.Version), $($Update.Architecture)]" {
+                        $Update.KB.Length | Should -BeGreaterThan 0
+                        $Update.Note.Length | Should -BeGreaterThan 0
+                        $Update.URL.Length | Should -BeGreaterThan 0
+                        $Update.Architecture.Length | Should -BeGreaterThan 0
+                        $Update.Version.Length | Should -BeGreaterThan 0
+                    }
+                }
+            }
+        }
+    }
+
     Describe 'Get-LatestAdobeFlashUpdate' {
         ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions) {
             Write-Host ""
@@ -241,6 +319,31 @@ InModuleScope LatestUpdate {
                     $Update.Note -match "$($ResourceStrings.SearchStrings.AdobeFlash).*$Version" | Should -Not -BeNullOrEmpty
                     $Update.Architecture -match $ResourceStrings.Architecture.All | Should -Not -BeNullOrEmpty
                     $Update.Version -match $Version | Should -Not -BeNullOrEmpty
+                }
+            }
+        }
+    }
+
+    Describe 'Get-LatestAdobeFlashUpdate -Previous' {
+        ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions) {
+            Write-Host ""
+            Write-Host "`tBuilding variable for Windows 10 [$Version] with -Previous." -ForegroundColor Cyan
+            New-Variable -Name "Updates$Version" -Value (Get-LatestAdobeFlashUpdate -OperatingSystem Windows10 -Version $Version -Previous)
+            $Output = (Get-Variable -Name "Updates$Version").Value
+            Remove-Variable -Name "Updates$Version"
+
+            Context "Validate list of Adobe Flash Player updates for Windows 10 $Version" {
+                It "Returns an array of 1 or more updates" {
+                    $Output.Count | Should -BeGreaterThan 0
+                }
+                ForEach ($Update in $Output) {
+                    It "Returns a valid array with expected properties: [$($Update.Version), $($Update.Architecture)]" {
+                        $Update.KB.Length | Should -BeGreaterThan 0
+                        $Update.Note.Length | Should -BeGreaterThan 0
+                        $Update.URL.Length | Should -BeGreaterThan 0
+                        $Update.Architecture.Length | Should -BeGreaterThan 0
+                        $Update.Version.Length | Should -BeGreaterThan 0
+                    }
                 }
             }
         }

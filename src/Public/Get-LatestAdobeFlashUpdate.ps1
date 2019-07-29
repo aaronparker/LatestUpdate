@@ -12,6 +12,9 @@ Function Get-LatestAdobeFlashUpdate {
         .PARAMETER Version
             Specifies the Windows 10 Semi-annual Channel version number. Only valid when 'Windows10' is specified for -OperatingSystem.
 
+        .PARAMETER Previous
+            Specifies that the previous to the latest update should be returned.
+
         .EXAMPLE
 
             PS C:\> Get-LatestAdobeFlashUpdate
@@ -48,7 +51,10 @@ Function Get-LatestAdobeFlashUpdate {
 
         [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.Windows10Versions })]
-        [System.String[]] $Version = $script:resourceStrings.ParameterValues.Windows10Versions[0]
+        [System.String[]] $Version = $script:resourceStrings.ParameterValues.Windows10Versions[0],
+
+        [Parameter(Mandatory = $False)]
+        [System.Management.Automation.SwitchParameter] $Previous
     )
     
     # If resource strings are returned we can continue
@@ -60,7 +66,11 @@ Function Get-LatestAdobeFlashUpdate {
         If ($Null -ne $updateFeed) {
 
             # Filter the feed for Adobe Flash updates and continue if we get updates
-            $updateList = Get-UpdateAdobeFlash -UpdateFeed $updateFeed
+            $gufParams = @{
+                UpdateFeed = $updateFeed
+            }
+            If ($Previous.IsPresent) { $gufParams.Previous = $True }
+            $updateList = Get-UpdateAdobeFlash @gufParams
             Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
 
             If ($Null -ne $updateList) {
