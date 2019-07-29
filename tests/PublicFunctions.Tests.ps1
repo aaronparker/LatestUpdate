@@ -16,7 +16,7 @@ Else {
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
     $module = Split-Path -Path $projectRoot -Leaf
 }
-$moduleParent = Join-Path -Path $projectRoot -ChildPath "src"
+$moduleParent = Join-Path -Path $projectRoot -ChildPath $module
 $manifestPath = Join-Path -Path $moduleParent -ChildPath "$module.psd1"
 $modulePath = Join-Path -Path $moduleParent -ChildPath "$module.psm1"
 
@@ -26,11 +26,10 @@ Write-Host "Importing module." -ForegroundColor Cyan
 Import-Module $manifestPath -Force
 
 # Read module resource strings for testing
-$ModulePath = Join-Path -Path $projectRoot -ChildPath "src"
-. "$ModulePath\Private\Test-PSCore.ps1"
-. "$ModulePath\Private\Get-ModuleResource.ps1"
-. "$ModulePath\Private\ConvertTo-Hashtable.ps1"
-$ResourceStrings = Get-ModuleResource -Path "$ModulePath\LatestUpdate.json"
+. "$moduleParent\Private\Test-PSCore.ps1"
+. "$moduleParent\Private\Get-ModuleResource.ps1"
+. "$moduleParent\Private\ConvertTo-Hashtable.ps1"
+$ResourceStrings = Get-ModuleResource -Path "$moduleParent\LatestUpdate.json"
 
 InModuleScope LatestUpdate {
     Describe 'Get-LatestCumulativeUpdate' {

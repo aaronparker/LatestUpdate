@@ -18,9 +18,17 @@ ElseIf ($env:APPVEYOR_PULL_REQUEST_NUMBER -gt 0) {
 }
 Else {
 
-    # Parameters
-    $module = $env:Module
-    $moduleParent = Join-Path -Path $projectRoot -ChildPath "src"
+    If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
+        # AppVeyor Testing
+        $projectRoot = Resolve-Path -Path $env:APPVEYOR_BUILD_FOLDER
+        $module = $env:Module
+    }
+    Else {
+        # Local Testing 
+        $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
+        $module = Split-Path -Path $projectRoot -Leaf
+    }
+    $moduleParent = Join-Path -Path $projectRoot -ChildPath $module
     $manifestPath = Join-Path -Path $moduleParent -ChildPath "$module.psd1"
     $modulePath = Join-Path -Path $moduleParent -ChildPath "$module.psm1"
 
@@ -30,10 +38,6 @@ Else {
         # We're going to add 1 to the revision value since a new commit has been merged to Master
         # This means that the major / minor / build values will be consistent across GitHub and the Gallery
         Try {
-            # This is where the module manifest lives
-            $modulePath = Join-Path $projectRoot "src"
-            $manifestPath = Join-Path $modulePath "$module.psd1"
-
             # Start by importing the manifest to determine the version, then add 1 to the revision
             $manifest = Test-ModuleManifest -Path $manifestPath
             [System.Version]$version = $manifest.Version
@@ -88,9 +92,8 @@ Else {
         # Publish the new version to the PowerShell Gallery
         Try {
             # Build a splat containing the required details and make sure to Stop for errors which will trigger the catch
-            Import-Module $manifestPath -Force
             $PM = @{
-                Name        = $module
+                Path        = $moduleParent
                 NuGetApiKey = $env:NuGetApiKey
                 ErrorAction = 'Stop'
             }

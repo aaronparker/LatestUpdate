@@ -16,7 +16,7 @@ Else {
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
     $module = Split-Path -Path $projectRoot -Leaf
 }
-$moduleParent = Join-Path -Path $projectRoot -ChildPath "src"
+$moduleParent = Join-Path -Path $projectRoot -ChildPath $module
 $manifestPath = Join-Path -Path $moduleParent -ChildPath "$module.psd1"
 $modulePath = Join-Path -Path $moduleParent -ChildPath "$module.psm1"
 
