@@ -18,6 +18,12 @@ ElseIf ($env:APPVEYOR_PULL_REQUEST_NUMBER -gt 0) {
 }
 Else {
 
+    # Parameters
+    $module = $env:Module
+    $moduleParent = Join-Path -Path $projectRoot -ChildPath "src"
+    $manifestPath = Join-Path -Path $moduleParent -ChildPath "$module.psd1"
+    $modulePath = Join-Path -Path $moduleParent -ChildPath "$module.psm1"
+
     # Tests success, push to GitHub
     If ($res.FailedCount -eq 0) {
 
@@ -83,7 +89,7 @@ Else {
         Try {
             # Build a splat containing the required details and make sure to Stop for errors which will trigger the catch
             $PM = @{
-                Path        = (Join-Path -Path $projectRoot -ChildPath "src")
+                Path        = $manifestPath
                 NuGetApiKey = $env:NuGetApiKey
                 ErrorAction = 'Stop'
             }
