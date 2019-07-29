@@ -46,7 +46,7 @@ Else {
             Write-Output "New Version: $newVersion"
 
             # Update the manifest with the new version value and fix the weird string replace bug
-            $functionList = ((Get-ChildItem -Path (Join-Path $modulePath "Public")).BaseName)
+            $functionList = ((Get-ChildItem -Path (Join-Path -Path $moduleParent -ChildPath "Public")).BaseName)
             Update-ModuleManifest -Path $manifestPath -ModuleVersion $newVersion -FunctionsToExport $functionList
             (Get-Content -Path $manifestPath) -replace 'PSGet_$module', $module | Set-Content -Path $manifestPath
             (Get-Content -Path $manifestPath) -replace 'NewManifest', $module | Set-Content -Path $manifestPath
@@ -68,7 +68,7 @@ Else {
 
             # Configure the git environment
             git config --global credential.helper store
-            Add-Content -Path (Join-Path $env:USERPROFILE ".git-credentials") -Value "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
+            Add-Content -Path (Join-Path -Path $env:USERPROFILE -ChildPath ".git-credentials") -Value "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
             git config --global user.email "$($env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL)"
             git config --global user.name "$($env:APPVEYOR_REPO_COMMIT_AUTHOR)"
             git config --global core.autocrlf true
