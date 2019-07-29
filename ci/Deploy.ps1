@@ -88,8 +88,9 @@ Else {
         # Publish the new version to the PowerShell Gallery
         Try {
             # Build a splat containing the required details and make sure to Stop for errors which will trigger the catch
+            Import-Module $manifestPath -Force
             $PM = @{
-                Path        = $manifestPath
+                Name        = $module
                 NuGetApiKey = $env:NuGetApiKey
                 ErrorAction = 'Stop'
             }
