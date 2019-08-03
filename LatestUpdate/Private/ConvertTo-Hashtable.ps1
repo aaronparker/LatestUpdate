@@ -11,7 +11,7 @@ Function ConvertTo-Hashtable {
     [CmdletBinding()]
     Param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline)]
-        [System.Management.Automation.PSObject] $InputObject
+        $InputObject
     )
 
     Process {
