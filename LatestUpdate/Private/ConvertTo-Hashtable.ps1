@@ -41,12 +41,12 @@ Function ConvertTo-Hashtable {
             ForEach ($property in $InputObject.PSObject.Properties) {
                 $hash[$property.Name] = ConvertTo-Hashtable -InputObject $property.Value
             }
-            Write-Output -InputObject $hash
+            $hash
         }
         Else {
             ## If the object isn't an array, collection, or other object, it's already a hash table
             ## So just return it.
-            Write-Output -InputObject $InputObject
+            $InputObject
         }
     }
 }
