@@ -84,8 +84,6 @@ Function Save-LatestUpdate {
         [System.Management.Automation.SwitchParameter] $Force
     )
 
-    Begin { }
-
     Process {
         # Step through each update in $Updates
         ForEach ($update in $Updates) {
@@ -103,6 +101,7 @@ Function Save-LatestUpdate {
                 Else {
                     If ($ForceWebRequest -or (Test-PSCore)) {
                         If ($pscmdlet.ShouldProcess($url, "WebDownload")) {
+
                             #Running on PowerShell Core or ForceWebRequest
                             try {
                                 $iwrParams = @{
@@ -135,6 +134,7 @@ Function Save-LatestUpdate {
                     }
                     Else {
                         If ($pscmdlet.ShouldProcess($(Split-Path -Path $url -Leaf), "BitsDownload")) {
+
                             #Running on Windows PowerShell
                             try {
                                 $sbtParams = @{
@@ -177,6 +177,4 @@ Function Save-LatestUpdate {
             }
         }
     }
-
-    End { }
 }

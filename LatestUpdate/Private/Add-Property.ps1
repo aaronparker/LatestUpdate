@@ -10,29 +10,31 @@ Function Add-Property {
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSObject] $InputObject,
 
-        [Parameter(Mandatory = $True, Position = 1, ValueFromPipeline)]
+        [Parameter(Mandatory = $True, Position = 1)]
         [ValidateNotNullOrEmpty()]
         [System.String] $Property,
 
-        [Parameter(Mandatory = $True, Position = 2, ValueFromPipeline)]
+        [Parameter(Mandatory = $True, Position = 2)]
         [ValidateNotNullOrEmpty()]
         [System.String] $NewPropertyName,
 
-        [Parameter(Mandatory = $True, Position = 3, ValueFromPipeline)]
+        [Parameter(Mandatory = $True, Position = 3)]
         [ValidateNotNullOrEmpty()]
         [System.String] $MatchPattern
     )
 
-    ForEach ($object in $InputObject) {
-        $value = $object | Select-Object -ExpandProperty $Property | `
-            Select-String -AllMatches -Pattern $MatchPattern | `
-            ForEach-Object { $_.Matches.Value }
+    Process {
+        ForEach ($object in $InputObject) {
+            $value = $object | Select-Object -ExpandProperty $Property | `
+                Select-String -AllMatches -Pattern $MatchPattern | `
+                ForEach-Object { $_.Matches.Value }
         
-        If ($value.Count -ge 2) {
-            $value = $value | Select-Object -Last 1
-        }
+            If ($value.Count -ge 2) {
+                $value = $value | Select-Object -Last 1
+            }
 
-        $object | Add-Member -NotePropertyName $NewPropertyName -NotePropertyValue $value
-        Write-Output -InputObject $object
+            $object | Add-Member -NotePropertyName $NewPropertyName -NotePropertyValue $value
+            Write-Output -InputObject $object
+        }
     }
 }

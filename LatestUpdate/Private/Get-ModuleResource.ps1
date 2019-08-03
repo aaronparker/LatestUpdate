@@ -6,7 +6,7 @@ Function Get-ModuleResource {
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline)]
+        [Parameter(Mandatory = $False, Position = 0)]
         [ValidateNotNull()]
         [ValidateScript( { If (Test-Path -Path $_ -PathType 'Leaf') { $True } Else { Throw "Cannot find file $_" } })]
         [System.String] $Path = (Join-Path -Path $MyInvocation.MyCommand.Module.ModuleBase -ChildPath "LatestUpdate.json")

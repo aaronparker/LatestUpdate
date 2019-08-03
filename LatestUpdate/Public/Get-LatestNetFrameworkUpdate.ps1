@@ -33,6 +33,7 @@ Function Get-LatestNetFrameworkUpdate {
 
     # If resource strings are returned we can continue
     If ($Null -ne $script:resourceStrings) {
+
         # Get the update feed and continue if successfully read
         $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.NetFramework
 
@@ -51,6 +52,7 @@ Function Get-LatestNetFrameworkUpdate {
 
             If ($Null -ne $updateList) {
                 ForEach ($update in $updateList) {
+
                     # Get download info for each update from the catalog
                     Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
                     $downloadInfoParams = @{

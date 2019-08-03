@@ -6,7 +6,7 @@ Function Test-PSCore {
     [CmdletBinding()]
     [OutputType([Boolean])]
     Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline)]
+        [Parameter(Mandatory = $False, Position = 0)]
         [ValidateNotNullOrEmpty()]
         [System.String] $Version = '6.0.0'
     )

@@ -21,11 +21,13 @@ Function Get-LatestWindowsDefenderUpdate {
         $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.WindowsDefender
 
         If ($Null -ne $updateFeed) {
+
             # Filter the feed for servicing stack updates and continue if we get updates
             $updateList = Get-UpdateDefender -UpdateFeed $updateFeed
             Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
 
             If ($Null -ne $updateList) {
+
                 # Get download info for each update from the catalog
                 Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
                 $downloadInfoParams = @{

@@ -63,6 +63,7 @@ Function Get-LatestAdobeFlashUpdate {
         # Get the update feed and continue if successfully read
         Write-Verbose -Message "$($MyInvocation.MyCommand): get feed for $OperatingSystem."
         $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.$OperatingSystem
+
         If ($Null -ne $updateFeed) {
 
             # Filter the feed for Adobe Flash updates and continue if we get updates
@@ -78,6 +79,7 @@ Function Get-LatestAdobeFlashUpdate {
 
                     "Windows10" {
                         ForEach ($ver in $Version) {
+
                             # Get download info for each update from the catalog
                             Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
                             $downloadInfoParams = @{
