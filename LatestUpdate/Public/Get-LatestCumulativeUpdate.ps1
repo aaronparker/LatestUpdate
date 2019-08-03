@@ -96,13 +96,14 @@ Function Get-LatestCumulativeUpdate {
                         MatchPattern    = $script:resourceStrings.Matches.Architecture
                     }
                     $updateListWithArch = Add-Property @updateListWithArchParams
-
+                    $updateListWithArch | Add-Member -NotePropertyName "Revision" -NotePropertyValue "$($updateList.Build).$($updateList.Revision)"
                     # Return object to the pipeline
                     If ($Null -ne $updateListWithArch) {
                         Write-Output -InputObject $updateListWithArch
                     }
                 }
             }
+
         }
     }
 }
