@@ -6,11 +6,11 @@ Function Invoke-UpdateCatalogSearch {
     [OutputType([Microsoft.PowerShell.Commands.WebResponseObject])]
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory = $True)]
+        [Parameter(Mandatory = $True, Position = 0)]
         [ValidateNotNullOrEmpty()]
         [System.String] $UpdateId,
 
-        [Parameter(Mandatory = $False)]
+        [Parameter(Mandatory = $False, Position = 1)]
         [System.String] $SearchString
     )
 

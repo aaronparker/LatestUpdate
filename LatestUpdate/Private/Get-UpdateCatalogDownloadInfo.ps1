@@ -6,18 +6,18 @@ Function Get-UpdateCatalogDownloadInfo {
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory = $True)]
+        [Parameter(Mandatory = $True, Position = 0)]
         [ValidateNotNullOrEmpty()]
         [System.String] $UpdateId,
 
-        [Parameter(Mandatory = $False)]
+        [Parameter(Mandatory = $False, Position = 1)]
         [System.String] $Architecture,
 
-        [Parameter(Mandatory = $False)]
+        [Parameter(Mandatory = $False, Position = 2)]
         [Alias('OS')]
         [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.Windows10,
 
-        [Parameter(Mandatory = $False)]
+        [Parameter(Mandatory = $False, Position = 3)]
         [System.String] $SearchString
     )
 

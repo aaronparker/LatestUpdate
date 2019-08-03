@@ -6,7 +6,7 @@ Function Invoke-UpdateCatalogDownloadDialog {
     [OutputType([Microsoft.PowerShell.Commands.WebResponseObject])]
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory = $True)]
+        [Parameter(Mandatory = $True, Position = 0)]
         [ValidateNotNullOrEmpty()]
         [System.Collections.Hashtable] $Body
     )

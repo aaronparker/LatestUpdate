@@ -48,12 +48,13 @@ InModuleScope LatestUpdate {
                     $Output | Should -BeOfType ((Get-Command Get-LatestCumulativeUpdate).OutputType.Type.Name)
                 }
                 ForEach ($Update in $Output) {
-                    It "Returns a valid array with expected properties: [$($Update.Version), $($Update.Architecture)]" {
-                        $Update.KB.Length | Should -BeGreaterThan 0
-                        $Update.Note.Length | Should -BeGreaterThan 0
-                        $Update.URL.Length | Should -BeGreaterThan 0
-                        $Update.Architecture.Length | Should -BeGreaterThan 0
-                        $Update.Version.Length | Should -BeGreaterThan 0
+                    It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
+                        $Update.KB | Should -BeOfType System.String
+                        $Update.Note | Should -BeOfType System.String
+                        $Update.URL | Should -BeOfType System.String
+                        $Update.Architecture | Should -BeOfType System.String
+                        $Update.Version | Should -BeOfType System.String
+                        $Update.Revision | Should -BeOfType System.String
                     }
                 }
             }
@@ -82,12 +83,12 @@ InModuleScope LatestUpdate {
                     $Output.Count | Should -BeGreaterThan 0
                 }
                 ForEach ($Update in $Output) {
-                    It "Returns a valid array with expected properties: [$($Update.Version), $($Update.Architecture)]" {
-                        $Update.KB.Length | Should -BeGreaterThan 0
-                        $Update.Note.Length | Should -BeGreaterThan 0
-                        $Update.URL.Length | Should -BeGreaterThan 0
-                        $Update.Architecture.Length | Should -BeGreaterThan 0
-                        $Update.Version.Length | Should -BeGreaterThan 0
+                    It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
+                        $Update.KB | Should -BeOfType System.String
+                        $Update.Note | Should -BeOfType System.String
+                        $Update.URL | Should -BeOfType System.String
+                        $Update.Architecture | Should -BeOfType System.String
+                        $Update.Version | Should -BeOfType System.String
                     }
                 }
             }
@@ -110,12 +111,12 @@ InModuleScope LatestUpdate {
                     $Output | Should -BeOfType ((Get-Command Get-LatestServicingStack).OutputType.Type.Name)
                 }
                 ForEach ($Update in $Output) {
-                    It "Returns a valid array with expected properties: [$($Update.Version), $($Update.Architecture)]" {
-                        $Update.KB.Length | Should -BeGreaterThan 0
-                        $Update.Note.Length | Should -BeGreaterThan 0
-                        $Update.URL.Length | Should -BeGreaterThan 0
-                        $Update.Architecture.Length | Should -BeGreaterThan 0
-                        $Update.Version.Length | Should -BeGreaterThan 0
+                    It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
+                        $Update.KB | Should -BeOfType System.String
+                        $Update.Note | Should -BeOfType System.String
+                        $Update.URL | Should -BeOfType System.String
+                        $Update.Architecture | Should -BeOfType System.String
+                        $Update.Version | Should -BeOfType System.String
                     }
                 }
             }
@@ -144,12 +145,12 @@ InModuleScope LatestUpdate {
                     $Output.Count | Should -BeGreaterThan 0
                 }
                 ForEach ($Update in $Output) {
-                    It "Returns a valid array with expected properties: [$($Update.Version), $($Update.Architecture)]" {
-                        $Update.KB.Length | Should -BeGreaterThan 0
-                        $Update.Note.Length | Should -BeGreaterThan 0
-                        $Update.URL.Length | Should -BeGreaterThan 0
-                        $Update.Architecture.Length | Should -BeGreaterThan 0
-                        $Update.Version.Length | Should -BeGreaterThan 0
+                    It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
+                        $Update.KB | Should -BeOfType System.String
+                        $Update.Note | Should -BeOfType System.String
+                        $Update.URL | Should -BeOfType System.String
+                        $Update.Architecture | Should -BeOfType System.String
+                        $Update.Version | Should -BeOfType System.String
                     }
                 }
             }
@@ -172,12 +173,12 @@ InModuleScope LatestUpdate {
                     $Output | Should -BeOfType ((Get-Command Get-LatestNetFrameworkUpdate).OutputType.Type.Name)
                 }
                 ForEach ($Update in $Output) {
-                    It "Returns a valid array with expected properties: [$($Update.Version), $($Update.Architecture)]" {
-                        $Update.KB.Length | Should -BeGreaterThan 0
-                        $Update.Note.Length | Should -BeGreaterThan 0
-                        $Update.URL.Length | Should -BeGreaterThan 0
-                        $Update.Architecture.Length | Should -BeGreaterThan 0
-                        $Update.Version.Length | Should -BeGreaterThan 0
+                    It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
+                        $Update.KB | Should -BeOfType System.String
+                        $Update.Note | Should -BeOfType System.String
+                        $Update.URL | Should -BeOfType System.String
+                        $Update.Architecture | Should -BeOfType System.String
+                        $Update.Version | Should -BeOfType System.String
                     }
                 }
             }
@@ -209,12 +210,12 @@ InModuleScope LatestUpdate {
                     $Output | Should -BeOfType ((Get-Command Get-LatestMonthlyRollup).OutputType.Type.Name)
                 }
                 ForEach ($Update in $Output) {
-                    It "Returns a valid array with expected properties: [$($Update.Version), $($Update.Architecture)]" {
-                        $Update.KB.Length | Should -BeGreaterThan 0
-                        $Update.Note.Length | Should -BeGreaterThan 0
-                        $Update.URL.Length | Should -BeGreaterThan 0
-                        $Update.Architecture.Length | Should -BeGreaterThan 0
-                        $Update.Version.Length | Should -BeGreaterThan 0
+                    It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
+                        $Update.KB | Should -BeOfType System.String
+                        $Update.Note | Should -BeOfType System.String
+                        $Update.URL | Should -BeOfType System.String
+                        $Update.Architecture | Should -BeOfType System.String
+                        $Update.Version | Should -BeOfType System.String
                     }
                 }
             }
@@ -243,12 +244,12 @@ InModuleScope LatestUpdate {
                     $Output.Count | Should -BeGreaterThan 0
                 }
                 ForEach ($Update in $Output) {
-                    It "Returns a valid array with expected properties: [$($Update.Version), $($Update.Architecture)]" {
-                        $Update.KB.Length | Should -BeGreaterThan 0
-                        $Update.Note.Length | Should -BeGreaterThan 0
-                        $Update.URL.Length | Should -BeGreaterThan 0
-                        $Update.Architecture.Length | Should -BeGreaterThan 0
-                        $Update.Version.Length | Should -BeGreaterThan 0
+                    It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
+                        $Update.KB | Should -BeOfType System.String
+                        $Update.Note | Should -BeOfType System.String
+                        $Update.URL | Should -BeOfType System.String
+                        $Update.Architecture | Should -BeOfType System.String
+                        $Update.Version | Should -BeOfType System.String
                     }
                 }
             }
@@ -271,12 +272,12 @@ InModuleScope LatestUpdate {
                     $Output | Should -BeOfType ((Get-Command Get-LatestAdobeFlashUpdate).OutputType.Type.Name)
                 }
                 ForEach ($Update in $Output) {
-                    It "Returns a valid array with expected properties: [$($Update.Version), $($Update.Architecture)]" {
-                        $Update.KB.Length | Should -BeGreaterThan 0
-                        $Update.Note.Length | Should -BeGreaterThan 0
-                        $Update.URL.Length | Should -BeGreaterThan 0
-                        $Update.Architecture.Length | Should -BeGreaterThan 0
-                        $Update.Version.Length | Should -BeGreaterThan 0
+                    It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
+                        $Update.KB | Should -BeOfType System.String
+                        $Update.Note | Should -BeOfType System.String
+                        $Update.URL | Should -BeOfType System.String
+                        $Update.Architecture | Should -BeOfType System.String
+                        $Update.Version | Should -BeOfType System.String
                     }
                 }
             }
@@ -303,12 +304,12 @@ InModuleScope LatestUpdate {
                 $Output | Should -BeOfType ((Get-Command Get-LatestAdobeFlashUpdate).OutputType.Type.Name)
             }
             ForEach ($Update in $Output) {
-                It "Returns a valid array with expected properties: [$($Update.Version), $($Update.Architecture)]" {
-                    $Update.KB.Length | Should -BeGreaterThan 0
-                    $Update.Note.Length | Should -BeGreaterThan 0
-                    $Update.URL.Length | Should -BeGreaterThan 0
-                    $Update.Architecture.Length | Should -BeGreaterThan 0
-                    $Update.Version.Length | Should -BeGreaterThan 0
+                It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
+                    $Update.KB | Should -BeOfType System.String
+                    $Update.Note | Should -BeOfType System.String
+                    $Update.URL | Should -BeOfType System.String
+                    $Update.Architecture | Should -BeOfType System.String
+                    $Update.Version | Should -BeOfType System.String
                 }
             }
         }
@@ -336,12 +337,12 @@ InModuleScope LatestUpdate {
                     $Output.Count | Should -BeGreaterThan 0
                 }
                 ForEach ($Update in $Output) {
-                    It "Returns a valid array with expected properties: [$($Update.Version), $($Update.Architecture)]" {
-                        $Update.KB.Length | Should -BeGreaterThan 0
-                        $Update.Note.Length | Should -BeGreaterThan 0
-                        $Update.URL.Length | Should -BeGreaterThan 0
-                        $Update.Architecture.Length | Should -BeGreaterThan 0
-                        $Update.Version.Length | Should -BeGreaterThan 0
+                    It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
+                        $Update.KB | Should -BeOfType System.String
+                        $Update.Note | Should -BeOfType System.String
+                        $Update.URL | Should -BeOfType System.String
+                        $Update.Architecture | Should -BeOfType System.String
+                        $Update.Version | Should -BeOfType System.String
                     }
                 }
             }
@@ -365,10 +366,10 @@ InModuleScope LatestUpdate {
                 $DefenderUpdates | Should -BeOfType ((Get-Command Get-LatestWindowsDefenderUpdate).OutputType.Type.Name)
             }
             ForEach ($Update in $DefenderUpdates) {
-                It "Given no arguments, returns a valid array with expected properties" {
-                    $Update.KB.Length | Should -BeGreaterThan 0
-                    $Update.Note.Length | Should -BeGreaterThan 0
-                    $Update.URL.Length | Should -BeGreaterThan 0
+                It "Given no arguments, Returns an array with expected property types" {
+                    $Update.KB | Should -BeOfType System.String
+                    $Update.Note | Should -BeOfType System.String
+                    $Update.URL | Should -BeOfType System.String
                 }
             }
         } 
@@ -395,9 +396,9 @@ InModuleScope LatestUpdate {
             }
             ForEach ($Download in $Downloads) {
                 It "Output from Save-LatestUpdate should have the expected properties" {
-                    $Download.KB.Length | Should -BeGreaterThan 0
-                    $Download.Note.Length | Should -BeGreaterThan 0
-                    $Download.Path.Length | Should -BeGreaterThan 0
+                    $Download.KB | Should -BeOfType System.String
+                    $Download.Note | Should -BeOfType System.String
+                    $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                 }
             }
         }
@@ -425,9 +426,9 @@ InModuleScope LatestUpdate {
                     }
                     ForEach ($Download in $Downloads) {
                         It "Output from Save-LatestUpdate should have the expected properties" {
-                            $Download.KB.Length | Should -BeGreaterThan 0
-                            $Download.Note.Length | Should -BeGreaterThan 0
-                            $Download.Path.Length | Should -BeGreaterThan 0
+                            $Download.KB | Should -BeOfType System.String
+                            $Download.Note | Should -BeOfType System.String
+                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                         }
                     }
                 }
@@ -453,9 +454,9 @@ InModuleScope LatestUpdate {
                     }
                     ForEach ($Download in $Downloads) {
                         It "Output from Save-LatestUpdate should have the expected properties" {
-                            $Download.KB.Length | Should -BeGreaterThan 0
-                            $Download.Note.Length | Should -BeGreaterThan 0
-                            $Download.Path.Length | Should -BeGreaterThan 0
+                            $Download.KB | Should -BeOfType System.String
+                            $Download.Note | Should -BeOfType System.String
+                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                         }
                     }
                 }
@@ -481,9 +482,9 @@ InModuleScope LatestUpdate {
                     }
                     ForEach ($Download in $Downloads) {
                         It "Output from Save-LatestUpdate should have the expected properties" {
-                            $Download.KB.Length | Should -BeGreaterThan 0
-                            $Download.Note.Length | Should -BeGreaterThan 0
-                            $Download.Path.Length | Should -BeGreaterThan 0
+                            $Download.KB | Should -BeOfType System.String
+                            $Download.Note | Should -BeOfType System.String
+                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                         }
                     }
                 }
@@ -509,9 +510,9 @@ InModuleScope LatestUpdate {
                     }
                     ForEach ($Download in $Downloads) {
                         It "Output from Save-LatestUpdate should have the expected properties" {
-                            $Download.KB.Length | Should -BeGreaterThan 0
-                            $Download.Note.Length | Should -BeGreaterThan 0
-                            $Download.Path.Length | Should -BeGreaterThan 0
+                            $Download.KB | Should -BeOfType System.String
+                            $Download.Note | Should -BeOfType System.String
+                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                         }
                     }
                 }
@@ -533,9 +534,9 @@ InModuleScope LatestUpdate {
                 }
                 ForEach ($Download in $Downloads) {
                     It "Output from Save-LatestUpdate should have the expected properties" {
-                        $Download.KB.Length | Should -BeGreaterThan 0
-                        $Download.Note.Length | Should -BeGreaterThan 0
-                        $Download.Path.Length | Should -BeGreaterThan 0
+                        $Download.KB | Should -BeOfType System.String
+                        $Download.Note | Should -BeOfType System.String
+                        $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                     }
                 }
             }
@@ -560,9 +561,9 @@ InModuleScope LatestUpdate {
                     }
                     ForEach ($Download in $Downloads) {
                         It "Output from Save-LatestUpdate should have the expected properties" {
-                            $Download.KB.Length | Should -BeGreaterThan 0
-                            $Download.Note.Length | Should -BeGreaterThan 0
-                            $Download.Path.Length | Should -BeGreaterThan 0
+                            $Download.KB | Should -BeOfType System.String
+                            $Download.Note | Should -BeOfType System.String
+                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                         }
                     }
                 }
@@ -592,9 +593,9 @@ Context "Download via BITS Transfer" {
     }
     ForEach ($Download in $Downloads) {
         It "Output from Save-LatestUpdate should have the expected properties" {
-            $Download.KB.Length | Should -BeGreaterThan 0
-            $Download.Note.Length | Should -BeGreaterThan 0
-            $Download.Path.Length | Should -BeGreaterThan 0
+            $Download.KB | Should -BeOfType System.String
+            $Download.Note | Should -BeOfType System.String
+            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
         }
     }
 }

@@ -10,7 +10,7 @@ Function Get-UpdateAdobeFlash {
         [ValidateNotNullOrEmpty()]
         [System.Xml.XmlNode] $UpdateFeed,
 
-        [Parameter(Mandatory = $False)]
+        [Parameter(Mandatory = $False, Position = 1)]
         [System.Management.Automation.SwitchParameter] $Previous
     )
 

@@ -49,6 +49,7 @@ Function Get-LatestServicingStackUpdate {
 
     # If resource strings are returned we can continue
     If ($Null -ne $script:resourceStrings) {
+
         # Get the update feed and continue if successfully read
         Write-Verbose -Message "$($MyInvocation.MyCommand): get feed for $OperatingSystem."
         $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.$OperatingSystem
@@ -61,6 +62,7 @@ Function Get-LatestServicingStackUpdate {
                         $Version = @($script:resourceStrings.ParameterValues.Windows10Versions[0])
                     }
                     ForEach ($ver in $Version) {
+
                         # Filter the feed for servicing stack updates and continue if we get updates
                         Write-Verbose -Message "$($MyInvocation.MyCommand): search feed for version $ver."
                         $gusParams = @{
@@ -71,6 +73,7 @@ Function Get-LatestServicingStackUpdate {
                         $updateList = Get-UpdateServicingStack @gusParams
         
                         If ($Null -ne $updateList) {
+
                             # Get download info for each update from the catalog
                             Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
                             $downloadInfoParams = @{
@@ -124,6 +127,7 @@ Function Get-LatestServicingStackUpdate {
                     Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
         
                     If ($Null -ne $updateList) {
+
                         # Get download info for each update from the catalog
                         Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
                         $downloadInfoParams = @{

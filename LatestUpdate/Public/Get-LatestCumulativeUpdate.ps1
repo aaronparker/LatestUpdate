@@ -55,6 +55,7 @@ Function Get-LatestCumulativeUpdate {
     
     # If resource strings are returned we can continue
     If ($Null -ne $script:resourceStrings) {
+
         # Get the update feed and continue if successfully read
         Write-Verbose -Message "$($MyInvocation.MyCommand): get feed for $OperatingSystem."
         $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.Windows10
@@ -73,6 +74,7 @@ Function Get-LatestCumulativeUpdate {
                 Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
 
                 If ($Null -ne $updateList) {
+
                     # Get download info for each update from the catalog
                     Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($updateList.Title)]."
                     $downloadInfoParams = @{
@@ -97,12 +99,16 @@ Function Get-LatestCumulativeUpdate {
                     }
                     $updateListWithArch = Add-Property @updateListWithArchParams
 
+                    # Add Revsion property
+                    $updateListWithArch | Add-Member -NotePropertyName "Revision" -NotePropertyValue "$($updateList.Build).$($updateList.Revision)"
+
                     # Return object to the pipeline
                     If ($Null -ne $updateListWithArch) {
                         Write-Output -InputObject $updateListWithArch
                     }
                 }
             }
+
         }
     }
 }
