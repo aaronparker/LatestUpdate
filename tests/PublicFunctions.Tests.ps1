@@ -398,7 +398,7 @@ InModuleScope LatestUpdate {
                 It "Output from Save-LatestUpdate should have the expected properties" {
                     $Download.KB | Should -BeOfType System.String
                     $Download.Note | Should -BeOfType System.String
-                    $Download.Path | Should -BeOfType System.String
+                    $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                 }
             }
         }
@@ -428,7 +428,7 @@ InModuleScope LatestUpdate {
                         It "Output from Save-LatestUpdate should have the expected properties" {
                             $Download.KB | Should -BeOfType System.String
                             $Download.Note | Should -BeOfType System.String
-                            $Download.Path | Should -BeOfType System.String
+                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                         }
                     }
                 }
@@ -456,7 +456,7 @@ InModuleScope LatestUpdate {
                         It "Output from Save-LatestUpdate should have the expected properties" {
                             $Download.KB | Should -BeOfType System.String
                             $Download.Note | Should -BeOfType System.String
-                            $Download.Path | Should -BeOfType System.String
+                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                         }
                     }
                 }
@@ -484,7 +484,7 @@ InModuleScope LatestUpdate {
                         It "Output from Save-LatestUpdate should have the expected properties" {
                             $Download.KB | Should -BeOfType System.String
                             $Download.Note | Should -BeOfType System.String
-                            $Download.Path | Should -BeOfType System.String
+                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                         }
                     }
                 }
@@ -512,7 +512,7 @@ InModuleScope LatestUpdate {
                         It "Output from Save-LatestUpdate should have the expected properties" {
                             $Download.KB | Should -BeOfType System.String
                             $Download.Note | Should -BeOfType System.String
-                            $Download.Path | Should -BeOfType System.String
+                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                         }
                     }
                 }
@@ -536,7 +536,7 @@ InModuleScope LatestUpdate {
                     It "Output from Save-LatestUpdate should have the expected properties" {
                         $Download.KB | Should -BeOfType System.String
                         $Download.Note | Should -BeOfType System.String
-                        $Download.Path | Should -BeOfType System.String
+                        $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                     }
                 }
             }
@@ -563,7 +563,7 @@ InModuleScope LatestUpdate {
                         It "Output from Save-LatestUpdate should have the expected properties" {
                             $Download.KB | Should -BeOfType System.String
                             $Download.Note | Should -BeOfType System.String
-                            $Download.Path | Should -BeOfType System.String
+                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                         }
                     }
                 }
@@ -595,7 +595,7 @@ Context "Download via BITS Transfer" {
         It "Output from Save-LatestUpdate should have the expected properties" {
             $Download.KB | Should -BeOfType System.String
             $Download.Note | Should -BeOfType System.String
-            $Download.Path | Should -BeOfType System.String
+            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
         }
     }
 }
