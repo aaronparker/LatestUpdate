@@ -42,7 +42,7 @@ InModuleScope LatestUpdate {
 
             Context "Validate list of Cumulative updates for Windows 10 $Version" {
                 It "Returns an array of 1 or more updates" {
-                    $Output.Count | Should -BeGreaterThan 0
+                    ($Output | Measure-Object).Count | Should -BeGreaterThan 0
                 }
                 It "Returns the expected output" {
                     $Output | Should -BeOfType ((Get-Command Get-LatestCumulativeUpdate).OutputType.Type.Name)
@@ -80,7 +80,7 @@ InModuleScope LatestUpdate {
 
             Context "Validate list of previous Cumulative updates for Windows 10 $Version" {
                 It "Returns an array of 1 or more updates" {
-                    $Output.Count | Should -BeGreaterThan 0
+                    ($Output | Measure-Object).Count | Should -BeGreaterThan 0
                 }
                 ForEach ($Update in $Output) {
                     It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
@@ -105,7 +105,7 @@ InModuleScope LatestUpdate {
 
             Context "Validate list of Servicing Stack updates for Windows 10 $Version" {
                 It "Returns an array of 1 or more updates" {
-                    $Output.Count | Should -BeGreaterThan 0
+                    ($Output | Measure-Object).Count | Should -BeGreaterThan 0
                 }
                 It "Returns the expected output" {
                     $Output | Should -BeOfType ((Get-Command Get-LatestServicingStack).OutputType.Type.Name)
@@ -142,7 +142,7 @@ InModuleScope LatestUpdate {
 
             Context "Validate list of previous Servicing Stack updates for Windows 10 $Version" {
                 It "Returns an array of 1 or more updates" {
-                    $Output.Count | Should -BeGreaterThan 0
+                    ($Output | Measure-Object).Count | Should -BeGreaterThan 0
                 }
                 ForEach ($Update in $Output) {
                     It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
@@ -167,7 +167,7 @@ InModuleScope LatestUpdate {
 
             Context "Validate list of .NET Framework updates for $Version" {
                 It "Returns an array of 1 or more updates" {
-                    $Output.Count | Should -BeGreaterThan 0
+                    ($Output | Measure-Object).Count | Should -BeGreaterThan 0
                 }
                 It "Returns the expected output" {
                     $Output | Should -BeOfType ((Get-Command Get-LatestNetFrameworkUpdate).OutputType.Type.Name)
@@ -204,7 +204,7 @@ InModuleScope LatestUpdate {
 
             Context "Validate list of Monthly Rollup updates for $Version" {
                 It "Returns an array of 1 or more updates" {
-                    $Output.Count | Should -BeGreaterThan 0
+                    ($Output | Measure-Object).Count | Should -BeGreaterThan 0
                 }
                 It "Returns the expected output" {
                     $Output | Should -BeOfType ((Get-Command Get-LatestMonthlyRollup).OutputType.Type.Name)
@@ -241,7 +241,7 @@ InModuleScope LatestUpdate {
 
             Context "Validate list of Monthly Rollup updates for $Version" {
                 It "Returns an array of 1 or more updates" {
-                    $Output.Count | Should -BeGreaterThan 0
+                    ($Output | Measure-Object).Count | Should -BeGreaterThan 0
                 }
                 ForEach ($Update in $Output) {
                     It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
@@ -266,7 +266,7 @@ InModuleScope LatestUpdate {
 
             Context "Validate list of Adobe Flash Player updates for Windows 10 $Version" {
                 It "Returns an array of 1 or more updates" {
-                    $Output.Count | Should -BeGreaterThan 0
+                    ($Output | Measure-Object).Count | Should -BeGreaterThan 0
                 }
                 It "Returns the expected output" {
                     $Output | Should -BeOfType ((Get-Command Get-LatestAdobeFlashUpdate).OutputType.Type.Name)
@@ -298,7 +298,7 @@ InModuleScope LatestUpdate {
             $Output = Get-LatestAdobeFlashUpdate -OperatingSystem Windows8
 
             It "Returns an array of 1 or more updates" {
-                $Output.Count | Should -BeGreaterThan 0
+                ($Output | Measure-Object).Count | Should -BeGreaterThan 0
             }
             It "Returns the expected output" {
                 $Output | Should -BeOfType ((Get-Command Get-LatestAdobeFlashUpdate).OutputType.Type.Name)
@@ -334,7 +334,7 @@ InModuleScope LatestUpdate {
 
             Context "Validate list of Adobe Flash Player updates for Windows 10 $Version" {
                 It "Returns an array of 1 or more updates" {
-                    $Output.Count | Should -BeGreaterThan 0
+                    ($Output | Measure-Object).Count | Should -BeGreaterThan 0
                 }
                 ForEach ($Update in $Output) {
                     It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
