@@ -84,15 +84,9 @@ Function Get-LatestCumulativeUpdate {
                     $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 
                     # Add the Version and Architecture properties to the list
-                    $updateListWithVersionParams = @{
-                        InputObject     = $downloadInfo
-                        Property        = "Note"
-                        NewPropertyName = "Version"
-                        MatchPattern    = $script:resourceStrings.Matches.Windows10Version
-                    }
-                    $updateListWithVersion = Add-Property @updateListWithVersionParams
+                    $downloadInfo | Add-Member -NotePropertyName "Version" -NotePropertyValue $ver
                     $updateListWithArchParams = @{
-                        InputObject     = $updateListWithVersion
+                        InputObject     = $downloadInfo
                         Property        = "Note"
                         NewPropertyName = "Architecture"
                         MatchPattern    = $script:resourceStrings.Matches.Architecture

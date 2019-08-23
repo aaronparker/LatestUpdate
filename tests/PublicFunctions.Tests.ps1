@@ -63,7 +63,7 @@ InModuleScope LatestUpdate {
                     It "Given $Version returns updates for version $($Version): [$($Update.Version), $($Update.Architecture)]" {
                         $Update.Note -match "$($ResourceStrings.SearchStrings.CumulativeUpdate).*$Version" | Should -Not -BeNullOrEmpty
                         $Update.Architecture -match $ResourceStrings.Architecture.All | Should -Not -BeNullOrEmpty
-                        $Update.Version -match $Version | Should -Not -BeNullOrEmpty
+                        $Update.Version | Should -BeExactly $Version
                     }
                 }
             }
@@ -125,7 +125,7 @@ InModuleScope LatestUpdate {
                     It "Given $Version returns updates for version $($Version): [$($Update.Version), $($Update.Architecture)]" {
                         $Update.Note -match "$($ResourceStrings.SearchStrings.ServicingStack).*$Version" | Should -Not -BeNullOrEmpty
                         $Update.Architecture -match $ResourceStrings.Architecture.All | Should -Not -BeNullOrEmpty
-                        $Update.Version -match $Version | Should -Not -BeNullOrEmpty
+                        $Update.Version | Should -BeExactly $Version
                     }
                 }
             }
@@ -187,7 +187,7 @@ InModuleScope LatestUpdate {
                     It "Given $Version returns updates for version $($Version): [$($Update.Version), $($Update.Architecture)]" {
                         $Update.Note -match "$($ResourceStrings.SearchStrings.NetFramework).*$Version" | Should -Not -BeNullOrEmpty
                         $Update.Architecture -match $ResourceStrings.Architecture.All | Should -Not -BeNullOrEmpty
-                        $Update.Version -match $Version | Should -Not -BeNullOrEmpty
+                        $Update.Version | Should -BeExactly $Version
                     }
                 }
             }
@@ -224,7 +224,7 @@ InModuleScope LatestUpdate {
                     It "Given $Version returns updates for version $($Version): [$($Update.Version), $($Update.Architecture)]" {
                         $Update.Note -match "$($ResourceStrings.SearchStrings.$Version).*$Version" | Should -Not -BeNullOrEmpty
                         $Update.Architecture -match $ResourceStrings.Architecture.All | Should -Not -BeNullOrEmpty
-                        $Update.Version -match $Version | Should -Not -BeNullOrEmpty
+                        $Update.Version | Should -BeExactly $Version
                     }
                 }
             }
@@ -286,7 +286,7 @@ InModuleScope LatestUpdate {
                     It "Given $Version returns updates for version $($Version): [$($Update.Version), $($Update.Architecture)]" {
                         $Update.Note -match "$($ResourceStrings.SearchStrings.AdobeFlash).*$Version" | Should -Not -BeNullOrEmpty
                         $Update.Architecture -match $ResourceStrings.Architecture.All | Should -Not -BeNullOrEmpty
-                        $Update.Version -match $Version | Should -Not -BeNullOrEmpty
+                        $Update.Version | Should -BeExactly $Version
                     }
                 }
             }
@@ -318,7 +318,7 @@ InModuleScope LatestUpdate {
                 It "Returns updates for Windows $($Update.Version): [$($Update.Architecture)]" {
                     $Update.Note -match "$($ResourceStrings.SearchStrings.AdobeFlash).*$Version" | Should -Not -BeNullOrEmpty
                     $Update.Architecture -match $ResourceStrings.Architecture.All | Should -Not -BeNullOrEmpty
-                    $Update.Version -match $Version | Should -Not -BeNullOrEmpty
+                    $Update.Version | Should -BeExactly $Version
                 }
             }
         }
@@ -390,7 +390,7 @@ InModuleScope LatestUpdate {
                 ForEach ($File in $Update.Url) {
                     $Filename = Split-Path $File -Leaf
                     It "Given updates returned from Get-LatestWindowsDefenderUpdate, it successfully downloads the update." {
-                        (Join-Path $Target $Filename) | Should -Exist
+                        (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
                     }
                 }
             }
@@ -420,7 +420,7 @@ InModuleScope LatestUpdate {
                         ForEach ($File in $Update.Url) {
                             $Filename = Split-Path $File -Leaf
                             It "Given updates returned from Get-LatestCumulativeUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
-                                (Join-Path $Target $Filename) | Should -Exist
+                                (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
                             }
                         }
                     }
@@ -448,7 +448,7 @@ InModuleScope LatestUpdate {
                         ForEach ($File in $Update.Url) {
                             $Filename = Split-Path $File -Leaf
                             It "Given updates returned from Get-LatestServicingStack, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
-                                (Join-Path $Target $Filename) | Should -Exist
+                                (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
                             }
                         }
                     }
@@ -476,7 +476,7 @@ InModuleScope LatestUpdate {
                         ForEach ($File in $Update.Url) {
                             $Filename = Split-Path $File -Leaf
                             It "Given updates returned from Get-LatestNetFrameworkUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
-                                (Join-Path $Target $Filename) | Should -Exist
+                                (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
                             }
                         }
                     }
@@ -504,7 +504,7 @@ InModuleScope LatestUpdate {
                         ForEach ($File in $Update.Url) {
                             $Filename = Split-Path $File -Leaf
                             It "Given updates returned from Get-LatestAdobeFlashUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
-                                (Join-Path $Target $Filename) | Should -Exist
+                                (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
                             }
                         }
                     }
@@ -528,7 +528,7 @@ InModuleScope LatestUpdate {
                     ForEach ($File in $Update.Url) {
                         $Filename = Split-Path $File -Leaf
                         It "Given updates returned from Get-LatestAdobeFlashUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
-                            (Join-Path $Target $Filename) | Should -Exist
+                            (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
                         }
                     }
                 }
@@ -555,7 +555,7 @@ InModuleScope LatestUpdate {
                         ForEach ($File in $Update.Url) {
                             $Filename = Split-Path $File -Leaf
                             It "Given updates returned from Get-LatestMonthlyRollup, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
-                                (Join-Path $Target $Filename) | Should -Exist
+                                (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
                             }
                         }
                     }
