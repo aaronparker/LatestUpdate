@@ -16,7 +16,7 @@
   "Matches" : {
     "DownloadUrl" : "(http[s]?\\://download\\.windowsupdate\\.com\\/[^\\'\\\"\"]*)",
     "DownloadDescription" : "<a[^>]*>([^<]+)<\\/a>",
-    "Windows10Version" : "([12][056789][01][346789])",
+    "Windows10Version" : "\\s([12][056789][01][346789])\\s",
     "Windows8Version" : "8.1|2012",
     "Windows7Version" : "7|2008",
     "WindowsClientVersion" : "7|8.1|([12][056789][01][346789])",
@@ -48,22 +48,39 @@
   },
   "ParameterValues" : {
     "Windows10Versions" : [
-      "1903", "1809", "1803", "1709", "1703", "1607"
+      "1903",
+      "1809",
+      "1803",
+      "1709",
+      "1703",
+      "1607"
     ],
     "VersionsAll" : [
-      "Windows10", "Windows8", "Windows7"
+      "Windows10",
+      "Windows8",
+      "Windows7"
     ],
     "Versions108" : [
-      "Windows10", "Windows8", "WindowsServer"
+      "Windows10",
+      "Windows8",
+      "WindowsServer"
     ],
     "Versions87" : [
-      "Windows8", "Windows7"
+      "Windows8",
+      "Windows7"
     ],
     "Versions10" : [
-      "Windows10", "WindowsClient", "WindowsServer"
+      "Windows10",
+      "WindowsClient",
+      "WindowsServer"
     ],
     "VersionsComplete" : [
-      "Windows10", "Windows8", "Windows7", "WindowsClient", "WindowsServer", "All"
+      "Windows10",
+      "Windows8",
+      "Windows7",
+      "WindowsClient",
+      "WindowsServer",
+      "All"
     ],
     "Windows10" : "Windows 10|Windows Server"
   },
