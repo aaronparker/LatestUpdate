@@ -375,14 +375,14 @@ InModuleScope LatestUpdate {
         } 
     }
 
+    # Download target for Save-LatestUpdate
+    If (Test-Path -Path env:Temp) { $TempDir = $env:Temp }
+    If (Test-Path -Path env:TMPDIR) { $TempDir = $env:TMPDIR }
+    $Target = Join-Path -Path $TempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
+    New-Item -Path $Target -ItemType Directory -Force -ErrorAction SilentlyContinue
+
     Describe -Tag "Save", "Local" -Name "Save-LatestUpdate Local tests" {
         Context "Downloads updates from Get-LatestWindowsDefenderUpdate" {
-            # Download target
-            If (Test-Path -Path env:Temp) { $TempDir = $env:Temp }
-            If (Test-Path -Path env:TMPDIR) { $TempDir = $env:TMPDIR }
-            $Target = Join-Path -Path $TempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
-            New-Item -Path $Target -ItemType Directory -Force -ErrorAction SilentlyContinue
-
             $DefenderUpdates = Get-LatestWindowsDefenderUpdate
             $Downloads = Save-LatestUpdate -Updates $DefenderUpdates -Path $Target -ForceWebRequest
             ForEach ($Update in $DefenderUpdates) {
@@ -404,14 +404,16 @@ InModuleScope LatestUpdate {
     }
     
     Describe -Tag "Save", "Bits" -Name "Save-LatestUpdate Local BITS tests" {
-        Context "Download via BITS Transfer" {
-            $DownloadPath = Join-Path -Path $Target -ChildPath ([System.IO.Path]::GetRandomFileName())
-            New-Item -Path $DownloadPath -ItemType Directory -Force
-            Save-LatestUpdate -Updates $StackUpdates -Path $DownloadPath
-            ForEach ($Update in $StackUpdates) {
-                $Filename = Split-Path $Update.Url -Leaf
-                It "Given downloads via BITS, it successfully downloads the update" {
-                    (Join-Path $DownloadPath $Filename) | Should -Exist
+        Context "Downloads updates from Get-LatestWindowsDefenderUpdate via BITS" {
+            Remove-Item -Path $Target -Recurse -Force -ErrorAction SilentlyContinue
+            $DefenderUpdates = Get-LatestWindowsDefenderUpdate
+            $Downloads = Save-LatestUpdate -Updates $DefenderUpdates -Path $Target
+            ForEach ($Update in $DefenderUpdates) {
+                ForEach ($File in $Update.Url) {
+                    $Filename = Split-Path $File -Leaf
+                    It "Given updates returned from Get-LatestWindowsDefenderUpdate, it successfully downloads the update." {
+                        (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
+                    }
                 }
             }
             ForEach ($Download in $Downloads) {
@@ -425,13 +427,6 @@ InModuleScope LatestUpdate {
     }
 
     Describe -Tag "Save", "AppVeyor" -Name "Save-LatestUpdate AppVeyor tests" {
-    
-        # Download target
-        If (Test-Path -Path env:Temp) { $TempDir = $env:Temp }
-        If (Test-Path -Path env:TMPDIR) { $TempDir = $env:TMPDIR }
-        $Target = Join-Path -Path $TempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
-        New-Item -Path $Target -ItemType Directory -Force -ErrorAction SilentlyContinue
-
         # Get-LatestCumulativeUpdate
         ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions[0]) {
             Write-Host ""
@@ -594,11 +589,11 @@ InModuleScope LatestUpdate {
                 }
             }
         }
-
-        # Calculate downloaded size
-        $Size = "{0:N2} MB" -f ((Get-ChildItem $Target -Recurse | Measure-Object -Property Length -Sum -ErrorAction Stop).Sum / 1MB)
-        Write-Host ""
-        Write-Host "Total download size: $Size." -ForegroundColor Cyan
-        Remove-Item -Path $Target -Recurse -Force
     }
+
+    # Calculate downloaded size
+    $Size = "{0:N2} MB" -f ((Get-ChildItem $Target -Recurse | Measure-Object -Property Length -Sum -ErrorAction Stop).Sum / 1MB)
+    Write-Host ""
+    Write-Host "Total download size: $Size." -ForegroundColor Cyan
+    Remove-Item -Path $Target -Recurse -Force -ErrorAction SilentlyContinue
 }
