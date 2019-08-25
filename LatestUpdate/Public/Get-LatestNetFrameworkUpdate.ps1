@@ -46,9 +46,9 @@ Function Get-LatestNetFrameworkUpdate {
             Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
 
             # Filter again for updates from the most recent month, otherwise we have too many updates
-            $updateList = $updateList | Sort-Object -Property Updated -Descending
-            $updateList = $updateList | Where-Object { $_.Updated.Month -eq $updateList[0].Updated.Month }                
-            Write-Verbose -Message "$($MyInvocation.MyCommand): filtered to $($updateList.Count) items."
+            $updateList = $updateList | Sort-Object -Property Updated -Descending | `
+                Where-Object { $_.Updated.Month -eq $updateList[0].Updated.Month }                
+            Write-Verbose -Message "$($MyInvocation.MyCommand): filtered updates to $($updateList.Count) items."
 
             If ($Null -ne $updateList) {
                 ForEach ($update in $updateList) {

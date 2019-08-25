@@ -466,7 +466,7 @@ InModuleScope LatestUpdate {
             ForEach ($Version in $ResourceStrings.ParameterValues.VersionsComplete[0]) {
                 Write-Host ""
                 Write-Host "`tBuilding variable for Get-LatestNetFrameworkUpdate [$Version]." -ForegroundColor Cyan
-                New-Variable -Name "Downloads$Version" -Value (Get-LatestNetFrameworkUpdate -OperatingSystem $Version)
+                New-Variable -Name "Downloads$Version" -Value (Get-LatestNetFrameworkUpdate -OperatingSystem $Version | Select-Object -First 1)
                 $Output = (Get-Variable -Name "Downloads$Version").Value
                 Remove-Variable -Name "Downloads$Version"
 
@@ -521,7 +521,7 @@ InModuleScope LatestUpdate {
             # Get-LatestAdobeFlashUpdate Windows 8
             Write-Host ""
             Write-Host "`tBuilding variable for Get-LatestAdobeFlashUpdate Windows 8." -ForegroundColor Cyan
-            $Output = Get-LatestAdobeFlashUpdate -OperatingSystem Windows8
+            $Output = Get-LatestAdobeFlashUpdate -OperatingSystem Windows8 | Select-Object -First 1
             Context "Downloads updates from Get-LatestAdobeFlashUpdate for Windows 8" {
                 $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
                 ForEach ($Update in $Output) {
