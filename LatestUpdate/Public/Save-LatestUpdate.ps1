@@ -70,6 +70,10 @@ Function Save-LatestUpdate {
         [System.Management.Automation.SwitchParameter] $ForceWebRequest,
 
         [Parameter(Mandatory = $False)]
+        [ValidateSet('BitsTransfer', 'WebRequest', 'WebClient')]
+        [System.String] $Method = 'BitsTransfer',
+
+        [Parameter(Mandatory = $False)]
         [ValidateSet('Foreground', 'High', 'Normal', 'Low')]
         [System.String] $Priority = "Foreground",
 
@@ -100,68 +104,103 @@ Function Save-LatestUpdate {
                 }
                 Else {
                     If ($ForceWebRequest -or (Test-PSCore)) {
-                        If ($pscmdlet.ShouldProcess($url, "WebDownload")) {
-
-                            #Running on PowerShell Core or ForceWebRequest
-                            try {
-                                $iwrParams = @{
-                                    Uri             = $url
-                                    OutFile         = $updateDownloadTarget
-                                    UseBasicParsing = $True
-                                    ErrorAction     = $script:resourceStrings.Preferences.ErrorAction
-                                }
-                                If ($PSBoundParameters.ContainsKey('Proxy')) {
-                                    $iwrParams.Proxy = $Proxy
-                                }
-                                If ($PSBoundParameters.ContainsKey('ProxyCredential')) {
-                                    $iwrParams.ProxyCredentials = $ProxyCredential
-                                }
-                                Invoke-WebRequest @iwrParams
-                            }
-                            catch [System.Net.Http.HttpRequestException] {
-                                Write-Warning -Message "$($MyInvocation.MyCommand): HttpRequestException: Check URL is valid: $url."
-                                Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
-                            }
-                            catch [System.Net.WebException] {
-                                Write-Warning -Message "$($MyInvocation.MyCommand): WebException."
-                                Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
-                            }
-                            catch [System.Exception] {
-                                Write-Warning -Message "$($MyInvocation.MyCommand): Failed to download: $url."
-                                Throw $_.Exception.Message
-                            }
-                        }
+                        #Running on PowerShell Core or ForceWebRequest
+                        $Method = 'WebRequest'
                     }
-                    Else {
-                        If ($pscmdlet.ShouldProcess($(Split-Path -Path $url -Leaf), "BitsDownload")) {
 
+                    Switch ($Method) {
+                        'BitsTransfer' {
                             #Running on Windows PowerShell
-                            try {
-                                $sbtParams = @{
-                                    Source      = $url
-                                    Destination = $updateDownloadTarget
-                                    Priority    = $Priority
-                                    DisplayName = $update.Note
-                                    Description = "Downloading $url"
-                                    ErrorAction = $script:resourceStrings.Preferences.ErrorAction
+                            If ($pscmdlet.ShouldProcess($(Split-Path -Path $url -Leaf), "BitsDownload")) {
+                                try {
+                                    $sbtParams = @{
+                                        Source      = $url
+                                        Destination = $updateDownloadTarget
+                                        Priority    = $Priority
+                                        DisplayName = $update.Note
+                                        Description = "Downloading $url"
+                                        ErrorAction = $script:resourceStrings.Preferences.ErrorAction
+                                    }
+                                    If ($PSBoundParameters.ContainsKey('Proxy')) {
+                                        # Set priority to Foreground because the proxy will remove the Range protocol header
+                                        $sbtParams.Priority = "Foreground"
+                                        $sbtParams.ProxyUsage = "Override"
+                                        $sbtParams.ProxyList = $Proxy
+                                    }
+                                    If ($PSBoundParameters.ContainsKey('ProxyCredential')) {
+                                        $sbtParams.ProxyCredential = $ProxyCredentials
+                                    }
+                                    Start-BitsTransfer @sbtParams
                                 }
-                                If ($PSBoundParameters.ContainsKey('Proxy')) {
-                                    # Set priority to Foreground because the proxy will remove the Range protocol header
-                                    $sbtParams.Priority = "Foreground"
-                                    $sbtParams.ProxyUsage = "Override"
-                                    $sbtParams.ProxyList = $Proxy
+                                catch [System.Exception] {
+                                    Write-Warning -Message "$($MyInvocation.MyCommand): Exception: check URL is valid: $url."
+                                    Throw $_.Exception.Message
                                 }
-                                If ($PSBoundParameters.ContainsKey('ProxyCredential')) {
-                                    $sbtParams.ProxyCredential = $ProxyCredentials
-                                }
-                                Start-BitsTransfer @sbtParams
                             }
-                            catch [System.Exception] {
-                                Write-Warning -Message "$($MyInvocation.MyCommand): Exception: check URL is valid: $url."
-                                Throw $_.Exception.Message
+                        }
+                        'WebRequest' {
+                            #Running on PowerShell Core or ForceWebRequest
+                            If ($ForceWebRequest -or (Test-PSCore) -or ($pscmdlet.ShouldProcess($url, "WebDownload"))) {
+                                try {
+                                    $iwrParams = @{
+                                        Uri             = $url
+                                        OutFile         = $updateDownloadTarget
+                                        UseBasicParsing = $True
+                                        ErrorAction     = $script:resourceStrings.Preferences.ErrorAction
+                                    }
+                                    If ($PSBoundParameters.ContainsKey('Proxy')) {
+                                        $iwrParams.Proxy = $Proxy
+                                    }
+                                    If ($PSBoundParameters.ContainsKey('ProxyCredential')) {
+                                        $iwrParams.ProxyCredentials = $ProxyCredential
+                                    }
+                                    Invoke-WebRequest @iwrParams
+                                }
+                                catch [System.Net.Http.HttpRequestException] {
+                                    Write-Warning -Message "$($MyInvocation.MyCommand): HttpRequestException: Check URL is valid: $url."
+                                    Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
+                                }
+                                catch [System.Net.WebException] {
+                                    Write-Warning -Message "$($MyInvocation.MyCommand): WebException."
+                                    Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
+                                }
+                                catch [System.Exception] {
+                                    Write-Warning -Message "$($MyInvocation.MyCommand): Failed to download: $url."
+                                    Throw $_.Exception.Message
+                                }
+                            }
+                        }
+                        'WebClient' {
+                            If ($pscmdlet.ShouldProcess($(Split-Path -Path $url -Leaf), "WebClient")) {
+                                try {
+                                    $webClient = New-Object -TypeName System.Net.WebClient
+                                    If ($PSBoundParameters.ContainsKey('Proxy')) {
+                                        $proxyObj = New-Object -TypeName System.Net.WebProxy
+                                        $proxyObj.Address = $Proxy
+
+                                        If ($PSBoundParameters.ContainsKey('ProxyCredential')) {
+                                            $proxyObj.credentials = $ProxyCredential
+                                        }
+                                        $webClient.Proxy = $proxyObj
+                                    }
+                                    $webClient.DownloadFile($url, $updateDownloadTarget)
+                                }
+                                catch [System.Net.Http.HttpRequestException] {
+                                    Write-Warning -Message "$($MyInvocation.MyCommand): HttpRequestException: Check URL is valid: $url."
+                                    Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
+                                }
+                                catch [System.Net.WebException] {
+                                    Write-Warning -Message "$($MyInvocation.MyCommand): WebException."
+                                    Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
+                                }
+                                catch [System.Exception] {
+                                    Write-Warning -Message "$($MyInvocation.MyCommand): Failed to download: $url."
+                                    Throw $_.Exception.Message
+                                }
                             }
                         }
                     }
+
                     If (Test-Path -Path $updateDownloadTarget) {
                         $outputObject = [PSCustomObject] @{
                             KB   = $update.KB

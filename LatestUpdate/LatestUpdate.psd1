@@ -30,11 +30,11 @@ CompanyName = 'stealthpuppy'
 Copyright = '(c) 2019 stealthpuppy. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'A module for retrieving the latest Windows 10 / Windows Server 2016, 2019, Semi Annual Channel Cumulative Updates, Servicing Stack Updates, .NET Framework Cumulative Updates,  Monthly Rollups for 8.1 / 7 (and Windows Server 2012 R2, 2008 R2), the latest Adobe Flash Player updates and Windows Defender antimalware platform updates from the Microsoft Update History feeds. In addition, the module provides a function for downloading the update files locally.
+Description = 'A module for retrieving and downloading the latest Windows updates from the Microsoft Update History feeds. This module assists IT Pros in speeding Windows operating system deployments with tracking of Windows updates, offline patching in MDT for reference images or PC deployments, or direct application of updates to a WIM.
 
-This module assists IT Pros in speeding Windows operating system deployments with tracking of Windows updates, offline patching in MDT for reference images or PC deployments, or direct application of updates to a WIM.
+Updates retrieved include: Windows 10 / Windows Server 2016, 2019 Semi Annual Channel Cumulative Updates, Servicing Stack Updates, .NET Framework Cumulative Updates, the latest Adobe Flash Player updates, Windows Defender antimalware platform updates and Monthly Rollups for 8.1 / 7 (Windows Server 2012 R2, Windows Server 2008 R2).
 
-PowerShell Core is full suppported.'
+PowerShell Core is fully suppported.'
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '5.0'

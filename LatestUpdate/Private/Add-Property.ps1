@@ -29,9 +29,10 @@ Function Add-Property {
                 Select-String -AllMatches -Pattern $MatchPattern | `
                 ForEach-Object { $_.Matches.Value }
         
-            If ($value.Count -ge 2) {
+            If ($value.Count -gt 1) {
                 $value = $value | Select-Object -Last 1
             }
+            If ($Null -ne $value) { $value = $value.Trim(" ") }
 
             $object | Add-Member -NotePropertyName $NewPropertyName -NotePropertyValue $value
             Write-Output -InputObject $object

@@ -16,12 +16,12 @@
   "Matches" : {
     "DownloadUrl" : "(http[s]?\\://download\\.windowsupdate\\.com\\/[^\\'\\\"\"]*)",
     "DownloadDescription" : "<a[^>]*>([^<]+)<\\/a>",
-    "Windows10Version" : "([12][056789][01][346799])",
+    "Windows10Version" : "\\s([12][056789][01][346789])\\s",
     "Windows8Version" : "8.1|2012",
     "Windows7Version" : "7|2008",
-    "WindowsClientVersion" : "7|8.1|([12][056789][01][346799])",
-    "WindowsServerVersion" : "2008|2012|2016|2019|([12][056789][01][346799])",
-    "AllVersion" : "7|8.1|2008|2012|2016|2019|([12][056789][01][346799])",
+    "WindowsClientVersion" : "7|8.1|\\s([12][056789][01][346789])\\s",
+    "WindowsServerVersion" : "2008|2012|2016|2019|\\s([12][056789][01][346789])\\s",
+    "AllVersion" : "7|8.1|2008|2012|2016|2019|\\s([12][056789][01][346789])\\s",
     "Architecture" : "(x86|x64|ARM64)"
   },
   "CatalogUris" : {
@@ -32,6 +32,7 @@
     "Windows10" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom",
     "Windows8" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/b905caa1-d413-c90c-bed3-20aead901092/atom",
     "Windows7" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/f825ca23-c7d1-aab8-4513-64980e1c3007/atom",
+    "WindowsServer" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/6ae59d69-36fc-8e4d-23dd-631d98bf74a9/atom",
     "NetFramework" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-us/df2c02f6-9610-d46d-2d76-fa570bd8c86a/atom",
     "WindowsDefender" : "https://support.microsoft.com/app/content/api/content/feeds/sap/en-au/5d4715e7-a9c9-378e-3f83-fd410db4ef0a/atom"
   },
@@ -47,22 +48,39 @@
   },
   "ParameterValues" : {
     "Windows10Versions" : [
-      "1903", "1809", "1803", "1709", "1703", "1607"
+      "1903",
+      "1809",
+      "1803",
+      "1709",
+      "1703",
+      "1607"
     ],
     "VersionsAll" : [
-      "Windows10", "Windows8", "Windows7"
+      "Windows10",
+      "Windows8",
+      "Windows7"
     ],
     "Versions108" : [
-      "Windows10", "Windows8"
+      "Windows10",
+      "Windows8",
+      "WindowsServer"
     ],
     "Versions87" : [
-      "Windows8", "Windows7"
+      "Windows8",
+      "Windows7"
     ],
     "Versions10" : [
-      "Windows10", "WindowsClient", "WindowsServer"
+      "Windows10",
+      "WindowsClient",
+      "WindowsServer"
     ],
     "VersionsComplete" : [
-    "Windows10", "Windows8", "Windows7", "WindowsClient", "WindowsServer", "All"
+      "Windows10",
+      "Windows8",
+      "Windows7",
+      "WindowsClient",
+      "WindowsServer",
+      "All"
     ],
     "Windows10" : "Windows 10|Windows Server"
   },

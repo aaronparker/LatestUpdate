@@ -72,10 +72,10 @@ Function Get-LatestAdobeFlashUpdate {
             }
             If ($Previous.IsPresent) { $gufParams.Previous = $True }
             $updateList = Get-UpdateAdobeFlash @gufParams
-            Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
+            Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $(($updateList | Measure-Object).count)."
 
             If ($Null -ne $updateList) {
-                Switch ($OperatingSystem) {
+                Switch -regex ($OperatingSystem) {
 
                     "Windows10" {
                         ForEach ($ver in $Version) {
@@ -113,7 +113,7 @@ Function Get-LatestAdobeFlashUpdate {
                         }
                     }
 
-                    "Windows8" {
+                    "Windows8|WindowsServer" {
                         If ($PSBoundParameters.ContainsKey('Version')) {
                             Write-Information -MessageData "INFO: The Version parameter is only valid for Windows10. Ignoring parameter." `
                                 -InformationAction Continue -Tags UserNotify

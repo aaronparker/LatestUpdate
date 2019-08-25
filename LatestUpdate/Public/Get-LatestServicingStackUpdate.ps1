@@ -82,22 +82,15 @@ Function Get-LatestServicingStackUpdate {
                             }
                             $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
         
-                            # Add the Version and Architecture properties to the list
-                            $updateListWithVersionParams = @{
-                                InputObject     = $downloadInfo
-                                Property        = "Note"
-                                NewPropertyName = "Version"
-                                MatchPattern    = $script:resourceStrings.Matches."$($OperatingSystem)Version"
-                            }
-                            $updateListWithVersion = Add-Property @updateListWithVersionParams
-        
-                            $updateListWithArchParams = @{
-                                InputObject     = $updateListWithVersion
-                                Property        = "Note"
-                                NewPropertyName = "Architecture"
-                                MatchPattern    = $script:resourceStrings.Matches.Architecture
-                            }
-                            $updateListWithArch = Add-Property @updateListWithArchParams
+                    # Add the Version and Architecture properties to the list
+                    $downloadInfo | Add-Member -NotePropertyName "Version" -NotePropertyValue $ver
+                    $updateListWithArchParams = @{
+                        InputObject     = $downloadInfo
+                        Property        = "Note"
+                        NewPropertyName = "Architecture"
+                        MatchPattern    = $script:resourceStrings.Matches.Architecture
+                    }
+                    $updateListWithArch = Add-Property @updateListWithArchParams
         
                             # If the value for Architecture is blank, make it "x86"
                             $i = 0
