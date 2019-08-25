@@ -51,6 +51,12 @@ Param (
     [System.Management.Automation.SwitchParameter] $Clean,
 
     [Parameter(Mandatory = $False)]
+    [System.String] $Version = "1903",
+
+    [Parameter(Mandatory = $False)]
+    [System.String] $Architecture = "x64",
+
+    [Parameter(Mandatory = $False)]
     [System.String] $Drive = "DS004"
 )
 
@@ -99,19 +105,19 @@ Else {
 
 # Download the updates
 Write-Host "Downloading cumulative updates." -ForegroundColor Cyan
-Get-LatestCumulativeUpdate | Where-Object { $_.Architecture -eq "x64" } | Save-LatestUpdate -Path $UpdatePath -Method WebClient
+Get-LatestCumulativeUpdate -Version $Version | Where-Object { $_.Architecture -eq $Architecture } | Save-LatestUpdate -Path $UpdatePath -Method WebClient
 
 Write-Host "Downloading servicing stack updates." -ForegroundColor Cyan
-Get-LatestServicingStackUpdate | Where-Object { $_.Architecture -eq "x64" } | Save-LatestUpdate -Path $UpdatePath -Method WebClient
+Get-LatestServicingStackUpdate -Version $Version  | Where-Object { $_.Architecture -eq $Architecture } | Save-LatestUpdate -Path $UpdatePath -Method WebClient
 
 Write-Host "Downloading servicing stack updates." -ForegroundColor Cyan
-Get-LatestAdobeFlashUpdate | Where-Object { $_.Architecture -eq "x64" } | Save-LatestUpdate -Path $UpdatePath -Method WebClient
+Get-LatestAdobeFlashUpdate -Version $Version  | Where-Object { $_.Architecture -eq $Architecture } | Save-LatestUpdate -Path $UpdatePath -Method WebClient
 
 # Write-Host "Downloading Windows Defender updates." -ForegroundColor Cyan
 # Get-LatestWindowsDefenderUpdate | Save-LatestUpdate -Path $UpdatePath -Method WebClient
 
 Write-Host "Downloading .NET Framework updates." -ForegroundColor Cyan
-Get-LatestNetFrameworkUpdate | Where-Object { $_.Version -eq "1903" } | Save-LatestUpdate -Path $UpdatePath -Method WebClient
+Get-LatestNetFrameworkUpdate | Where-Object { $_.Version -eq $Version } | Where-Object { $_.Architecture -eq $Architecture } | Save-LatestUpdate -Path $UpdatePath -Method WebClient
 
 
 # Validate the provided local path and import the update package
