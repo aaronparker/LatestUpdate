@@ -18,7 +18,7 @@ Else {
 }
 $moduleParent = Join-Path -Path $projectRoot -ChildPath $module
 $manifestPath = Join-Path -Path $moduleParent -ChildPath "$module.psd1"
-$modulePath = Join-Path -Path $moduleParent -ChildPath "$module.psm1"
+# $modulePath = Join-Path -Path $moduleParent -ChildPath "$module.psm1"
 
 # Import module
 Write-Host ""
@@ -375,15 +375,14 @@ InModuleScope LatestUpdate {
         } 
     }
 
-    Describe -Tag "Save" -Name "Save-LatestUpdate" {
-    
-        # Download target
-        If (Test-Path -Path env:Temp) { $TempDir = $env:Temp }
-        If (Test-Path -Path env:TMPDIR) { $TempDir = $env:TMPDIR }
-        $Target = Join-Path -Path $TempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
-        New-Item -Path $Target -ItemType Directory -Force -ErrorAction SilentlyContinue
-
+    Describe -Tag "Save", "Local" -Name "Save-LatestUpdate Local tests" {
         Context "Downloads updates from Get-LatestWindowsDefenderUpdate" {
+            # Download target
+            If (Test-Path -Path env:Temp) { $TempDir = $env:Temp }
+            If (Test-Path -Path env:TMPDIR) { $TempDir = $env:TMPDIR }
+            $Target = Join-Path -Path $TempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
+            New-Item -Path $Target -ItemType Directory -Force -ErrorAction SilentlyContinue
+
             $DefenderUpdates = Get-LatestWindowsDefenderUpdate
             $Downloads = Save-LatestUpdate -Updates $DefenderUpdates -Path $Target -ForceWebRequest
             ForEach ($Update in $DefenderUpdates) {
@@ -402,127 +401,130 @@ InModuleScope LatestUpdate {
                 }
             }
         }
-
-        # Skip download tests unless running in AppVeyor.
-        If (Test-Path -Path "env:APPVEYOR_BUILD_FOLDER") {
-
-            # Get-LatestCumulativeUpdate
-            ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions[0]) {
-                Write-Host ""
-                Write-Host "`tBuilding variable for Get-LatestCumulativeUpdate Windows 10 [$Version]." -ForegroundColor Cyan
-                New-Variable -Name "Downloads$Version" -Value (Get-LatestCumulativeUpdate -OperatingSystem Windows10 -Version $Version)
-                $Output = (Get-Variable -Name "Downloads$Version").Value
-                Remove-Variable -Name "Downloads$Version"
+    }
     
-                Context "Downloads updates from Get-LatestCumulativeUpdate for Windows 10 $Version" {
-                    $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
-                    ForEach ($Update in $Output) {
-                        ForEach ($File in $Update.Url) {
-                            $Filename = Split-Path $File -Leaf
-                            It "Given updates returned from Get-LatestCumulativeUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
-                                (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
-                            }
-                        }
-                    }
-                    ForEach ($Download in $Downloads) {
-                        It "Output from Save-LatestUpdate should have the expected properties" {
-                            $Download.KB | Should -BeOfType System.String
-                            $Download.Note | Should -BeOfType System.String
-                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
-                        }
-                    }
+    Describe -Tag "Save", "Bits" -Name "Save-LatestUpdate Local BITS tests" {
+        Context "Download via BITS Transfer" {
+            $DownloadPath = Join-Path -Path $Target -ChildPath ([System.IO.Path]::GetRandomFileName())
+            New-Item -Path $DownloadPath -ItemType Directory -Force
+            Save-LatestUpdate -Updates $StackUpdates -Path $DownloadPath
+            ForEach ($Update in $StackUpdates) {
+                $Filename = Split-Path $Update.Url -Leaf
+                It "Given downloads via BITS, it successfully downloads the update" {
+                    (Join-Path $DownloadPath $Filename) | Should -Exist
                 }
             }
-
-            # Get-LatestServicingStack
-            ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions[0]) {
-                Write-Host ""
-                Write-Host "`tBuilding variable for Get-LatestServicingStack Windows 10 [$Version]." -ForegroundColor Cyan
-                New-Variable -Name "Downloads$Version" -Value (Get-LatestServicingStack -OperatingSystem Windows10 -Version $Version)
-                $Output = (Get-Variable -Name "Downloads$Version").Value
-                Remove-Variable -Name "Downloads$Version"
-
-                Context "Downloads updates from Get-LatestServicingStack for Windows 10 $Version" {
-                    $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
-                    ForEach ($Update in $Output) {
-                        ForEach ($File in $Update.Url) {
-                            $Filename = Split-Path $File -Leaf
-                            It "Given updates returned from Get-LatestServicingStack, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
-                                (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
-                            }
-                        }
-                    }
-                    ForEach ($Download in $Downloads) {
-                        It "Output from Save-LatestUpdate should have the expected properties" {
-                            $Download.KB | Should -BeOfType System.String
-                            $Download.Note | Should -BeOfType System.String
-                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
-                        }
-                    }
+            ForEach ($Download in $Downloads) {
+                It "Output from Save-LatestUpdate should have the expected properties" {
+                    $Download.KB | Should -BeOfType System.String
+                    $Download.Note | Should -BeOfType System.String
+                    $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
                 }
             }
+        }
+    }
 
-            # Get-LatestNetFrameworkUpdate
-            ForEach ($Version in $ResourceStrings.ParameterValues.VersionsComplete[0]) {
-                Write-Host ""
-                Write-Host "`tBuilding variable for Get-LatestNetFrameworkUpdate [$Version]." -ForegroundColor Cyan
-                New-Variable -Name "Downloads$Version" -Value (Get-LatestNetFrameworkUpdate -OperatingSystem $Version | Select-Object -First 1)
-                $Output = (Get-Variable -Name "Downloads$Version").Value
-                Remove-Variable -Name "Downloads$Version"
+    Describe -Tag "Save", "AppVeyor" -Name "Save-LatestUpdate AppVeyor tests" {
+    
+        # Download target
+        If (Test-Path -Path env:Temp) { $TempDir = $env:Temp }
+        If (Test-Path -Path env:TMPDIR) { $TempDir = $env:TMPDIR }
+        $Target = Join-Path -Path $TempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
+        New-Item -Path $Target -ItemType Directory -Force -ErrorAction SilentlyContinue
 
-                Context "Downloads updates from Get-LatestNetFrameworkUpdate for Windows $Version" {
-                    $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
-                    ForEach ($Update in $Output) {
-                        ForEach ($File in $Update.Url) {
-                            $Filename = Split-Path $File -Leaf
-                            It "Given updates returned from Get-LatestNetFrameworkUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
-                                (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
-                            }
-                        }
-                    }
-                    ForEach ($Download in $Downloads) {
-                        It "Output from Save-LatestUpdate should have the expected properties" {
-                            $Download.KB | Should -BeOfType System.String
-                            $Download.Note | Should -BeOfType System.String
-                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
-                        }
-                    }
-                }
-            }
-
-            # Get-LatestAdobeFlashUpdate Windows 10
-            ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions[0]) {
-                Write-Host ""
-                Write-Host "`tBuilding variable for Get-LatestAdobeFlashUpdate Windows 10 [$Version]." -ForegroundColor Cyan
-                New-Variable -Name "Downloads$Version" -Value (Get-LatestAdobeFlashUpdate -OperatingSystem Windows10 -Version $Version)
-                $Output = (Get-Variable -Name "Downloads$Version").Value
-                Remove-Variable -Name "Downloads$Version"
-        
-                Context "Downloads updates from Get-LatestAdobeFlashUpdate for Windows 10 $Version" {
-                    $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
-                    ForEach ($Update in $Output) {
-                        ForEach ($File in $Update.Url) {
-                            $Filename = Split-Path $File -Leaf
-                            It "Given updates returned from Get-LatestAdobeFlashUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
-                                (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
-                            }
-                        }
-                    }
-                    ForEach ($Download in $Downloads) {
-                        It "Output from Save-LatestUpdate should have the expected properties" {
-                            $Download.KB | Should -BeOfType System.String
-                            $Download.Note | Should -BeOfType System.String
-                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
-                        }
-                    }
-                }
-            }
-
-            # Get-LatestAdobeFlashUpdate Windows 8
+        # Get-LatestCumulativeUpdate
+        ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions[0]) {
             Write-Host ""
-            Write-Host "`tBuilding variable for Get-LatestAdobeFlashUpdate Windows 8." -ForegroundColor Cyan
-            $Output = Get-LatestAdobeFlashUpdate -OperatingSystem Windows8 | Select-Object -First 1
-            Context "Downloads updates from Get-LatestAdobeFlashUpdate for Windows 8" {
+            Write-Host "`tBuilding variable for Get-LatestCumulativeUpdate Windows 10 [$Version]." -ForegroundColor Cyan
+            New-Variable -Name "Downloads$Version" -Value (Get-LatestCumulativeUpdate -OperatingSystem Windows10 -Version $Version)
+            $Output = (Get-Variable -Name "Downloads$Version").Value
+            Remove-Variable -Name "Downloads$Version"
+    
+            Context "Downloads updates from Get-LatestCumulativeUpdate for Windows 10 $Version" {
+                $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
+                ForEach ($Update in $Output) {
+                    ForEach ($File in $Update.Url) {
+                        $Filename = Split-Path $File -Leaf
+                        It "Given updates returned from Get-LatestCumulativeUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
+                            (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
+                        }
+                    }
+                }
+                ForEach ($Download in $Downloads) {
+                    It "Output from Save-LatestUpdate should have the expected properties" {
+                        $Download.KB | Should -BeOfType System.String
+                        $Download.Note | Should -BeOfType System.String
+                        $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
+                    }
+                }
+            }
+        }
+
+        # Get-LatestServicingStack
+        ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions[0]) {
+            Write-Host ""
+            Write-Host "`tBuilding variable for Get-LatestServicingStack Windows 10 [$Version]." -ForegroundColor Cyan
+            New-Variable -Name "Downloads$Version" -Value (Get-LatestServicingStack -OperatingSystem Windows10 -Version $Version)
+            $Output = (Get-Variable -Name "Downloads$Version").Value
+            Remove-Variable -Name "Downloads$Version"
+
+            Context "Downloads updates from Get-LatestServicingStack for Windows 10 $Version" {
+                $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
+                ForEach ($Update in $Output) {
+                    ForEach ($File in $Update.Url) {
+                        $Filename = Split-Path $File -Leaf
+                        It "Given updates returned from Get-LatestServicingStack, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
+                            (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
+                        }
+                    }
+                }
+                ForEach ($Download in $Downloads) {
+                    It "Output from Save-LatestUpdate should have the expected properties" {
+                        $Download.KB | Should -BeOfType System.String
+                        $Download.Note | Should -BeOfType System.String
+                        $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
+                    }
+                }
+            }
+        }
+
+        # Get-LatestNetFrameworkUpdate
+        ForEach ($Version in $ResourceStrings.ParameterValues.VersionsComplete[0]) {
+            Write-Host ""
+            Write-Host "`tBuilding variable for Get-LatestNetFrameworkUpdate [$Version]." -ForegroundColor Cyan
+            New-Variable -Name "Downloads$Version" -Value (Get-LatestNetFrameworkUpdate -OperatingSystem $Version | Select-Object -First 1)
+            $Output = (Get-Variable -Name "Downloads$Version").Value
+            Remove-Variable -Name "Downloads$Version"
+
+            Context "Downloads updates from Get-LatestNetFrameworkUpdate for Windows $Version" {
+                $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
+                ForEach ($Update in $Output) {
+                    ForEach ($File in $Update.Url) {
+                        $Filename = Split-Path $File -Leaf
+                        It "Given updates returned from Get-LatestNetFrameworkUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
+                            (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
+                        }
+                    }
+                }
+                ForEach ($Download in $Downloads) {
+                    It "Output from Save-LatestUpdate should have the expected properties" {
+                        $Download.KB | Should -BeOfType System.String
+                        $Download.Note | Should -BeOfType System.String
+                        $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
+                    }
+                }
+            }
+        }
+
+        # Get-LatestAdobeFlashUpdate Windows 10
+        ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions[0]) {
+            Write-Host ""
+            Write-Host "`tBuilding variable for Get-LatestAdobeFlashUpdate Windows 10 [$Version]." -ForegroundColor Cyan
+            New-Variable -Name "Downloads$Version" -Value (Get-LatestAdobeFlashUpdate -OperatingSystem Windows10 -Version $Version)
+            $Output = (Get-Variable -Name "Downloads$Version").Value
+            Remove-Variable -Name "Downloads$Version"
+        
+            Context "Downloads updates from Get-LatestAdobeFlashUpdate for Windows 10 $Version" {
                 $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
                 ForEach ($Update in $Output) {
                     ForEach ($File in $Update.Url) {
@@ -540,35 +542,57 @@ InModuleScope LatestUpdate {
                     }
                 }
             }
+        }
 
-            # Get-LatestMonthlyRollup
-            ForEach ($Version in $ResourceStrings.ParameterValues.Versions87[0]) {
-                Write-Host ""
-                Write-Host "`tBuilding variable for Get-LatestMonthlyRollup [$Version]." -ForegroundColor Cyan
-                New-Variable -Name "Downloads$Version" -Value (Get-LatestMonthlyRollup -OperatingSystem $Version)
-                $Output = (Get-Variable -Name "Downloads$Version").Value
-                Remove-Variable -Name "Downloads$Version"
-        
-                Context "Downloads updates from Get-LatestMonthlyRollup for $Version" {
-                    $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
-                    ForEach ($Update in $Output) {
-                        ForEach ($File in $Update.Url) {
-                            $Filename = Split-Path $File -Leaf
-                            It "Given updates returned from Get-LatestMonthlyRollup, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
-                                (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
-                            }
-                        }
-                    }
-                    ForEach ($Download in $Downloads) {
-                        It "Output from Save-LatestUpdate should have the expected properties" {
-                            $Download.KB | Should -BeOfType System.String
-                            $Download.Note | Should -BeOfType System.String
-                            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
-                        }
+        # Get-LatestAdobeFlashUpdate Windows 8
+        Write-Host ""
+        Write-Host "`tBuilding variable for Get-LatestAdobeFlashUpdate Windows 8." -ForegroundColor Cyan
+        $Output = Get-LatestAdobeFlashUpdate -OperatingSystem Windows8 | Select-Object -First 1
+        Context "Downloads updates from Get-LatestAdobeFlashUpdate for Windows 8" {
+            $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
+            ForEach ($Update in $Output) {
+                ForEach ($File in $Update.Url) {
+                    $Filename = Split-Path $File -Leaf
+                    It "Given updates returned from Get-LatestAdobeFlashUpdate, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
+                        (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
                     }
                 }
             }
+            ForEach ($Download in $Downloads) {
+                It "Output from Save-LatestUpdate should have the expected properties" {
+                    $Download.KB | Should -BeOfType System.String
+                    $Download.Note | Should -BeOfType System.String
+                    $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
+                }
+            }
+        }
 
+        # Get-LatestMonthlyRollup
+        ForEach ($Version in $ResourceStrings.ParameterValues.Versions87[0]) {
+            Write-Host ""
+            Write-Host "`tBuilding variable for Get-LatestMonthlyRollup [$Version]." -ForegroundColor Cyan
+            New-Variable -Name "Downloads$Version" -Value (Get-LatestMonthlyRollup -OperatingSystem $Version)
+            $Output = (Get-Variable -Name "Downloads$Version").Value
+            Remove-Variable -Name "Downloads$Version"
+        
+            Context "Downloads updates from Get-LatestMonthlyRollup for $Version" {
+                $Downloads = Save-LatestUpdate -Updates $Output -Path $Target -ForceWebRequest
+                ForEach ($Update in $Output) {
+                    ForEach ($File in $Update.Url) {
+                        $Filename = Split-Path $File -Leaf
+                        It "Given updates returned from Get-LatestMonthlyRollup, it successfully downloads the update: [$($Update.Version), $($Update.Architecture)]." {
+                            (Join-Path -Path $Target -ChildPath $Filename) | Should -Exist
+                        }
+                    }
+                }
+                ForEach ($Download in $Downloads) {
+                    It "Output from Save-LatestUpdate should have the expected properties" {
+                        $Download.KB | Should -BeOfType System.String
+                        $Download.Note | Should -BeOfType System.String
+                        $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
+                    }
+                }
+            }
         }
 
         # Calculate downloaded size
@@ -578,25 +602,3 @@ InModuleScope LatestUpdate {
         Remove-Item -Path $Target -Recurse -Force
     }
 }
-
-<# - Currently failing on AppVeyor
-Context "Download via BITS Transfer" {
-    Disable-NetFirewallRule -DisplayName "Core Networking - Group Policy (TCP-Out)"
-    $DownloadPath = Join-Path -Path $Target -ChildPath ([System.IO.Path]::GetRandomFileName())
-    New-Item -Path $DownloadPath -ItemType Directory -Force
-    Save-LatestUpdate -Updates $StackUpdates -Path $DownloadPath
-    ForEach ($Update in $StackUpdates) {
-        $Filename = Split-Path $Update.Url -Leaf
-        It "Given downloads via BITS, it successfully downloads the update" {
-            (Join-Path $DownloadPath $Filename) | Should -Exist
-        }
-    }
-    ForEach ($Download in $Downloads) {
-        It "Output from Save-LatestUpdate should have the expected properties" {
-            $Download.KB | Should -BeOfType System.String
-            $Download.Note | Should -BeOfType System.String
-            $Download.Path | Should -BeOfType System.Management.Automation.PathInfo
-        }
-    }
-}
-#>

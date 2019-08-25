@@ -174,18 +174,15 @@ Function Save-LatestUpdate {
                             If ($pscmdlet.ShouldProcess($(Split-Path -Path $url -Leaf), "WebClient")) {
                                 try {
                                     $webClient = New-Object -TypeName System.Net.WebClient
-
                                     If ($PSBoundParameters.ContainsKey('Proxy')) {
                                         $proxyObj = New-Object -TypeName System.Net.WebProxy
                                         $proxyObj.Address = $Proxy
-                                    
+
                                         If ($PSBoundParameters.ContainsKey('ProxyCredential')) {
                                             $proxyObj.credentials = $ProxyCredential
                                         }
-
                                         $webClient.Proxy = $proxyObj
                                     }
-                                
                                     $webClient.DownloadFile($url, $updateDownloadTarget)
                                 }
                                 catch [System.Net.Http.HttpRequestException] {
