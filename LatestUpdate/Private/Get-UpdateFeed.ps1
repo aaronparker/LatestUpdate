@@ -10,7 +10,7 @@ Function Get-UpdateFeed {
         [ValidateNotNullOrEmpty()]
         [System.String] $Uri
     )
-    
+
     # Fix for Invoke-WebRequest creating BOM in XML files; Handle Temp locations on Windows, macOS / Linux
     If (Test-Path -Path env:Temp) {
         $tempDir = $env:Temp
@@ -31,16 +31,12 @@ Function Get-UpdateFeed {
         }
         Invoke-WebRequest @params
     }
-    catch [System.Net.Http.HttpRequestException] {
-        Write-Warning -Message "$($MyInvocation.MyCommand): HttpRequestException: Failed to retrieve the update feed: $Uri."
-        Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
-    }
     catch [System.Net.WebException] {
         Write-Warning -Message "$($MyInvocation.MyCommand): WebException: Failed to retrieve the update feed: $Uri."
         Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
     }
     catch [System.Exception] {
-        Write-Warning -Message "$($MyInvocation.MyCommand): Failed to download: $url."
+        Write-Warning -Message "$($MyInvocation.MyCommand): Failed to retrieve the update feed: $url."
         Throw $_.Exception.Message
     }
     
