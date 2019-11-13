@@ -31,7 +31,7 @@ Function Get-LatestNetFrameworkUpdate {
         [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.VersionsComplete[0],
         
         [Parameter(Mandatory = $False)]
-        [System.Management.Automation.SwitchParameter] $Previous
+        [System.Management.Automation.SwitchParameter] $Previous,
 
         [Parameter(Mandatory = $False)]
         [System.String] $Proxy,
