@@ -39,18 +39,19 @@ Function Get-LatestCumulativeUpdate {
     [CmdletBinding(HelpUri = "https://docs.stealthpuppy.com/docs/latestupdate/usage/get-latest")]
     [Alias("Get-LatestUpdate")]
     Param (
-        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.")]
+        [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline, HelpMessage = "Windows OS name.", ParameterSetName = "Default")]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.Versions10 })]
         [Alias('OS')]
         [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.Versions10[0],
 
-        [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
+        [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Windows 10 Semi-annual Channel version number.", ParameterSetName = "Default")]
         [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.Windows10Versions })]
         [System.String[]] $Version = $script:resourceStrings.ParameterValues.Windows10Versions[0],
-
-        [Parameter(Mandatory = $False)]
-        [System.Management.Automation.SwitchParameter] $Previous
+        [Parameter(Mandatory = $False, ParameterSetName = "Default")]
+        [System.Management.Automation.SwitchParameter] $Previous,
+        [Parameter(Mandatory = $False, Position = 0, HelpMessage = "Build Number", ParameterSetName = "Build")]
+        [int]$Build        
     )
     
     # If resource strings are returned we can continue
@@ -59,20 +60,29 @@ Function Get-LatestCumulativeUpdate {
         # Get the update feed and continue if successfully read
         Write-Verbose -Message "$($MyInvocation.MyCommand): get feed for $OperatingSystem."
         $updateFeed = Get-UpdateFeed -Uri $script:resourceStrings.UpdateFeeds.Windows10
+        $updateList = New-Object -TypeName System.Collections.ArrayList
+
+        if($Build)
+        {
+            $BuildList = @($Build)
+        }
+        else
+        {
+            $BuildList = $Version | ForEach-Object { $script:resourceStrings.VersionTable.Windows10Builds[$_] }
+        }
 
         If ($Null -ne $updateFeed) {
-            ForEach ($ver in $Version) {
+            ForEach ($Build in $BuildList) {
 
                 # Filter the feed for cumulative updates and continue if we get updates
-                Write-Verbose -Message "$($MyInvocation.MyCommand): search feed for version $ver."
+                Write-Verbose -Message "$($MyInvocation.MyCommand): search feed for build $Build."
                 $gucParams = @{
                     UpdateFeed = $updateFeed
-                    Build = $script:resourceStrings.VersionTable.Windows10Builds[$ver]
+                    Build = $Build
                 }
                 If ($Previous.IsPresent) { $gucParams.Previous = $True }
-                $updateList = Get-UpdateCumulative @gucParams
+                $updateList.AddRange(@(Get-UpdateCumulative @gucParams))
                 Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
-
                 If ($Null -ne $updateList) {
 
                     # Get download info for each update from the catalog
@@ -84,7 +94,7 @@ Function Get-LatestCumulativeUpdate {
                     $downloadInfo = Get-UpdateCatalogDownloadInfo @downloadInfoParams
 
                     # Add the Version and Architecture properties to the list
-                    $downloadInfo | Add-Member -NotePropertyName "Version" -NotePropertyValue $ver
+                    $downloadInfo | Add-Member -NotePropertyName "Build" -NotePropertyValue $Build
                     $updateListWithArchParams = @{
                         InputObject     = $downloadInfo
                         Property        = "Note"
@@ -93,8 +103,22 @@ Function Get-LatestCumulativeUpdate {
                     }
                     $updateListWithArch = Add-Property @updateListWithArchParams
 
+                    $updateListWithArchParams = @{
+                        InputObject     = $downloadInfo
+                        Property        = "Note"
+                        NewPropertyName = "Version"
+                        MatchPattern    = $script:resourceStrings.Matches.Windows10Version
+                    }
+                    $updateListWithArch = Add-Property @updateListWithArchParams
+                    
                     # Add Revsion property
-                    $updateListWithArch | Add-Member -NotePropertyName "Revision" -NotePropertyValue "$($updateList.Build).$($updateList.Revision)"
+                    $updateListWithArch | Add-Member -NotePropertyName "Revision" -NotePropertyValue $updateList.Revision
+
+                    # Remove updates where description version doesn't match specified version
+                    if($null -ne $Version)
+                    {
+                        $updateListWithArch = $updateListWithArch | Where-Object { $_.Version -in $Version }
+                    }
 
                     # Return object to the pipeline
                     If ($Null -ne $updateListWithArch) {
