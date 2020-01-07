@@ -27,36 +27,22 @@ Function Get-UpdateCumulative {
             $BuildVersion = [regex]::Match($item.title, $rxB).Value
             $PSObject = [PSCustomObject] @{
                 Title   = $item.title
-                ID      = $item.id
+                ID       = "KB{0}" -f ($item.id).Split(":")[2]
                 Build   = $BuildVersion
+                Revision = ($BuildVersion.Split(".")[1])
                 Updated = $item.updated
             }
             $updateList.Add($PSObject) | Out-Null
         }
     }
-
-    # Filter and select the most current update
-    If ($updateList.Count -ge 1) {
-        $sortedUpdateList = New-Object -TypeName System.Collections.ArrayList
-        ForEach ($update in $updateList) {
-            $PSObject = [PSCustomObject] @{
-                Title    = $update.title
-                ID       = "KB{0}" -f ($update.id).Split(":")[2]
-                Build    = $update.Build.Split(".")[0]
-                Revision = [int]($update.Build.Split(".")[1])
-                Updated  = ([DateTime]::Parse($update.updated))
-            }
-            $sortedUpdateList.Add($PSObject) | Out-Null
-        }
-        If ($Previous.IsPresent) {
-            Write-Verbose -Message "$($MyInvocation.MyCommand): selecting previous update"
-            $latestUpdate = $sortedUpdateList | Sort-Object -Property Revision -Descending | Select-Object -First 2 | Select-Object -Last 1
-        }
-        Else {
-            $latestUpdate = $sortedUpdateList | Sort-Object -Property Revision -Descending | Select-Object -First 1
-        }
-        Write-Verbose -Message "$($MyInvocation.MyCommand): selected item [$($latestUpdate.title)]"
+    $Skip = 0
+    if($Previous.IsPresent)
+    {
+        Write-Verbose -Message "$($MyInvocation.MyCommand): selecting previous update"
+        $Skip = 1
     }
+    $latestUpdate = $updateList | Sort-Object -Property Revision -Descending | Select-Object -First 1 -Skip $Skip
+    Write-Verbose -Message "$($MyInvocation.MyCommand): selected item [$($latestUpdate.title)]"
 
     # Return object to the pipeline
     Write-Output -InputObject $latestUpdate
