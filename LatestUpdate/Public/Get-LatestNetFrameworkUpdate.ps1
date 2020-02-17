@@ -29,6 +29,9 @@ Function Get-LatestNetFrameworkUpdate {
         [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.VersionsComplete })]
         [Alias('OS')]
         [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.VersionsComplete[0],
+        
+        [Parameter(Mandatory = $False)]
+        [System.Management.Automation.SwitchParameter] $Previous,
 
         [Parameter(Mandatory = $False)]
         [System.String] $Proxy,
@@ -52,13 +55,15 @@ Function Get-LatestNetFrameworkUpdate {
             
             # Filter the feed for .NET Framework updates
             Write-Verbose -Message "$($MyInvocation.MyCommand): filter feed for [$($script:resourceStrings.SearchStrings.$OperatingSystem)]."
-            $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | `
-                Where-Object { $_.Title -match $script:resourceStrings.SearchStrings.$OperatingSystem }
+            $updateList = Get-UpdateNetFramework -UpdateFeed $updateFeed | Where-Object { $_.Title -match $script:resourceStrings.SearchStrings.$OperatingSystem }
             Write-Verbose -Message "$($MyInvocation.MyCommand): update count is: $($updateList.Count)."
 
             # Filter again for updates from the most recent month, otherwise we have too many updates
-            $updateList = $updateList | Sort-Object -Property Updated -Descending | `
-                Where-Object { $_.Updated.Month -eq $updateList[0].Updated.Month }                
+            $month = $updateList[0].Updated.Month
+            if ($Previous.IsPresent) {
+                $month = $month - 1
+            }
+            $updateList = $updateList | Sort-Object -Property Updated -Descending | Where-Object { $_.Updated.Month -eq $month }                
             Write-Verbose -Message "$($MyInvocation.MyCommand): filtered updates to $($updateList.Count) items."
 
             If ($Null -ne $updateList) {
