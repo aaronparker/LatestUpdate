@@ -34,8 +34,19 @@ Function Get-LatestMonthlyRollup {
         [System.String] $OperatingSystem = $script:resourceStrings.ParameterValues.Versions87[0],
 
         [Parameter(Mandatory = $False)]
-        [System.Management.Automation.SwitchParameter] $Previous
+        [System.Management.Automation.SwitchParameter] $Previous,
+
+        [Parameter(Mandatory = $False)]
+        [System.String] $Proxy,
+
+        [Parameter(Mandatory = $False)]
+        [System.Management.Automation.PSCredential]
+        $ProxyCredential = [System.Management.Automation.PSCredential]::Empty
     )
+
+    if ($PSBoundParameters.ContainsKey('Proxy') -or $PSBoundParameters.ContainsKey('ProxyCredential')) {
+        $null = Set-Proxy -Proxy $Proxy -ProxyCredential $ProxyCredential
+    }
     
     # If resource strings are returned we can continue
     If ($Null -ne $script:resourceStrings) {
