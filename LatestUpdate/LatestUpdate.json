@@ -6,7 +6,7 @@
     "MonthlyRollup" : "(?!Preview of Monthly Rollup)(\\(Monthly Rollup.*\\))",
     "NetFramework" : "Cumulative Update for \\.NET Framework|^Security and Quality Rollup for \\.NET Framework|^Security Only Update for \\.NET Framework",
     "WindowsDefender" : "Update for Windows Defender.*antimalware platform.*",
-    "Windows10" : "Windows 10|Windows Server 2016|Windows Server 2019|version 1903",
+    "Windows10" : "Windows 10|Windows Server 2016|Windows Server 2019|version 1909",
     "Windows8" : "Windows 8.1|Windows Server 2012",
     "Windows7" : "Windows 7|Windows Server 2008",
     "WindowsClient" : "Windows 7|Windows 8.1|Windows 10",
@@ -38,7 +38,7 @@
   },
   "VersionTable" : {
     "Windows10Builds" : {
-      "1909" : "18363",
+      "1909" : "18363"
       "1903" : "18362",
       "1809" : "17763",
       "1803" : "17134",
