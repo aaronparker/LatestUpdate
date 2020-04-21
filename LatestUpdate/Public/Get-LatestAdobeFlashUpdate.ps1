@@ -81,7 +81,7 @@ Function Get-LatestAdobeFlashUpdate {
                         ForEach ($ver in $Version) {
 
                             # Get download info for each update from the catalog
-                            Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($update.Title)]."
+                            Write-Verbose -Message "$($MyInvocation.MyCommand): searching catalog for: [$($updateList.Title)]."
                             $downloadInfoParams = @{
                                 UpdateId        = $updateList.ID
                                 OperatingSystem = $script:resourceStrings.SearchStrings.$OperatingSystem

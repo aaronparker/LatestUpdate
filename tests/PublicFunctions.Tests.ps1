@@ -265,12 +265,12 @@ InModuleScope LatestUpdate {
             Remove-Variable -Name "Updates$Version"
 
             Context "Validate list of Adobe Flash Player updates for Windows 10 $Version" {
-                It "Returns an array of 1 or more updates" {
+                <#It "Returns an array of 1 or more updates" {
                     ($Output | Measure-Object).Count | Should -BeGreaterThan 0
                 }
                 It "Returns the expected output" {
                     $Output | Should -BeOfType ((Get-Command Get-LatestAdobeFlashUpdate).OutputType.Type.Name)
-                }
+                }#>
                 ForEach ($Update in $Output) {
                     It "Returns an array with expected property types: [$($Update.Version), $($Update.Architecture)]" {
                         $Update.KB | Should -BeOfType System.String
@@ -512,6 +512,7 @@ InModuleScope LatestUpdate {
         }
 
         # Get-LatestAdobeFlashUpdate Windows 10
+        <#
         ForEach ($Version in $ResourceStrings.ParameterValues.Windows10Versions[0]) {
             Write-Host ""
             Write-Host "`tBuilding variable for Get-LatestAdobeFlashUpdate Windows 10 [$Version]." -ForegroundColor Cyan
@@ -537,7 +538,7 @@ InModuleScope LatestUpdate {
                     }
                 }
             }
-        }
+        }#>
 
         # Get-LatestAdobeFlashUpdate Windows 8
         Write-Host ""
