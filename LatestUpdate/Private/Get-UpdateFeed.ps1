@@ -11,6 +11,14 @@ Function Get-UpdateFeed {
         [System.String] $Uri
     )
 
+    # Disable the Invoke-WebRequest progress bar for faster downloads
+    If ($PSBoundParameters.ContainsKey('Verbose')) {
+        $ProgressPreference = "Continue"
+    }
+    Else {
+        $ProgressPreference = "SilentlyContinue"
+    }
+
     # Fix for Invoke-WebRequest creating BOM in XML files; Handle Temp locations on Windows, macOS / Linux
     If (Test-Path -Path env:Temp) {
         $tempDir = $env:Temp

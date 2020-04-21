@@ -96,6 +96,14 @@ Function Save-LatestUpdate {
         if ($PSBoundParameters.ContainsKey('Proxy') -or $PSBoundParameters.ContainsKey('ProxyCredential')) {
             $null = Set-Proxy -Proxy $Proxy -ProxyCredential $ProxyCredential
         }
+
+        # Disable the Invoke-WebRequest progress bar for faster downloads
+        If ($PSBoundParameters.ContainsKey('Verbose')) {
+            $ProgressPreference = "Continue"
+        }
+        Else {
+            $ProgressPreference = "SilentlyContinue"
+        }
     }    
 
     Process {
@@ -133,9 +141,9 @@ Function Save-LatestUpdate {
                                     }
                                     If ($PSBoundParameters.ContainsKey('Proxy')) {
                                         # Set priority to Foreground because the proxy will remove the Range protocol header
-                                        $sbtParams.Priority   = "Foreground"
+                                        $sbtParams.Priority = "Foreground"
                                         $sbtParams.ProxyUsage = "Override"
-                                        $sbtParams.ProxyList  = $Proxy
+                                        $sbtParams.ProxyList = $Proxy
                                     }
                                     If ($PSBoundParameters.ContainsKey('ProxyCredential')) {
                                         $sbtParams.ProxyAuthentication = $ProxyAuthentication
