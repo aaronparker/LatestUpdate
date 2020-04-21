@@ -41,6 +41,7 @@ Function Invoke-UpdateCatalogDownloadDialog {
         }
 
         If ($downloadResult.StatusCode -eq "200") {
+            Write-Verbose -Message "$($MyInvocation.MyCommand): Download dialog result: $($downloadResult.StatusCode)."
             Write-Output -InputObject $downloadResult
         }
         Else {
