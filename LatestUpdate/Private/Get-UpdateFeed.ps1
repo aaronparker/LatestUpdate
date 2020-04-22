@@ -28,6 +28,7 @@ Function Get-UpdateFeed {
     }
     $tempFile = Join-Path -Path $tempDir -ChildPath ([System.IO.Path]::GetRandomFileName())
 
+    Write-Verbose -Message "$($MyInvocation.MyCommand): Requesting update feed at: $Uri."
     try {
         $params = @{
             Uri             = $Uri
