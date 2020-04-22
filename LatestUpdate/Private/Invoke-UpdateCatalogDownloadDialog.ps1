@@ -11,6 +11,14 @@ Function Invoke-UpdateCatalogDownloadDialog {
         [System.Collections.Hashtable] $Body
     )
 
+    # Disable the Invoke-WebRequest progress bar for faster downloads
+    If ($PSBoundParameters.ContainsKey('Verbose')) {
+        $ProgressPreference = "Continue"
+    }
+    Else {
+        $ProgressPreference = "SilentlyContinue"
+    }
+
     If ($Null -ne $script:resourceStrings) {
         try {
             $params = @{
@@ -33,6 +41,7 @@ Function Invoke-UpdateCatalogDownloadDialog {
         }
 
         If ($downloadResult.StatusCode -eq "200") {
+            Write-Verbose -Message "$($MyInvocation.MyCommand): Download dialog result: $($downloadResult.StatusCode)."
             Write-Output -InputObject $downloadResult
         }
         Else {

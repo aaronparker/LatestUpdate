@@ -83,10 +83,28 @@ Function Save-LatestUpdate {
         [Parameter(Mandatory = $False)]
         [System.Management.Automation.PSCredential]
         $ProxyCredential = [System.Management.Automation.PSCredential]::Empty,
+
+        [Parameter(Mandatory = $False)]
+        [ValidateSet('Basic', 'Digest', 'Ntlm', 'Negotiate', 'Passport')]
+        [System.String] $ProxyAuthentication = 'Negotiate',
         
         [Parameter(Mandatory = $False)]
         [System.Management.Automation.SwitchParameter] $Force
     )
+
+    Begin {
+        if ($PSBoundParameters.ContainsKey('Proxy') -or $PSBoundParameters.ContainsKey('ProxyCredential')) {
+            $null = Set-Proxy -Proxy $Proxy -ProxyCredential $ProxyCredential
+        }
+
+        # Disable the Invoke-WebRequest progress bar for faster downloads
+        If ($PSBoundParameters.ContainsKey('Verbose')) {
+            $ProgressPreference = "Continue"
+        }
+        Else {
+            $ProgressPreference = "SilentlyContinue"
+        }
+    }    
 
     Process {
         # Step through each update in $Updates
@@ -128,7 +146,8 @@ Function Save-LatestUpdate {
                                         $sbtParams.ProxyList = $Proxy
                                     }
                                     If ($PSBoundParameters.ContainsKey('ProxyCredential')) {
-                                        $sbtParams.ProxyCredential = $ProxyCredentials
+                                        $sbtParams.ProxyAuthentication = $ProxyAuthentication
+                                        $sbtParams.ProxyCredential = $ProxyCredential
                                     }
                                     Start-BitsTransfer @sbtParams
                                 }
@@ -148,17 +167,7 @@ Function Save-LatestUpdate {
                                         UseBasicParsing = $True
                                         ErrorAction     = $script:resourceStrings.Preferences.ErrorAction
                                     }
-                                    If ($PSBoundParameters.ContainsKey('Proxy')) {
-                                        $iwrParams.Proxy = $Proxy
-                                    }
-                                    If ($PSBoundParameters.ContainsKey('ProxyCredential')) {
-                                        $iwrParams.ProxyCredentials = $ProxyCredential
-                                    }
                                     Invoke-WebRequest @iwrParams
-                                }
-                                catch [System.Net.Http.HttpRequestException] {
-                                    Write-Warning -Message "$($MyInvocation.MyCommand): HttpRequestException: Check URL is valid: $url."
-                                    Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
                                 }
                                 catch [System.Net.WebException] {
                                     Write-Warning -Message "$($MyInvocation.MyCommand): WebException."
@@ -174,20 +183,7 @@ Function Save-LatestUpdate {
                             If ($pscmdlet.ShouldProcess($(Split-Path -Path $url -Leaf), "WebClient")) {
                                 try {
                                     $webClient = New-Object -TypeName System.Net.WebClient
-                                    If ($PSBoundParameters.ContainsKey('Proxy')) {
-                                        $proxyObj = New-Object -TypeName System.Net.WebProxy
-                                        $proxyObj.Address = $Proxy
-
-                                        If ($PSBoundParameters.ContainsKey('ProxyCredential')) {
-                                            $proxyObj.credentials = $ProxyCredential
-                                        }
-                                        $webClient.Proxy = $proxyObj
-                                    }
                                     $webClient.DownloadFile($url, $updateDownloadTarget)
-                                }
-                                catch [System.Net.Http.HttpRequestException] {
-                                    Write-Warning -Message "$($MyInvocation.MyCommand): HttpRequestException: Check URL is valid: $url."
-                                    Write-Warning -Message ([string]::Format("Error : {0}", $_.Exception.Message))
                                 }
                                 catch [System.Net.WebException] {
                                     Write-Warning -Message "$($MyInvocation.MyCommand): WebException."

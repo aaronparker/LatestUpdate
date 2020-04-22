@@ -33,11 +33,21 @@ Function Get-LatestNetFrameworkUpdate {
         [Parameter(Mandatory = $False, Position = 1, HelpMessage = "Windows 10 Semi-annual Channel version number.")]
         [ValidateScript( { $_ -in $script:resourceStrings.ParameterValues.Windows10Versions })]
         [System.String[]] $Version = $script:resourceStrings.ParameterValues.Windows10Versions[0],
+        
+        [Parameter(Mandatory = $False)]
+        [System.Management.Automation.SwitchParameter] $Previous,
 
         [Parameter(Mandatory = $False)]
-        [System.Management.Automation.SwitchParameter] $Previous
+        [System.String] $Proxy,
 
+        [Parameter(Mandatory = $False)]
+        [System.Management.Automation.PSCredential]
+        $ProxyCredential = [System.Management.Automation.PSCredential]::Empty
     )
+
+    if ($PSBoundParameters.ContainsKey('Proxy') -or $PSBoundParameters.ContainsKey('ProxyCredential')) {
+        $null = Set-Proxy -Proxy $Proxy -ProxyCredential $ProxyCredential
+    }
 
     # If resource strings are returned we can continue
     If ($Null -ne $script:resourceStrings) {
