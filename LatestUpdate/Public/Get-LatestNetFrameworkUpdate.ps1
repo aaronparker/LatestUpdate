@@ -45,7 +45,7 @@ Function Get-LatestNetFrameworkUpdate {
         $ProxyCredential = [System.Management.Automation.PSCredential]::Empty
     )
 
-    if ($PSBoundParameters.ContainsKey('Proxy') -or $PSBoundParameters.ContainsKey('ProxyCredential')) {
+    If ($PSBoundParameters.ContainsKey('Proxy') -or $PSBoundParameters.ContainsKey('ProxyCredential')) {
         $null = Set-Proxy -Proxy $Proxy -ProxyCredential $ProxyCredential
     }
 
@@ -65,6 +65,7 @@ Function Get-LatestNetFrameworkUpdate {
                     Version = $ver
                 }
                 If ($Previous.IsPresent) { $gnfuParams.Previous = $True }
+                
                 # Filter the feed for .NET Framework updates
                 Write-Verbose -Message "$($MyInvocation.MyCommand): filter feed for version [$ver]."
                 $updateList = Get-UpdateNetFramework @gnfuParams
@@ -102,6 +103,7 @@ Function Get-LatestNetFrameworkUpdate {
                         }
                         $updateListAll += $updateListWithArch
                     }
+                    
                     # If the value for Architecture is blank, make it "x86"
                     $i = 0
                     ForEach ($update in $updateListAll) {
@@ -111,16 +113,17 @@ Function Get-LatestNetFrameworkUpdate {
                         $i++
                     }
 
-                    If($null -ne $Version) {
+                    # Match against the $Version supplied
+                    If ($null -ne $Version) {
                         $updateListAll = $updateListAll | Where-Object {$_.Version -match $Version}
                     }
                     
                     If ($Previous.IsPresent) {
                         Write-Verbose -Message "$($MyInvocation.MyCommand): selecting previous update"
-                        $latestUpdate = ($updateListAll | Sort-Object Updated -Descending | Group-Object -Property Updated | Select -First 2 | Select -Last 1).Group
+                        $latestUpdate = ($updateListAll | Sort-Object Updated -Descending | Group-Object -Property Updated | Select-Object -First 2 | Select-Object -Last 1).Group
                     }
                     Else {
-                        $latestUpdate = ($updateListAll | Sort-Object Updated -Descending | Group-Object -Property Updated | Select -First 1).Group
+                        $latestUpdate = ($updateListAll | Sort-Object Updated -Descending | Group-Object -Property Updated | Select-Object -First 1).Group
                     }
 
                     # Output to pipeline
@@ -132,5 +135,3 @@ Function Get-LatestNetFrameworkUpdate {
         }
     }
 }
-    
-
